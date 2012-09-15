@@ -1,13 +1,13 @@
 [user]
-  name = Ben Alman
-  email = EMAIL
+  name = stevo
+  email = stevoland@gmail.com
 [github]
-  user = cowboy
+  user = stevoland
   token = TOKEN
 [core]
   autocrlf = input
   whitespace = fix,space-before-tab,tab-in-indent,trailing-space
-  excludesfile = /Users/cowboy/.dotfiles/conf/.gitignore_global
+  excludesfile = /Users/stevo/.dotfiles/conf/.gitignore_global
 [apply]
   whitespace = fix
 [alias]
