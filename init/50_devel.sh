@@ -33,7 +33,7 @@ fi
 
 # Install Ruby.
 if [[ "$(type -P rbenv)" ]]; then
-  versions=(1.9.3-p194 1.9.2-p290)
+  versions=(2.0.0-p247)
 
   list="$(to_install "${versions[*]}" "$(rbenv whence ruby)")"
   if [[ "$list" ]]; then
@@ -46,12 +46,13 @@ fi
 
 # Install Gems.
 if [[ "$(type -P gem)" ]]; then
-  gems=(bundler awesome_print interactive_editor)
+  gems=(bundler awesome_print pry lolcat)
 
   list="$(to_install "${gems[*]}" "$(gem list | awk '{print $1}')")"
   if [[ "$list" ]]; then
     e_header "Installing Ruby gems: $list"
     gem install $list
+    rbenv rehash
   fi
 fi
 
