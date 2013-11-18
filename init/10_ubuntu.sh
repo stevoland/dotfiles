@@ -33,13 +33,13 @@ fi
 # Update APT.
 e_header "Updating APT"
 sudo apt-get -qq update
-sudo apt-get -qq upgrade
+sudo apt-get -qq dist-upgrade
 
 # Install APT packages.
 packages=(
   build-essential libssl-dev
   git-core
-  tree sl id3tool
+  tree sl id3tool cowsay
   nmap telnet
   htop
 )

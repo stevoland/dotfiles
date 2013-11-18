@@ -24,6 +24,11 @@ alias grr='git remote rm'
 alias gcl='git clone'
 alias gcd='git rev-parse 2>/dev/null && cd "./$(git rev-parse --show-cdup)"'
 
+# Run commands in each subdirectory.
+alias gu-all='eachdir git pull'
+alias gp-all='eachdir git push'
+alias gs-all='eachdir git status'
+
 # open all changed files (that still actually exist) in the editor
 function ged() {
   local files=()
