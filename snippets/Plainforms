@@ -1,0 +1,23 @@
+// snippet Plainforms exported by snippeteer from
+// Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.101 Safari/537.36
+// at 2013-11-18T14:01:23.664Z
+// plainforms.js
+// https://github.com/bgrins/devtools-snippets
+// Remove HTML5 form features (validations and special input types).
+
+(function () {
+
+  ['maxlength', 'required', 'min', 'max', 'pattern', 'step' ].forEach(function (attr) {
+    [].forEach.call(document.querySelectorAll("[" + attr + "]"), function (node) {
+      node.removeAttribute(attr);
+    });
+  });
+
+  ['tel', 'url', 'email', 'datetime', 'date', 'month', 'week', 'time', 'datetime-local', 'number', 'range', 'color'].forEach(function (type) {
+    [].forEach.call(document.querySelectorAll("input[type=" + type + "]"), function (node) {
+      node.setAttribute('type', 'text');
+    });
+  });
+
+  console.info("All HTML5 form validations have been removed.");
+})();

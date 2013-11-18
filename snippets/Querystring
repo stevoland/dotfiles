@@ -1,0 +1,25 @@
+// snippet Querystring exported by snippeteer from
+// Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.101 Safari/537.36
+// at 2013-11-18T14:01:23.663Z
+// querystringvalues.js
+// https://github.com/bgrins/devtools-snippets
+// Print out key/value pairs from querystring.
+
+(function() {
+
+    var url = location;
+    var querystring = location.search.slice(1);
+    var tab = querystring.split("&").map(function(qs) {
+        return {
+            "Key": qs.split("=")[0],
+            "Value": qs.split("=")[1],
+            "Pretty Value": decodeURIComponent(qs.split("=")[1]).replace(/\+/g, " ")
+        }
+    });
+
+    console.group("Querystring Values");
+    console.log("URL: " + url + "\nQS:  " + querystring);
+    console.table(tab);
+    console.groupEnd("Querystring Values");
+
+})();

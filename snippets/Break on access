@@ -1,0 +1,20 @@
+// snippet Break on access exported by snippeteer from
+// Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.101 Safari/537.36
+// at 2013-11-18T14:01:23.663Z
+function breakOn(obj, prop, mode) {
+
+    var origValue = obj[prop]
+
+    Object.defineProperty(obj, prop, {
+        get: function() {
+            if (mode == 'read') debugger;
+            return origValue;
+        },
+        set: function(val) {
+            debugger;
+            obj[prop] = val;
+            return val;
+        }
+    });
+
+}; 
