@@ -1,0 +1,31 @@
+[user]
+	name = Stephen Collings
+	email = stephen@mettle.co.uk
+[branch]
+	sort = -committerdate
+[push]
+	autoSetupRemote = true
+
+[core]
+    pager = delta
+	excludesfile = ~/.gitignore
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    navigate = true    # use n and N to move between diff sections
+
+    # delta detects terminal colors automatically; set one of these to disable auto-detection
+    # dark = true
+    # light = true
+
+[merge]
+    conflictstyle = zdiff3
+[filter "lfs"]
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+[pull]
+	rebase = false
