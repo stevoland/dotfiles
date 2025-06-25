@@ -7,9 +7,6 @@
 [submodule "zsh/custom/plugins/fast-syntax-highlighting"]
 	path = zsh/custom/plugins/fast-syntax-highlighting
 	url = https://github.com/zdharma-continuum/fast-syntax-highlighting
-[submodule "compnav"]
-	path = compnav
-	url = https://github.com/mrcnski/compnav
 [submodule "ohmytmux"]
 	path = ohmytmux
 	url = https://github.com/gpakosz/.tmux
