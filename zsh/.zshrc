@@ -75,7 +75,7 @@ plugins=(
   zsh-autosuggestions
   zsh-syntax-highlighting
   fast-syntax-highlighting
-  # zsh-autocomplete
+  poetry
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -117,3 +117,6 @@ eval "$(starship init zsh)"
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+# bun completions
+[ -s "/Users/stephen.collings/.bun/_bun" ] && source "/Users/stephen.collings/.bun/_bun"

@@ -20,8 +20,6 @@ ln -s ~/dotfiles/zsh/.zshrc ~/.zshrc
 rm ~/.zprofile
 ln -s ~/dotfiles/zsh/.zprofile ~/.zprofile
 
-source ~/.zshrc
-
 # tmux
 mkdir -p ~/.config/tmux
 ln -s ~/dotfiles/ohmytmux/.tmux.conf ~/.config/tmux/tmux.conf
@@ -46,6 +44,11 @@ nwb setup all
 brew install rcmdnk/file/brew-file
 ln -s ~/dotfiles/brewfile ~/.config/brewfile
 brew file install
+
+curl -fsSL https://bun.sh/install | bash
+npm install swpm --global
+
+helm plugin install https://github.com/helm-unittest/helm-unittest.git
 
 # https://macos-defaults.com/
 defaults write -g InitialKeyRepeat -int 15
