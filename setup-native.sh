@@ -1,4 +1,4 @@
-# /bin/bash
+#!/bin/bash
 
 RUBY_VERSION=3.3.0
 XCODE_VERSION=16.0.0
