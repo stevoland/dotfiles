@@ -58,9 +58,9 @@ defaults write com.apple.dock "autohide" -bool "true"
 defaults write com.apple.dock "autohide-time-modifier" -float "0.1"
 defaults write com.apple.dock "tilesize" -int "48"
 killall Dock
-defaults write com.apple.screencapture "location" -string "~/Downloads"
+defaults write com.apple.screencapture "location" -string "$HOME/Downloads"
 killall SystemUIServer
-defaults write com.apple.iphonesimulator "ScreenShotSaveLocation" -string "~/Downloads"
+defaults write com.apple.iphonesimulator "ScreenShotSaveLocation" -string "$HOME/Downloads"
 
 # lets go
 open /Applications/ghostty.app
