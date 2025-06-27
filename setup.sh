@@ -1,10 +1,10 @@
-# /bin/bash
+#!/bin/bash
 
 # nwb admin
 /Applications/Privileges.app/Contents/MacOS/PrivilegesCLI -a
 open -a "Google Chrome" --args --make-default-browser
 
-git clone https://github.com/stevoland/dotfiles ~/dotfiles
+git clone --recurse-submodules -j8 https://github.com/stevoland/dotfiles ~/dotfiles
 
 # git
 rm ~/.gitconfig

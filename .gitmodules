@@ -10,3 +10,6 @@
 [submodule "ohmytmux"]
 	path = ohmytmux
 	url = https://github.com/gpakosz/.tmux
+[submodule "compnav"]
+	path = compnav
+	url = https://github.com/stevoland/compnav
