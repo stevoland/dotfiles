@@ -53,3 +53,10 @@ export HOMEBREW_BREWFILE_VSCODE=1
 if [ -f $(brew --prefix)/etc/brew-wrap ];then
   source $(brew --prefix)/etc/brew-wrap
 fi
+
+function lk {
+  cd "$(walk --icons "$@")"
+}
+export WALK_EDITOR="less -N"
+export WALK_OPEN_WITH="txt:less -N;go:code;ts:code;tsx:code;js:code;jsx:code;json:code;md:glow -p"
+export WALK_STATUS_BAR='[Mode(), Owner(), Size() | PadLeft(7), ModTime() | PadLeft(12)] | join(" ")'

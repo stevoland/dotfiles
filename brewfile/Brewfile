@@ -8,7 +8,6 @@ brew antigen
 brew aom
 brew aria2
 brew aribb24
-brew at-spi2-core
 brew autoconf
 brew awscli
 brew bat
@@ -18,13 +17,10 @@ brew btop
 brew ca-certificates
 brew cairo
 brew capstone
-brew cffi
 brew cjson
 brew colima
 brew coreutils
-brew cryptography
 brew dav1d
-brew dbus
 brew deno
 brew docker
 brew docker-buildx
@@ -34,19 +30,16 @@ brew docker-credential-helper-ecr
 brew dtc
 brew dyff
 brew eza
-brew faac
-brew faad2
-brew fdk-aac
 brew ffmpeg
 brew flac
 brew fnm
 brew fontconfig
+brew fpp
 brew freetype
 brew frei0r
 brew fribidi
 brew fx
 brew fzf
-brew gdk-pixbuf
 brew gettext
 brew gh
 brew giflib
@@ -54,32 +47,24 @@ brew git-delta
 brew git-lfs
 brew github-keygen
 brew glib
-brew glib-networking
+brew glow
 brew gmp
 brew gnu-sed
 brew gnutls
 brew go
-brew gobject-introspection
 brew gradle
-brew graphene
 brew graphite2
-brew gsettings-desktop-schemas
-brew gstreamer
-brew gtk+3
-brew gtk4
 brew harfbuzz
 brew helm
 brew helm-docs
-brew hicolor-icon-theme
 brew highway
 brew hyperfine
 brew icu4c@77
 brew imath
-brew jpeg
 brew jpeg-turbo
 brew jpeg-xl
 brew jq
-brew json-glib
+brew json-c
 brew k9s
 brew kind
 brew kubectx
@@ -93,26 +78,19 @@ brew libarchive
 brew libass
 brew libb2
 brew libbluray
-brew libcuefile
 brew libdeflate
-brew libepoxy
 brew libevent
 brew libgit2
 brew libidn2
 brew libmicrohttpd
 brew libnghttp2
-brew libnice
 brew libogg
 brew libpng
-brew libpsl
-brew libreplaygain
 brew librist
 brew libsamplerate
-brew libshout
 brew libslirp
 brew libsndfile
 brew libsodium
-brew libsoup
 brew libsoxr
 brew libssh
 brew libssh2
@@ -121,20 +99,18 @@ brew libtiff
 brew libunibreak
 brew libunistring
 brew libusb
-brew libusrsctp
+brew libuv
 brew libvidstab
 brew libvmaf
 brew libvorbis
 brew libvpx
+brew libwebsockets
 brew libx11
 brew libxau
 brew libxcb
 brew libxdmcp
 brew libxext
-brew libxfixes
-brew libxi
 brew libxrender
-brew libxtst
 brew libyaml
 brew lima
 brew little-cms2
@@ -147,7 +123,6 @@ brew mas
 brew mbedtls
 brew mpdecimal
 brew mpg123
-brew musepack
 brew ncurses
 brew nettle
 brew oniguruma
@@ -157,7 +132,6 @@ brew openjdk
 brew openjpeg
 brew openssl@3
 brew opus
-brew orc
 brew p11-kit
 brew pango
 brew parallel
@@ -165,11 +139,8 @@ brew pcre2
 brew pipx
 brew pixman
 brew pkgconf
-brew py3cairo
-brew pycparser
 brew pyenv
 brew pyenv-virtualenv
-brew pygobject3
 brew python@3.12
 brew python@3.13
 brew qemu
@@ -177,21 +148,18 @@ brew rav1e
 brew rbenv
 brew readline
 brew ripgrep
-brew rtmpdump
 brew rubberband
 brew ruby-build
 brew sdl2
+brew showkey
 brew skaffold
 brew snappy
 brew speex
-brew spice-server
 brew sqlite
 brew srt
-brew srtp
 brew starship
 brew stern
 brew svt-av1
-brew taglib
 brew tesseract
 brew thefuck
 brew theora
@@ -199,11 +167,12 @@ brew tidy-viewer
 brew tig
 brew tmux
 brew tree
+brew ttyd
 brew unbound
-brew utf8cpp
 brew utf8proc
 brew uv
 brew vde
+brew vhs
 brew visidata
 brew walk
 brew webp
@@ -297,8 +266,8 @@ cask font-ubuntu-nerd-font
 cask font-ubuntu-sans-nerd-font
 cask font-victor-mono-nerd-font
 cask font-zed-mono-nerd-font
+cask gcloud-cli
 cask ghostty
-cask google-cloud-sdk
 cask ngrok
 cask raycast
 cask switch
@@ -306,11 +275,17 @@ cask visual-studio-code
 
 tap buo/cask-upgrade
 
+tap charmbracelet/tap
+brew freeze
+
 tap danielfoehrkn/switch
 brew switcher
 
 tap eeveebank/tap
 brew nwb
+
+tap hmarr/tap
+brew codeowners
 
 tap int128/kubelogin
 
@@ -321,12 +296,15 @@ brew brew-file
 
 tap saulpw/vd
 
+tap snyk/tap
+brew snyk
+
 tap trycua/lume
 
 # App Store applications
 appstore 682658836 GarageBand (10.4.11)
 appstore 408981434 iMovie (10.4.2)
-appstore 1608041266 Jamf Trust (2.22.3)
+appstore 1608041266 Jamf Trust (2.23.0)
 appstore 409183694 Keynote (14.2)
 appstore 409203825 Numbers (14.2)
 appstore 409201541 Pages (14.2)
@@ -350,12 +328,15 @@ vscode github.vscode-github-actions
 vscode github.vscode-pull-request-github
 vscode golang.go
 vscode intility.vscode-backstage
+vscode mathiasfrohlich.kotlin
 vscode mquandalle.graphql
 vscode ms-azuretools.vscode-containers
 vscode ms-azuretools.vscode-docker
+vscode ms-playwright.playwright
 vscode ms-python.debugpy
 vscode ms-python.python
 vscode ms-python.vscode-pylance
+vscode ms-python.vscode-python-envs
 vscode ms-vscode-remote.remote-containers
 vscode ms-vscode.remote-repositories
 vscode ms-vsliveshare.vsliveshare

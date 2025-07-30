@@ -25,8 +25,9 @@ mkdir -p ~/.config/tmux
 ln -s ~/dotfiles/ohmytmux/.tmux.conf ~/.config/tmux/tmux.conf
 
 # terminal
-ln -s ~/dotfiles/ghostty ~/.config/ghostty
+ln -s $HOME/dotfiles/ghostty $HOME/.config
 ln -s ~/dotfiles/starship.toml ~/.config/starship.toml
+ln -s $HOME/dotfiles/glow $HOME/Library/Preferences
 
 # npm
 ln -s ~/dotfiles/.npmrc ~/.npmrc

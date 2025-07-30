@@ -43,7 +43,7 @@
 # resize-overlay-duration = 4s 200ms
 
 font-family = Hack Nerd Font Mono
-#font-family = Iosevka Nerd Font
+# font-family = Iosevka Nerd Font
 # font-family = SFMono Nerd Font 
 font-size = 14
 theme = GruvboxDarkHard
