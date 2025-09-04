@@ -4,24 +4,32 @@
 tap homebrew/core
 brew act
 brew adr-tools
+brew agg
+brew aha
 brew antigen
 brew aom
 brew aria2
 brew aribb24
+brew asciinema
 brew autoconf
 brew awscli
+brew bash
+brew bash-language-server
 brew bat
 brew bfs
 brew brotli
 brew btop
+brew c-ares
 brew ca-certificates
 brew cairo
 brew capstone
+brew chrome-cli
 brew cjson
 brew colima
 brew coreutils
 brew dav1d
 brew deno
+brew difftastic
 brew docker
 brew docker-buildx
 brew docker-completion
@@ -30,6 +38,7 @@ brew docker-credential-helper-ecr
 brew dtc
 brew dyff
 brew eza
+brew fastfetch
 brew ffmpeg
 brew flac
 brew fnm
@@ -43,24 +52,30 @@ brew fzf
 brew gettext
 brew gh
 brew giflib
+brew git
 brew git-delta
 brew git-lfs
 brew github-keygen
 brew glib
 brew glow
 brew gmp
+brew gnu-getopt
 brew gnu-sed
+brew gnupg
 brew gnutls
 brew go
+brew gopls
 brew gradle
 brew graphite2
 brew harfbuzz
 brew helm
 brew helm-docs
 brew highway
+brew hwatch
 brew hyperfine
 brew icu4c@77
 brew imath
+brew jj
 brew jpeg-turbo
 brew jpeg-xl
 brew jq
@@ -76,14 +91,20 @@ brew lame
 brew leptonica
 brew libarchive
 brew libass
+brew libassuan
 brew libb2
 brew libbluray
 brew libdeflate
 brew libevent
+brew libgcrypt
 brew libgit2
+brew libgpg-error
 brew libidn2
+brew libksba
 brew libmicrohttpd
 brew libnghttp2
+brew libnghttp3
+brew libngtcp2
 brew libogg
 brew libpng
 brew librist
@@ -115,7 +136,10 @@ brew libyaml
 brew lima
 brew little-cms2
 brew lnav
+brew lpeg
+brew luajit
 brew lume
+brew luv
 brew lz4
 brew lzo
 brew m4
@@ -124,7 +148,10 @@ brew mbedtls
 brew mpdecimal
 brew mpg123
 brew ncurses
+brew neovim
 brew nettle
+brew node
+brew npth
 brew oniguruma
 brew opencore-amr
 brew openexr
@@ -135,15 +162,19 @@ brew opus
 brew p11-kit
 brew pango
 brew parallel
+brew pass
 brew pcre2
+brew pinentry
 brew pipx
 brew pixman
 brew pkgconf
+brew procs
 brew pyenv
 brew pyenv-virtualenv
 brew python@3.12
 brew python@3.13
 brew qemu
+brew qrencode
 brew rav1e
 brew rbenv
 brew readline
@@ -152,6 +183,7 @@ brew rubberband
 brew ruby-build
 brew sdl2
 brew showkey
+brew simdjson
 brew skaffold
 brew snappy
 brew speex
@@ -165,17 +197,24 @@ brew thefuck
 brew theora
 brew tidy-viewer
 brew tig
+brew tlrc
 brew tmux
 brew tree
+brew tree-sitter
 brew ttyd
+brew typescript
+brew typescript-language-server
 brew unbound
+brew unibilium
 brew utf8proc
 brew uv
 brew vde
 brew vhs
+brew viddy
 brew visidata
 brew walk
 brew webp
+brew wget
 brew x264
 brew x265
 brew xcodes
@@ -268,14 +307,20 @@ cask font-victor-mono-nerd-font
 cask font-zed-mono-nerd-font
 cask gcloud-cli
 cask ghostty
+cask keycastr
+cask meld
 cask ngrok
 cask raycast
 cask switch
 cask visual-studio-code
 
+tap aviator-co/tap
+brew av
+
 tap buo/cask-upgrade
 
 tap charmbracelet/tap
+brew crush
 brew freeze
 
 tap danielfoehrkn/switch
@@ -283,6 +328,7 @@ brew switcher
 
 tap eeveebank/tap
 brew nwb
+brew nwb-scripts
 
 tap hmarr/tap
 brew codeowners
@@ -291,13 +337,22 @@ tap int128/kubelogin
 
 tap norwoodj/tap
 
+tap pehlicd/crd-wizard
+brew crd-wizard
+
 tap rcmdnk/file
 brew brew-file
 
 tap saulpw/vd
 
+tap skyscanner/tools
+brew turbolift
+
 tap snyk/tap
 brew snyk
+
+tap sst/tap
+brew opencode
 
 tap trycua/lume
 
@@ -311,7 +366,9 @@ appstore 409201541 Pages (14.2)
 
 # VSCode extensions
 vscode aaron-bond.better-comments
+vscode anthropic.claude-code
 vscode apollographql.vscode-apollo
+vscode bascodes.opencode-inofficial
 vscode datadog.datadog-vscode
 vscode dbaeumer.vscode-eslint
 vscode denoland.vscode-deno
@@ -328,6 +385,7 @@ vscode github.vscode-github-actions
 vscode github.vscode-pull-request-github
 vscode golang.go
 vscode intility.vscode-backstage
+vscode mads-hartmann.bash-ide-vscode
 vscode mathiasfrohlich.kotlin
 vscode mquandalle.graphql
 vscode ms-azuretools.vscode-containers
@@ -347,6 +405,7 @@ vscode pomber.git-file-history
 vscode raunofreiberg.vesper
 vscode redhat.java
 vscode redhat.vscode-yaml
+vscode savh.json5-kit
 vscode streetsidesoftware.code-spell-checker
 vscode tamasfe.even-better-toml
 vscode thinker.sort-json

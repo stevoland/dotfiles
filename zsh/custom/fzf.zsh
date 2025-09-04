@@ -1,12 +1,14 @@
 source <(fzf --zsh)
 
 export FZF_DEFAULT_OPTS="
-  --ansi
-  --color light
-  --height 50% --layout=reverse --margin 1,1
-  --bind 'ctrl-j:jump-accept'
-  --color header:italic
-  --header 'CTRL-J: quickly accept a selection'
+--color=bg+:#232530,bg:#1c1e26,spinner:#24a8b4,hl:#df5273
+--color=fg:#9da0a2,header:#df5273,info:#efb993,pointer:#24a8b4
+--color=marker:#24a8b4,fg+:#dcdfe4,prompt:#efb993,hl+:#df5273
+--ansi
+--height 50% --layout=reverse --margin 1,1
+--bind 'ctrl-j:jump-accept'
+--color header:italic
+--header 'CTRL-J: quickly accept a selection'
   "
 export FZF_DEFAULT_COMMAND="bfs -color -not -name '.' -exclude \\( -name .git -or -name .hg \\) -printf '%P\n' 2>/dev/null"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
@@ -37,3 +39,22 @@ _fzf_compgen_dir() {
     bfs -H "$1" -color -exclude \( -depth +0 -hidden \) -type d 2>/dev/null
 }
 
+function rgf() {
+  RELOAD='reload:rg --column --color=always --smart-case {q} || :'
+  OPENER='if [[ $FZF_SELECT_COUNT -eq 0 ]]; then
+            "$EDITOR" {1} +{2}     # No selection. Open the current line in $EDITOR.
+          elif [[ $EDITOR == vim ]] || [[ $EDITOR == nvim ]]; then
+            "$EDITOR" +cw -q {+f}  # Build quickfix list for the selected items.
+          else
+            "$EDITOR" {+1}
+          fi'
+
+  fzf --no-height --tmux 100% --disabled --ansi --multi --query "${*:-}" \
+      --bind "start,change:$RELOAD" \
+      --bind "enter:become:$OPENER" \
+      --bind "ctrl-o:execute:$OPENER" \
+      --bind 'alt-a:select-all,alt-d:deselect-all,ctrl-/:toggle-preview' \
+      --delimiter : \
+      --preview 'bat --color=always --highlight-line {2} {1}' \
+      --preview-window 'up,border-bottom,~3,+{2}+3/3'
+}

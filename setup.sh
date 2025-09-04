@@ -28,6 +28,7 @@ ln -s ~/dotfiles/ohmytmux/.tmux.conf ~/.config/tmux/tmux.conf
 ln -s $HOME/dotfiles/ghostty $HOME/.config
 ln -s ~/dotfiles/starship.toml ~/.config/starship.toml
 ln -s $HOME/dotfiles/glow $HOME/Library/Preferences
+ln -s $HOME/dotfiles/opencode $HOME/.config
 
 # npm
 ln -s ~/dotfiles/.npmrc ~/.npmrc
@@ -50,6 +51,12 @@ curl -fsSL https://bun.sh/install | bash
 npm install swpm --global
 
 helm plugin install https://github.com/helm-unittest/helm-unittest.git
+
+go install github.com/edi9999/path-extractor@latest
+ln -s $HOME/go/bin/path-extractor $HOME/.local/bin/pe
+
+git clone https://github.com/tim-janik/jj-fzf ~/workspace/tim-janik/jj-fzf
+ln -s $HOME/workspace/tim-janik/jj-fzf/jj-fzf $HOME/.local/bin/jj-fzf
 
 # https://macos-defaults.com/
 defaults write -g InitialKeyRepeat -int 15

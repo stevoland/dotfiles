@@ -110,7 +110,9 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # Created by `pipx` on 2025-05-07 16:06:17
-export PATH="$PATH:/Users/stephen.collings/.local/bin"
+export PATH="$PATH:$HOME/.local/bin"
+
+[[ $PATH =~ zsh/scripts/chrome.fzf ]] || PATH="$HOME/dotfiles/zsh/scripts:$PATH"
 
 eval "$(starship init zsh)"
 
@@ -120,3 +122,9 @@ export SDKMAN_DIR="$HOME/.sdkman"
 
 # bun completions
 [ -s "/Users/stephen.collings/.bun/_bun" ] && source "/Users/stephen.collings/.bun/_bun"
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:$HOME/.lmstudio/bin"
+# End of LM Studio CLI section
+
+export DELTA_PAGER="less -X"
