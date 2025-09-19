@@ -25,6 +25,7 @@ brew cairo
 brew capstone
 brew chrome-cli
 brew cjson
+brew claude-squad
 brew colima
 brew coreutils
 brew dav1d
@@ -49,6 +50,7 @@ brew frei0r
 brew fribidi
 brew fx
 brew fzf
+brew gemini-cli
 brew gettext
 brew gh
 brew giflib
@@ -134,6 +136,7 @@ brew libxext
 brew libxrender
 brew libyaml
 brew lima
+brew lima-additional-guestagents
 brew little-cms2
 brew lnav
 brew lpeg
@@ -153,6 +156,7 @@ brew nettle
 brew node
 brew npth
 brew oniguruma
+brew opencode
 brew opencore-amr
 brew openexr
 brew openjdk
@@ -171,6 +175,7 @@ brew pkgconf
 brew procs
 brew pyenv
 brew pyenv-virtualenv
+brew python-setuptools
 brew python@3.12
 brew python@3.13
 brew qemu
@@ -201,6 +206,7 @@ brew tlrc
 brew tmux
 brew tree
 brew tree-sitter
+brew trivy
 brew ttyd
 brew typescript
 brew typescript-language-server
@@ -208,6 +214,7 @@ brew unbound
 brew unibilium
 brew utf8proc
 brew uv
+brew uvwasi
 brew vde
 brew vhs
 brew viddy
@@ -328,7 +335,6 @@ brew switcher
 
 tap eeveebank/tap
 brew nwb
-brew nwb-scripts
 
 tap hmarr/tap
 brew codeowners
@@ -352,7 +358,6 @@ tap snyk/tap
 brew snyk
 
 tap sst/tap
-brew opencode
 
 tap trycua/lume
 
@@ -366,7 +371,6 @@ appstore 409201541 Pages (14.2)
 
 # VSCode extensions
 vscode aaron-bond.better-comments
-vscode anthropic.claude-code
 vscode apollographql.vscode-apollo
 vscode bascodes.opencode-inofficial
 vscode datadog.datadog-vscode
@@ -396,6 +400,7 @@ vscode ms-python.python
 vscode ms-python.vscode-pylance
 vscode ms-python.vscode-python-envs
 vscode ms-vscode-remote.remote-containers
+vscode ms-vscode.makefile-tools
 vscode ms-vscode.remote-repositories
 vscode ms-vsliveshare.vsliveshare
 vscode msjsdiag.vscode-react-native

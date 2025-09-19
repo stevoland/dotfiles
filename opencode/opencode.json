@@ -7,10 +7,10 @@
       "type": "local",
       "command": ["/Users/stephen.collings/.config/opencode/commands/github.sh"]
     },
-    "snyk": {
-      "type": "local",
-      "command": ["/Users/stephen.collings/.config/opencode/commands/snyk.sh"]
-    }
+    // "snyk": {
+    //   "type": "local",
+    //   "command": ["/Users/stephen.collings/.config/opencode/commands/snyk.sh"]
+    // }
   },
   "provider": {
     "ollama": {
@@ -24,6 +24,6 @@
           "name": "gpt-oss 20b local"
         }
       }
-    }
+    },
   }
 }
