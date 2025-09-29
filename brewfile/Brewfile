@@ -17,6 +17,7 @@ brew bash
 brew bash-language-server
 brew bat
 brew bfs
+brew boost
 brew brotli
 brew btop
 brew c-ares
@@ -36,13 +37,20 @@ brew docker-buildx
 brew docker-completion
 brew docker-compose
 brew docker-credential-helper-ecr
+brew double-conversion
 brew dtc
 brew dyff
+brew edencommon
 brew eza
 brew fastfetch
+brew fb303
+brew fbthrift
 brew ffmpeg
+brew fizz
 brew flac
+brew fmt
 brew fnm
+brew folly
 brew fontconfig
 brew fpp
 brew freetype
@@ -52,6 +60,7 @@ brew fx
 brew fzf
 brew gemini-cli
 brew gettext
+brew gflags
 brew gh
 brew giflib
 brew git
@@ -59,6 +68,7 @@ brew git-delta
 brew git-lfs
 brew github-keygen
 brew glib
+brew glog
 brew glow
 brew gmp
 brew gnu-getopt
@@ -220,6 +230,8 @@ brew vhs
 brew viddy
 brew visidata
 brew walk
+brew wangle
+brew watchman
 brew webp
 brew wget
 brew x264
@@ -227,6 +239,7 @@ brew x265
 brew xcodes
 brew xorgproto
 brew xvid
+brew xxhash
 brew xz
 brew yarn
 brew yq
@@ -314,6 +327,7 @@ cask font-victor-mono-nerd-font
 cask font-zed-mono-nerd-font
 cask gcloud-cli
 cask ghostty
+cask helium-browser
 cask keycastr
 cask meld
 cask ngrok
@@ -336,10 +350,17 @@ brew switcher
 tap eeveebank/tap
 brew nwb
 
+tap felixkratz/formulae
+brew borders
+brew sketchybar
+
 tap hmarr/tap
 brew codeowners
 
 tap int128/kubelogin
+
+tap nikitabobko/tap
+cask aerospace
 
 tap norwoodj/tap
 
@@ -359,6 +380,10 @@ brew snyk
 
 tap sst/tap
 
+tap steipete/tap
+brew peekaboo
+brew poltergeist
+
 tap trycua/lume
 
 # App Store applications
@@ -366,7 +391,7 @@ appstore 682658836 GarageBand (10.4.11)
 appstore 408981434 iMovie (10.4.2)
 appstore 1608041266 Jamf Trust (2.23.0)
 appstore 409183694 Keynote (14.2)
-appstore 409203825 Numbers (14.2)
+appstore 409203825 Numbers (14.4)
 appstore 409201541 Pages (14.2)
 
 # VSCode extensions
@@ -404,6 +429,7 @@ vscode ms-vscode.makefile-tools
 vscode ms-vscode.remote-repositories
 vscode ms-vsliveshare.vsliveshare
 vscode msjsdiag.vscode-react-native
+vscode obstinate.vesper-pp
 vscode orta.vscode-twoslash-queries
 vscode p42ai.refactor
 vscode pomber.git-file-history
@@ -418,11 +444,13 @@ vscode twpayne.vscode-testscript
 vscode visualstudioexptteam.intellicode-api-usage-examples
 vscode visualstudioexptteam.vscodeintellicode
 vscode vitest.explorer
+vscode vscjava.migrate-java-to-azure
 vscode vscjava.vscode-gradle
 vscode vscjava.vscode-java-debug
 vscode vscjava.vscode-java-dependency
 vscode vscjava.vscode-java-pack
 vscode vscjava.vscode-java-test
+vscode vscjava.vscode-java-upgrade
 vscode vscjava.vscode-maven
 vscode waderyan.gitblame
 vscode wix.vscode-import-cost

@@ -121,10 +121,20 @@ export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 
 # bun completions
-[ -s "/Users/stephen.collings/.bun/_bun" ] && source "/Users/stephen.collings/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "/Users/stephen.collings/.bun/_bun"
 
 # Added by LM Studio CLI (lms)
 export PATH="$PATH:$HOME/.lmstudio/bin"
 # End of LM Studio CLI section
 
 export DELTA_PAGER="less -X"
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:$HOME/.lmstudio/bin"
+# End of LM Studio CLI section
+
+export XDG_CONFIG_HOME="$HOME/.config"
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/stephen.collings/.lmstudio/bin"
+# End of LM Studio CLI section
+

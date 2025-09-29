@@ -5,11 +5,11 @@
   "mcp": {
     "github": {
       "type": "local",
-      "command": ["/Users/stephen.collings/.config/opencode/commands/github.sh"]
-    },
+      "command": ["/Users/stephen.collings/dotfiles/opencode-commands/github.sh"]
+    }
     // "snyk": {
     //   "type": "local",
-    //   "command": ["/Users/stephen.collings/.config/opencode/commands/snyk.sh"]
+    //   "command": ["/Users/stephen.collings/dotfiles/opencode-commands/snyk.sh"]
     // }
   },
   "provider": {

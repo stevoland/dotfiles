@@ -61,30 +61,30 @@ export WALK_EDITOR="less -N"
 export WALK_OPEN_WITH="txt:less -N;go:code;ts:code;tsx:code;js:code;jsx:code;json:code;md:glow -p"
 export WALK_STATUS_BAR='[Mode(), Owner(), Size() | PadLeft(7), ModTime() | PadLeft(12)] | join(" ")'
 
-# Open selected path in nvim
-alias -g P='| pe | fzf | read filename; [ ! -z $filename ] && nvim $filename'
+# # Open selected path in nvim
+# alias -g P='| pe | fzf | read filename; [ ! -z $filename ] && nvim $filename'
 
-# Copy selected path to clipboard
-alias -g C='| pe | fzf | read filename; [ ! -z $filename ] && echo -n $filename | pbcopy'
+# # Copy selected path to clipboard
+# alias -g C='| pe | fzf | read filename; [ ! -z $filename ] && echo -n $filename | pbcopy'
 
 
-globalias() {
-  zle _expand_alias
-  zle expand-word
-  zle self-insert
-}
-zle -N globalias
+# globalias() {
+#   zle _expand_alias
+#   zle expand-word
+#   zle self-insert
+# }
+# zle -N globalias
 
-# space expands all aliases, including global
-bindkey -M emacs " " globalias
-bindkey -M viins " " globalias
+# # space expands all aliases, including global
+# bindkey -M emacs " " globalias
+# bindkey -M viins " " globalias
 
-# control-space to make a normal space
-bindkey -M emacs "^ " magic-space
-bindkey -M viins "^ " magic-space
+# # control-space to make a normal space
+# bindkey -M emacs "^ " magic-space
+# bindkey -M viins "^ " magic-space
 
-# normal space during searches
-bindkey -M isearch " " magic-space
+# # normal space during searches
+# bindkey -M isearch " " magic-space
 
 export EDITOR=nvim
 

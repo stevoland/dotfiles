@@ -67,5 +67,5 @@ copy-on-select = clipboard
 
 theme = vesper
 # breaks opencode logo
-minimum-contrast = 3
+#minimum-contrast = 3
 window-padding-x = 6
