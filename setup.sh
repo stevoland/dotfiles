@@ -63,6 +63,7 @@ ln -s $HOME/workspace/tim-janik/jj-fzf/jj-fzf $HOME/.local/bin/jj-fzf
 ln -s ~/dotfiles/k9s ~/.config/k9s
 ln -s ~/dotfiles/aerospace ~/.config/aerospace
 ln -s ~/dotfiles/sketchybar ~/.config/sketchybar
+ln -s ~/dotfiles/nvim ~/.config/nvim
 
 # https://macos-defaults.com/
 defaults write -g InitialKeyRepeat -int 15

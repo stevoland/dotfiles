@@ -43,4 +43,4 @@
 
 
 [diff]
-    external = difft
+    # external = difft

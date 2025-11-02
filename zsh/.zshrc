@@ -138,3 +138,5 @@ export XDG_CONFIG_HOME="$HOME/.config"
 export PATH="$PATH:/Users/stephen.collings/.lmstudio/bin"
 # End of LM Studio CLI section
 
+
+[[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"

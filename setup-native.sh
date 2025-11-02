@@ -1,7 +1,7 @@
 #!/bin/bash
 
 RUBY_VERSION=3.3.0
-XCODE_VERSION=16.0.0
+XCODE_VERSION=26.0.1
 
 brew install rbenv ruby-build aria2 xcodes
 

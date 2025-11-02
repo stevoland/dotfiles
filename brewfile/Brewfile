@@ -45,6 +45,7 @@ brew eza
 brew fastfetch
 brew fb303
 brew fbthrift
+brew fd
 brew ffmpeg
 brew fizz
 brew flac
@@ -87,6 +88,7 @@ brew hwatch
 brew hyperfine
 brew icu4c@77
 brew imath
+brew jbang
 brew jj
 brew jpeg-turbo
 brew jpeg-xl
@@ -357,7 +359,12 @@ brew sketchybar
 tap hmarr/tap
 brew codeowners
 
+tap hookdeck/hookdeck
+brew hookdeck
+
 tap int128/kubelogin
+
+tap jbangdev/tap
 
 tap nikitabobko/tap
 cask aerospace
@@ -416,6 +423,7 @@ vscode golang.go
 vscode intility.vscode-backstage
 vscode mads-hartmann.bash-ide-vscode
 vscode mathiasfrohlich.kotlin
+vscode mechatroner.rainbow-csv
 vscode mquandalle.graphql
 vscode ms-azuretools.vscode-containers
 vscode ms-azuretools.vscode-docker

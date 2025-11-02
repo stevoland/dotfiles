@@ -1,3 +1,3 @@
 #!/bin/bash
 
-snyk mcp -t stdio --experimental --disable-trust
+snyk mcp -t stdio --disable-trust

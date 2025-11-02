@@ -3,11 +3,11 @@
   "model": "github-copilot/claude-sonnet-4",
   "share": "disabled",
   "mcp": {
-    "github": {
-      "type": "local",
-      "command": ["/Users/stephen.collings/dotfiles/opencode-commands/github.sh"]
-    }
-    // "snyk": {
+    // "github": {
+    //   "type": "local",
+    //   "command": ["/Users/stephen.collings/dotfiles/opencode-commands/github.sh"]
+    // },
+    // "snyk-mcp": {
     //   "type": "local",
     //   "command": ["/Users/stephen.collings/dotfiles/opencode-commands/snyk.sh"]
     // }
