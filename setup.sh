@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # nwb admin
 /Applications/Privileges.app/Contents/MacOS/PrivilegesCLI -a
@@ -9,6 +10,12 @@ git clone --recurse-submodules -j8 https://github.com/stevoland/dotfiles ~/dotfi
 # git
 rm ~/.gitconfig
 ln -s ~/dotfiles/git/.gitconfig ~/.gitconfig
+mkdir -p ~/.config/git
+ln -s ~/dotfiles/git/attributes ~/.config/git/attributes
+
+# jj
+ln -s $HOME/dotfiles/jj $HOME/.config
+
 
 # root for repos (for compnav)
 mkdir ~/workspace
@@ -32,6 +39,8 @@ ln -s $HOME/dotfiles/opencode $HOME/.config
 
 # npm
 ln -s ~/dotfiles/.npmrc ~/.npmrc
+# for bun
+ln -s ~/dotfiles/.npmrc ~/.config/.npmrc
 
 # nwb
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -64,6 +73,8 @@ ln -s ~/dotfiles/k9s ~/.config/k9s
 ln -s ~/dotfiles/aerospace ~/.config/aerospace
 ln -s ~/dotfiles/sketchybar ~/.config/sketchybar
 ln -s ~/dotfiles/nvim ~/.config/nvim
+
+curl https://sh.rustup.rs -sSf | sh
 
 # https://macos-defaults.com/
 defaults write -g InitialKeyRepeat -int 15

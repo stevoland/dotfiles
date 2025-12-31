@@ -1,29 +1,160 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "github-copilot/claude-sonnet-4",
-  "share": "disabled",
-  "mcp": {
-    // "github": {
-    //   "type": "local",
-    //   "command": ["/Users/stephen.collings/dotfiles/opencode-commands/github.sh"]
-    // },
-    // "snyk-mcp": {
-    //   "type": "local",
-    //   "command": ["/Users/stephen.collings/dotfiles/opencode-commands/snyk.sh"]
-    // }
+  "autoupdate": false,
+  "default_agent": "yolo",
+  "enabled_providers": [
+    "github-copilot"
+  ],
+  "experimental": {
+    "batch_tool": true
   },
-  "provider": {
-    "ollama": {
-      "npm": "@ai-sdk/openai-compatible",
-      "name": "LM Studio",
-      "options": {
-        "baseURL": "http://localhost:1234/v1"
+  "mcp": {
+    "code-mode": {
+      "command": [
+        "srt",
+        "npx",
+        "-y",
+        "@utcp/code-mode-mcp"
+      ],
+      "enabled": false,
+      "environment": {
+        "UTCP_CONFIG_FILE": "/Users/stephen.collings/.config/utcp/config.json"
       },
+      "type": "local"
+    },
+    "maven": {
+      "command": [
+        "node",
+        "/Users/stephen.collings/workspace/github.com/eeveebank/boxed-mcp-servers/boxed-maven-mcp-server/dist/index.js"
+      ],
+      "enabled": false,
+      "type": "local"
+    },
+    "snyk": {
+      "command": [
+        "node",
+        "/Users/stephen.collings/workspace/github.com/eeveebank/boxed-mcp-servers/boxed-snyk-mcp-server/dist/index.js"
+      ],
+      "enabled": false,
+      "type": "local"
+    }
+  },
+  "model": "github-copilot/claude-sonnet-4.5",
+  "permission": {
+    "bash": {
+      "*": "ask",
+      ".gradlew*": "allow",
+      "bun*": "allow",
+      "cat*": "allow",
+      "cut*": "allow",
+      "diff*": "allow",
+      "du*": "allow",
+      "echo*": "allow",
+      "file *": "allow",
+      "find *": "allow",
+      "gh co*": "allow",
+      "gh pr checkout*": "allow",
+      "gh pr checks*": "allow",
+      "gh pr diff*": "allow",
+      "gh pr list*": "allow",
+      "gh pr status*": "allow",
+      "gh pr view*": "allow",
+      "gh search*": "allow",
+      "git branch": "allow",
+      "git branch -v": "allow",
+      "git diff*": "allow",
+      "git log*": "allow",
+      "git show*": "allow",
+      "git status*": "allow",
+      "go*": "allow",
+      "grep*": "allow",
+      "gsed*": "allow",
+      "head*": "allow",
+      "less*": "allow",
+      "ls*": "allow",
+      "more*": "allow",
+      "npm add*": "ask",
+      "npm*": "allow",
+      "pwd*": "allow",
+      "rg*": "allow",
+      "sed*": "allow",
+      "sort*": "allow",
+      "stat*": "allow",
+      "tail*": "allow",
+      "tree*": "allow",
+      "uniq*": "allow",
+      "wc*": "allow",
+      "whereis*": "allow",
+      "which*": "allow"
+    },
+    "doom_loop": "ask"
+  },
+  "plugin": ["@tarquinen/opencode-dcp@latest", "@franlol/opencode-md-table-formatter@0.0.3"],
+  "provider": {
+    "github-copilot": {
+      "whitelist": [
+        "claude-sonnet-4.5",
+        "gpt-5",
+        "gpt-5.1",
+        "gpt-5.1-codex",
+        "gpt-5.1-codex-max",
+        "gpt-5.2",
+        "claude-haiku-4.5",
+        "claude-opus-4.5",
+        "claude-opus-41",
+        "gpt-4o",
+        "gpt-4.1",
+        "gemini-2.5-pro",
+        "claude-sonnet-4"
+      ],
       "models": {
-        "gpt-oss:20b": {
-          "name": "gpt-oss 20b local"
+        "claude-sonnet-4.5": {
+          "limit": {
+            "context": 144000,
+            "output": 16000
+          }
+        },
+        "claude-haiku-4.5": {
+          "limit": {
+            "context": 144000,
+            "output": 16000
+          }
+        },
+        "gpt-5.2": {
+          "limit": {
+            "context": 264000,
+            "output": 64000
+          }
+        },
+        "gpt-5.1": {
+          "limit": {
+            "context": 264000,
+            "output": 64000
+          }
+        },
+        "gpt-5.1-codex": {
+          "limit": {
+            "context": 400000,
+            "output": 128000
+          }
+        },
+        "gpt-5.1-codex-max": {
+          "limit": {
+            "context": 400000,
+            "output": 128000
+          }
         }
       }
-    },
+    }
+  },
+  "share": "disabled",
+  "tools": {
+    "codesearch": false,
+    "websearch": false
+  },
+  "tui": {
+    "scroll_acceleration": {
+      "enabled": true
+    }
   }
 }

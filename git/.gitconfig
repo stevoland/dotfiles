@@ -1,6 +1,6 @@
 [user]
 	name = Stephen Collings
-	email = stephen@mettle.co.uk
+	email = 30143+stevoland@users.noreply.github.com
 [branch]
 	sort = -committerdate
 [push]
@@ -21,7 +21,7 @@
     # light = true
 
 [merge]
-    conflictstyle = zdiff3
+	conflictStyle = diff3
 # [filter "lfs"]
 # 	required = true
 # 	clean = git-lfs clean -- %f
@@ -44,3 +44,8 @@
 
 [diff]
     # external = difft
+[rerere]
+	enabled = true
+[merge "mergiraf"]
+	name = mergiraf
+	driver = mergiraf merge --git %O %A %B -s %S -x %X -y %Y -p %P -l %L

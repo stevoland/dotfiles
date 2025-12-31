@@ -1,0 +1,16 @@
+{
+  "manual_call_templates": [
+    {
+      "name": "github",
+      "call_template_type": "mcp",
+      "config": {
+        "mcpServers": {
+          "github": {
+            "command": "/Users/stephen.collings/dotfiles/opencode-commands/github.sh",
+            "transport": "stdio"
+          }
+        }
+      }
+    }
+  ]
+}

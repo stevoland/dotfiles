@@ -2,7 +2,7 @@
 description: Software Engineer
 mode: primary
 # model: github-copilot/gpt-4.1
-model: github-copilot/claude-sonnet-4
+model: github-copilot/claude-sonnet-4.5
 temperature: 0.3
 tools:
   write: true

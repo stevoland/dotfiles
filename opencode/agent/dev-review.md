@@ -16,4 +16,3 @@ Review the attached specification and then scan the codebase to validate that th
 If there are any problems, list them out in descending order of severity with a proposed fix.
 
 Do not implement the fixes, just describe them.
-

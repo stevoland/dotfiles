@@ -11,6 +11,7 @@ brew aom
 brew aria2
 brew aribb24
 brew asciinema
+brew ast-grep
 brew autoconf
 brew awscli
 brew bash
@@ -79,6 +80,7 @@ brew gnutls
 brew go
 brew gopls
 brew gradle
+brew gradle-completion
 brew graphite2
 brew harfbuzz
 brew helm
@@ -87,9 +89,11 @@ brew highway
 brew hwatch
 brew hyperfine
 brew icu4c@77
+brew icu4c@78
 brew imath
 brew jbang
 brew jj
+brew jjui
 brew jpeg-turbo
 brew jpeg-xl
 brew jq
@@ -150,6 +154,7 @@ brew libyaml
 brew lima
 brew lima-additional-guestagents
 brew little-cms2
+brew llvm
 brew lnav
 brew lpeg
 brew luajit
@@ -160,12 +165,14 @@ brew lzo
 brew m4
 brew mas
 brew mbedtls
+brew mergiraf
 brew mpdecimal
 brew mpg123
 brew ncurses
 brew neovim
 brew nettle
 brew node
+brew npq
 brew npth
 brew oniguruma
 brew opencode
@@ -188,8 +195,8 @@ brew procs
 brew pyenv
 brew pyenv-virtualenv
 brew python-setuptools
-brew python@3.12
 brew python@3.13
+brew python@3.14
 brew qemu
 brew qrencode
 brew rav1e
@@ -198,11 +205,14 @@ brew readline
 brew ripgrep
 brew rubberband
 brew ruby-build
+brew rust
 brew sdl2
 brew showkey
 brew simdjson
 brew skaffold
+brew snag
 brew snappy
+brew snitch
 brew speex
 brew sqlite
 brew srt
@@ -218,6 +228,7 @@ brew tlrc
 brew tmux
 brew tree
 brew tree-sitter
+brew treemd
 brew trivy
 brew ttyd
 brew typescript
@@ -245,6 +256,8 @@ brew xxhash
 brew xz
 brew yarn
 brew yq
+brew z3
+brew zellij
 brew zeromq
 brew zimg
 brew zipkin
@@ -332,10 +345,14 @@ cask ghostty
 cask helium-browser
 cask keycastr
 cask meld
+cask mitmproxy
 cask ngrok
 cask raycast
 cask switch
 cask visual-studio-code
+
+tap argoproj/tap
+brew kubectl-argo-rollouts
 
 tap aviator-co/tap
 brew av
@@ -349,12 +366,18 @@ brew freeze
 tap danielfoehrkn/switch
 brew switcher
 
+tap dmmulroy/tap
+brew jj-starship
+
 tap eeveebank/tap
+brew box
 brew nwb
 
 tap felixkratz/formulae
 brew borders
 brew sketchybar
+
+tap grantcarthew/tap
 
 tap hmarr/tap
 brew codeowners
@@ -400,11 +423,13 @@ appstore 1608041266 Jamf Trust (2.23.0)
 appstore 409183694 Keynote (14.2)
 appstore 409203825 Numbers (14.4)
 appstore 409201541 Pages (14.2)
+appstore 497799835 Xcode (26.2)
 
 # VSCode extensions
 vscode aaron-bond.better-comments
 vscode apollographql.vscode-apollo
-vscode bascodes.opencode-inofficial
+vscode charliermarsh.ruff
+vscode chunsen.bracket-select
 vscode datadog.datadog-vscode
 vscode dbaeumer.vscode-eslint
 vscode denoland.vscode-deno
@@ -449,8 +474,6 @@ vscode streetsidesoftware.code-spell-checker
 vscode tamasfe.even-better-toml
 vscode thinker.sort-json
 vscode twpayne.vscode-testscript
-vscode visualstudioexptteam.intellicode-api-usage-examples
-vscode visualstudioexptteam.vscodeintellicode
 vscode vitest.explorer
 vscode vscjava.migrate-java-to-azure
 vscode vscjava.vscode-gradle
@@ -460,6 +483,7 @@ vscode vscjava.vscode-java-pack
 vscode vscjava.vscode-java-test
 vscode vscjava.vscode-java-upgrade
 vscode vscjava.vscode-maven
+vscode vscodevim.vim
 vscode waderyan.gitblame
 vscode wix.vscode-import-cost
 vscode yoavbls.pretty-ts-errors

@@ -140,3 +140,6 @@ export PATH="$PATH:/Users/stephen.collings/.lmstudio/bin"
 
 
 [[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
+
+. "$HOME/.cargo/env" 
+

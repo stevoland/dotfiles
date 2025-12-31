@@ -89,3 +89,16 @@ export WALK_STATUS_BAR='[Mode(), Owner(), Size() | PadLeft(7), ModTime() | PadLe
 export EDITOR=nvim
 
 export PAGER="less -X"
+
+export UTCP_CONFIG_FILE="$HOME/.config/utcp/config.json"
+
+npmig() {
+  cd $HOME/npmbin
+  npm install --save $@
+  cd -
+}
+
+export PATH="$HOME/npmbin/node_modules/.bin:$PATH"
+
+export OPENCODE_EXPERIMENTAL_LSP_TOOL=true
+export OPENCODE_EXPERIMENTAL_FILEWATCHER=true
