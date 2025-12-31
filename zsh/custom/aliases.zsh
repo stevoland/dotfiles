@@ -101,4 +101,6 @@ npmig() {
 export PATH="$HOME/npmbin/node_modules/.bin:$PATH"
 
 export OPENCODE_EXPERIMENTAL_LSP_TOOL=true
-export OPENCODE_EXPERIMENTAL_FILEWATCHER=true
+# export OPENCODE_EXPERIMENTAL_FILEWATCHER=true
+
+# export PATH="$HOME/workspace/github.com/stevoland/opencode/packages/opencode/dist/opencode-darwin-arm64/bin:$PATH"

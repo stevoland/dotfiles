@@ -2,7 +2,21 @@
 
 [user]
 name = "Stephen Collings"
+email = "stevoland@gmail.com"
+
+[[--scope]]
+--when.repositories = ["~/workspace/github.com/eeveebank"]
+[--scope.user]
 email = "stephen@mettle.co.uk"
+
+[ui]
+diff-formatter = ":git"
+default-command = "log"
+
+[colors]
+"diff token" = { underline = false }
+"diff removed token" = { bg = "#221111" }
+"diff added token" = { bg = "#002200" }
 
 [snapshot]
 max-new-file-size = "10MiB"
@@ -10,8 +24,11 @@ max-new-file-size = "10MiB"
 [revset-aliases]
 'closest_bookmark(to)' = 'heads(::to & bookmarks())'
 
-# set all remote bookmarks (commits pushed to remote branches) to be immutable
-'immutable_heads()' = "builtin_immutable_heads() | remote_bookmarks()"
+# [[--scope]]
+# --when.repositories = ["~/workspace/github.com/eeveebank"]
+# [--scope.revset-aliases]
+# # set all remote bookmarks (commits pushed to remote branches) to be immutable
+# 'immutable_heads()' = "builtin_immutable_heads() | remote_bookmarks()"
 
 [aliases]
 tug = ["bookmark", "move", "--from", "closest_bookmark(@-)", "--to", "@-"]
@@ -19,11 +36,34 @@ tug = ["bookmark", "move", "--from", "closest_bookmark(@-)", "--to", "@-"]
 fetch = ["git", "fetch"]
 init = ["git", "init", "--colocate"]
 mark = ["bookmark", "set", "-r", "@"]
-push = ["git", "push", "--allow-new"]
+push = ["git", "push"]
 track = ["bookmark", "track"]
+
+raf = ["resolve", "--tool", "mergiraf"]
+
+[templates]
+log_node = '''
+if(self && !current_working_copy && !immutable && !conflict && in_branch(self),
+  "◇",
+  builtin_log_node
+)
+'''
+git_push_bookmark = '"stevo-" ++ change_id.short()'
 
 [template-aliases]
 # 'format_short_change_id(id)' = 'id.shortest()'
+"in_branch(commit)" = 'commit.contained_in("immutable_heads()..bookmarks()")'
+
+# Full timestamp in ISO 8601 format
+# 'format_timestamp(timestamp)' = 'timestamp'
+# Relative timestamp rendered as "x days/hours/seconds ago"
+'format_timestamp(timestamp)' = 'timestamp.ago()'
+
+# Username part of the email address
+'format_short_signature(signature)' = 'signature.email().local()'
 
 [remotes.origin]
 auto-track-bookmarks = "stevo/*"
+
+[git]
+track-default-bookmark-on-clone = true

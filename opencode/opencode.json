@@ -1,26 +1,45 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "agent": {
+    "bedrock": {
+      "model": "amazon-bedrock/claude-sonnet-4.5"
+    },
+    "build": {
+      "model": "github-copilot/claude-sonnet-4.5"
+    },
+    "explore": {
+      "model": "github-copilot/claude-sonnet-4.5"
+    },
+    "general": {
+      "model": "github-copilot/claude-sonnet-4.5"
+    },
+    "plan": {
+      "model": "github-copilot/gpt-5.2"
+    }
+  },
   "autoupdate": false,
-  "default_agent": "yolo",
-  "enabled_providers": [
-    "github-copilot"
-  ],
+  "enabled_providers": ["github-copilot", "amazon-bedrock"],
   "experimental": {
     "batch_tool": true
   },
+  "instructions": [
+    "/Users/stephen.collings/.config/opencode/instructions.nwb.md"
+  ],
   "mcp": {
-    "code-mode": {
-      "command": [
-        "srt",
-        "npx",
-        "-y",
-        "@utcp/code-mode-mcp"
-      ],
-      "enabled": false,
-      "environment": {
-        "UTCP_CONFIG_FILE": "/Users/stephen.collings/.config/utcp/config.json"
-      },
-      "type": "local"
+    "context7": {
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp",
+      "enabled": true
+    },
+    "grep_app": {
+      "type": "remote",
+      "url": "https://mcp.grep.app",
+      "enabled": true
+    },
+    "opensrc": {
+      "type": "local",
+      "command": ["npx", "-y", "opensrc-mcp"],
+      "enabled": true
     },
     "maven": {
       "command": [
@@ -37,6 +56,11 @@
       ],
       "enabled": false,
       "type": "local"
+    },
+    "datadog": {
+      "enabled": false,
+      "type": "remote",
+      "url": "https://mcp.datadoghq.eu/api/unstable/mcp-server/mcp"
     }
   },
   "model": "github-copilot/claude-sonnet-4.5",
@@ -72,6 +96,7 @@
       "head*": "allow",
       "less*": "allow",
       "ls*": "allow",
+      "mkdir*": "allow",
       "more*": "allow",
       "npm add*": "ask",
       "npm*": "allow",
@@ -89,65 +114,50 @@
     },
     "doom_loop": "ask"
   },
-  "plugin": ["@tarquinen/opencode-dcp@latest", "@franlol/opencode-md-table-formatter@0.0.3"],
+  "plugin": [],
   "provider": {
+    "amazon-bedrock": {
+      "options": {
+        "profile": "sbx-core-bedrock",
+        "region": "eu-west-2",
+        "setCacheKey": true
+      },
+      "models": {
+        "claude-sonnet-4.5": {
+          "id": "arn:aws:bedrock:eu-west-2:986002058650:application-inference-profile/9ooh2l5hmp5r"
+        }
+      }
+    },
     "github-copilot": {
       "whitelist": [
         "claude-sonnet-4.5",
         "gpt-5",
+        "gpt-5-mini",
         "gpt-5.1",
         "gpt-5.1-codex",
         "gpt-5.1-codex-max",
         "gpt-5.2",
+        "gpt-5.2-codex",
         "claude-haiku-4.5",
         "claude-opus-4.5",
-        "claude-opus-41",
         "gpt-4o",
         "gpt-4.1",
-        "gemini-2.5-pro",
-        "claude-sonnet-4"
+        "gemini-2.5-pro"
       ],
       "models": {
         "claude-sonnet-4.5": {
-          "limit": {
-            "context": 144000,
-            "output": 16000
-          }
-        },
-        "claude-haiku-4.5": {
-          "limit": {
-            "context": 144000,
-            "output": 16000
-          }
-        },
-        "gpt-5.2": {
-          "limit": {
-            "context": 264000,
-            "output": 64000
-          }
-        },
-        "gpt-5.1": {
-          "limit": {
-            "context": 264000,
-            "output": 64000
-          }
-        },
-        "gpt-5.1-codex": {
-          "limit": {
-            "context": 400000,
-            "output": 128000
-          }
-        },
-        "gpt-5.1-codex-max": {
-          "limit": {
-            "context": 400000,
-            "output": 128000
+          "cost": {
+            "input": 6,
+            "output": 22.5,
+            "cache_read": 0.6,
+            "cache_write": 7.5
           }
         }
       }
     }
   },
   "share": "disabled",
+  "small_model": "github-copilot/gpt-5-mini",
   "tools": {
     "codesearch": false,
     "websearch": false

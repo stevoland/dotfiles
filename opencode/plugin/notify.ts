@@ -1,12 +1,3 @@
-/**
- * notify plugin - plays sound on task completion
- *
- * uses macos afplay to play system sounds when:
- * - swarm completes successfully
- * - swarm fails/aborts
- * - session becomes idle (response complete)
- */
-
 import type { Plugin } from "@opencode-ai/plugin";
 
 const SOUNDS = {
@@ -24,27 +15,41 @@ async function playSound(sound: keyof typeof SOUNDS): Promise<void> {
   } catch {}
 }
 
-export const NotifyPlugin: Plugin = async () => {
+import { homedir } from "os";
+import { join } from "path";
+
+export const NotifyPlugin: Plugin = async ({ $, client }) => {
+  const soundPath = join(
+    homedir(),
+    ".config/opencode/sounds/gow_active_reload.mp3"
+  );
+
+  // Check if a session is a main (non-subagent) session
+  const isMainSession = async (sessionID: string) => {
+    try {
+      const result = await client.session.get({ path: { id: sessionID } });
+      const session = result.data ?? result;
+      return !session.parentID;
+    } catch {
+      // If we can't fetch the session, assume it's main to avoid missing notifications
+      return true;
+    }
+  };
+
   return {
     event: async ({ event }) => {
+      // Only notify for main session events, not background subagents
       if (event.type === "session.idle") {
-        await playSound("complete");
-      }
-    },
-
-    "tool.execute.after": async (toolInput, output) => {
-      if (toolInput.tool === "swarm_finalize") {
-        const result = JSON.parse(output.output ?? "{}");
-        if (result.success) {
+        const sessionID = event.properties.sessionID;
+        if (await isMainSession(sessionID)) {
           await playSound("success");
         }
       }
 
-      if (toolInput.tool === "swarm_abort") {
-        await playSound("error");
+      // Permission prompt created
+      if (event.type === "permission.replied") {
+        await $`afplay ${soundPath}`;
       }
     },
   };
 };
-
-export default NotifyPlugin;

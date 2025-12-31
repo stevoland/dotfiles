@@ -1,0 +1,52 @@
+{
+  "agents": {
+    "brainstormer": {
+      "model": "github-copilot/gpt-5.2",
+      "maxTokens": 128000
+    },
+    "codebase-locator": {
+      "model": "github-copilot/claude-haiku-4.5",
+      "maxTokens": 128000
+    },
+    "codebase-analyzer": {
+      "model": "github-copilot/claude-haiku-4.5",
+      "maxTokens": 128000
+    },
+    "commander": {
+      "model": "github-copilot/claude-sonnet-4.5",
+      "maxTokens": 128000
+    },
+    "pattern-finder": {
+      "model": "github-copilot/claude-haiku-4.5",
+      "maxTokens": 128000
+    },
+    "planner": {
+      "model": "github-copilot/gpt-5.2",
+      "maxTokens": 128000
+    },
+    "implementer": {
+      "model": "github-copilot/claude-sonnet-4.5",
+      "maxTokens": 128000
+    },
+    "reviewer": {
+      "model": "github-copilot/claude-sonnet-4.5",
+      "maxTokens": 128000
+    },
+    "executor": {
+      "model": "github-copilot/claude-sonnet-4.5",
+      "maxTokens": 128000
+    },
+    "project-initializer": {
+      "model": "github-copilot/claude-sonnet-4.5",
+      "maxTokens": 128000
+    },
+    "ledger-creator": {
+      "model": "github-copilot/claude-haiku-4.5",
+      "maxTokens": 128000
+    },
+    "artifact-searcher": {
+      "model": "github-copilot/claude-haiku-4.5",
+      "maxTokens": 128000
+    }
+  }
+}

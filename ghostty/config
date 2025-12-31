@@ -45,8 +45,7 @@
 font-family = Hack Nerd Font Mono
 # font-family = Iosevka Nerd Font
 # font-family = SFMono Nerd Font 
-font-size = 14
-theme = GruvboxDarkHard
+font-size = 16
 shell-integration-features = no-cursor,sudo,no-title
 cursor-style = block
 adjust-cell-height = 35%
@@ -66,9 +65,21 @@ window-colorspace = "display-p3"
 copy-on-select = clipboard
 
 theme = vesper
-# breaks opencode logo
+# theme = Black Metal (Burzum)
 minimum-contrast = 3
 window-padding-x = 6
 
 macos-option-as-alt = true
 macos-titlebar-style = hidden
+
+# custom-shader = ./shaders/bettercrt.glsl
+# custom-shader = ./shaders/bloom.glsl
+# custom-shader = ./shaders/glitchy.glsl
+# custom-shader = ./shaders/retro-terminal.glsl
+# custom-shader = ./shaders/glow-rgbsplit-twitchy.glsl
+
+# custom-shader = ./shaders/tft.glsl
+
+font-thicken = true
+link-url = true
+clipboard-trim-trailing-spaces = true
