@@ -8,17 +8,19 @@
       "model": "github-copilot/claude-sonnet-4.5"
     },
     "explore": {
-      "model": "github-copilot/claude-sonnet-4.5"
+      "model": "github-copilot/claude-haiku-4.5"
     },
     "general": {
-      "model": "github-copilot/claude-sonnet-4.5"
+      "model": "github-copilot/claude-haiku-4.5"
     },
     "plan": {
       "model": "github-copilot/gpt-5.2"
     }
   },
   "autoupdate": false,
-  "enabled_providers": ["github-copilot", "amazon-bedrock"],
+  "enabled_providers": [
+    "github-copilot"
+  ],
   "experimental": {
     "batch_tool": true
   },
@@ -26,20 +28,33 @@
     "/Users/stephen.collings/.config/opencode/instructions.nwb.md"
   ],
   "mcp": {
-    "context7": {
+    "atlassian": {
+      "enabled": false,
       "type": "remote",
-      "url": "https://mcp.context7.com/mcp",
-      "enabled": true
+      "url": "https://mcp.atlassian.com/v1/mcp"
+    },
+    "context7": {
+      "enabled": true,
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp"
+    },
+    "datadog": {
+      "enabled": false,
+      "type": "remote",
+      "url": "https://mcp.datadoghq.eu/api/unstable/mcp-server/mcp"
     },
     "grep_app": {
+      "enabled": true,
       "type": "remote",
-      "url": "https://mcp.grep.app",
-      "enabled": true
+      "url": "https://mcp.grep.app"
     },
-    "opensrc": {
-      "type": "local",
-      "command": ["npx", "-y", "opensrc-mcp"],
-      "enabled": true
+    "kubernetes": {
+      "command": [
+        "node",
+        "/Users/stephen.collings/workspace/github.com/eeveebank/boxed-mcp-servers/boxed-kubernetes-mcp-server/dist/index.js"
+      ],
+      "enabled": false,
+      "type": "local"
     },
     "maven": {
       "command": [
@@ -49,6 +64,15 @@
       "enabled": false,
       "type": "local"
     },
+    "opensrc": {
+      "command": [
+        "npx",
+        "-y",
+        "opensrc-mcp"
+      ],
+      "enabled": true,
+      "type": "local"
+    },
     "snyk": {
       "command": [
         "node",
@@ -56,18 +80,13 @@
       ],
       "enabled": false,
       "type": "local"
-    },
-    "datadog": {
-      "enabled": false,
-      "type": "remote",
-      "url": "https://mcp.datadoghq.eu/api/unstable/mcp-server/mcp"
     }
   },
   "model": "github-copilot/claude-sonnet-4.5",
   "permission": {
     "bash": {
       "*": "ask",
-      ".gradlew*": "allow",
+      "./gradlew*": "allow",
       "bun*": "allow",
       "cat*": "allow",
       "cut*": "allow",
@@ -116,18 +135,6 @@
   },
   "plugin": [],
   "provider": {
-    "amazon-bedrock": {
-      "options": {
-        "profile": "sbx-core-bedrock",
-        "region": "eu-west-2",
-        "setCacheKey": true
-      },
-      "models": {
-        "claude-sonnet-4.5": {
-          "id": "arn:aws:bedrock:eu-west-2:986002058650:application-inference-profile/9ooh2l5hmp5r"
-        }
-      }
-    },
     "github-copilot": {
       "whitelist": [
         "claude-sonnet-4.5",
@@ -143,17 +150,7 @@
         "gpt-4o",
         "gpt-4.1",
         "gemini-2.5-pro"
-      ],
-      "models": {
-        "claude-sonnet-4.5": {
-          "cost": {
-            "input": 6,
-            "output": 22.5,
-            "cache_read": 0.6,
-            "cache_write": 7.5
-          }
-        }
-      }
+      ]
     }
   },
   "share": "disabled",

@@ -47,9 +47,9 @@ export const NotifyPlugin: Plugin = async ({ $, client }) => {
       }
 
       // Permission prompt created
-      if (event.type === "permission.replied") {
-        await $`afplay ${soundPath}`;
-      }
+      // if (event.type === "permission.replied") {
+      //   await playSound("complete");
+      // }
     },
   };
 };
