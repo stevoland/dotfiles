@@ -5,25 +5,25 @@ const GIT_COMMANDS_PATTERN =
 
 const JJ_PREFIX = /(^|&&|\|\||;|\|)\s*/;
 const JJ_DIFFEDIT_PATTERN = new RegExp(
-  JJ_PREFIX.source + /jj\s+diffedit(\s|$)/.source
+  JJ_PREFIX.source + /jj\s+diffedit(\s|$)/.source,
 );
 const JJ_SQUASH_PATTERN = new RegExp(
-  JJ_PREFIX.source + /jj\s+squash(\s|$)/.source
+  JJ_PREFIX.source + /jj\s+squash(\s|$)/.source,
 );
 const JJ_SPLIT_PATTERN = new RegExp(
-  JJ_PREFIX.source + /jj\s+split(\s|$)/.source
+  JJ_PREFIX.source + /jj\s+split(\s|$)/.source,
 );
 const JJ_RESOLVE_PATTERN = new RegExp(
-  JJ_PREFIX.source + /jj\s+resolve(\s|$)/.source
+  JJ_PREFIX.source + /jj\s+resolve(\s|$)/.source,
 );
 const JJ_DESCRIBE_PATTERN = new RegExp(
-  JJ_PREFIX.source + /jj\s+(describe|desc)(\s|$)/.source
+  JJ_PREFIX.source + /jj\s+(describe|desc)(\s|$)/.source,
 );
 const JJ_COMMIT_PATTERN = new RegExp(
-  JJ_PREFIX.source + /jj\s+(commit|ci)(\s|$)/.source
+  JJ_PREFIX.source + /jj\s+(commit|ci)(\s|$)/.source,
 );
 const JJ_INTERACTIVE_PATTERN = new RegExp(
-  JJ_PREFIX.source + /jj\s+(commit|ci|restore)\s/.source
+  JJ_PREFIX.source + /jj\s+(commit|ci|restore)\s/.source,
 );
 
 const HAS_MESSAGE_FLAG = /(-m\s|--message\s|-m"|--message=|-m'|--stdin)/;
@@ -58,7 +58,7 @@ function checkJJInteractiveCommands(command: string): string | null {
       .replace(/^\s*jj\s+split\s*/, "")
       .replace(
         /(-r|--revision|-d|--destination|-A|--insert-after|-B|--insert-before|-m|--message)\s+("[^"]*"|'[^']*'|[^\s]+)\s*/g,
-        ""
+        "",
       )
       .replace(/(-p|--parallel)\s*/g, "")
       .trim();
@@ -89,14 +89,51 @@ function checkJJInteractiveCommands(command: string): string | null {
   return null;
 }
 
-export const JjPlugin: Plugin = async ({ $, client }) => {
-  const { exitCode } = await $`jj root`.nothrow().quiet();
+function transformSystemPrompt(prompt: string) {
+  const vcsLineRe = /Is directory a git repo:.*/;
+  return prompt.replace(
+    vcsLineRe,
+    `Is directory a jujutsu (jj) repo: yes
+
+  Do not use git commands, use jj commands:
+
+  | Operation | git | jj |
+  |-----------|-----|-----|
+  | Status | \`git status\` | \`jj status\` |
+  | Log | \`git log\` | \`jj log\` |
+  | Diff | \`git diff\` | \`jj diff\` |
+  | Commit | \`git commit\` | \`jj commit\` / \`jj describe\` |
+  | Branch list | \`git branch\` | \`jj branch list\` |
+  | New branch | \`git checkout -b <name>\` | \`jj branch create <name>\` |
+  | Push | \`git push\` | \`jj git push\` |
+  | Pull/Fetch | \`git pull\` / \`git fetch\` | \`jj git fetch\` |
+  | Rebase | \`git rebase\` | \`jj rebase\` |
+
+`,
+  );
+}
+
+export const JjPlugin: Plugin = async ({ $, directory }) => {
+  const { exitCode } = await $`jj root`.cwd(directory).nothrow().quiet();
 
   if (exitCode !== 0) {
     return {};
   }
 
   return {
+    "experimental.chat.system.transform": async (
+      _input: { sessionID: string },
+      output: { system: string[] },
+    ) => {
+      for (let i = 0; i < output.system.length; i++) {
+        const prompt = output.system[i];
+        if (typeof prompt != "string") {
+          continue;
+        }
+        output.system[i] = transformSystemPrompt(prompt);
+      }
+      output.system = output.system.map(transformSystemPrompt);
+    },
     "tool.execute.before": async ({ tool }, { args }) => {
       if (tool !== "bash") {
         return;

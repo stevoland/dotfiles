@@ -15,15 +15,7 @@ async function playSound(sound: keyof typeof SOUNDS): Promise<void> {
   } catch {}
 }
 
-import { homedir } from "os";
-import { join } from "path";
-
 export const NotifyPlugin: Plugin = async ({ $, client }) => {
-  const soundPath = join(
-    homedir(),
-    ".config/opencode/sounds/gow_active_reload.mp3"
-  );
-
   // Check if a session is a main (non-subagent) session
   const isMainSession = async (sessionID: string) => {
     try {
@@ -45,11 +37,11 @@ export const NotifyPlugin: Plugin = async ({ $, client }) => {
           await playSound("success");
         }
       }
-
-      // Permission prompt created
-      // if (event.type === "permission.replied") {
-      //   await playSound("complete");
-      // }
+    },
+    "tool.execute.before": async ({ tool }) => {
+      if (tool === "question") {
+        await playSound("complete");
+      }
     },
   };
 };
