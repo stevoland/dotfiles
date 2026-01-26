@@ -18,7 +18,9 @@
     }
   },
   "autoupdate": false,
-  "enabled_providers": ["github-copilot"],
+  "enabled_providers": [
+    "github-copilot"
+  ],
   "experimental": {
     "batch_tool": true,
     "openTelemetry": true
@@ -48,27 +50,44 @@
       "url": "https://mcp.grep.app"
     },
     "kubernetes": {
-      "command": ["npx", "-y", "@mettle/boxed-kubernetes-mcp-server"],
+      "command": [
+        "npx",
+        "-y",
+        "@mettle/boxed-kubernetes-mcp-server"
+      ],
       "enabled": false,
       "type": "local"
     },
     "maven": {
-      "command": ["npx", "-y", "@mettle/boxed-maven-mcp-server"],
+      "command": [
+        "npx",
+        "-y",
+        "@mettle/boxed-maven-mcp-server"
+      ],
       "enabled": false,
       "type": "local"
     },
     "opensrc": {
-      "command": ["npx", "-y", "opensrc-mcp"],
+      "command": [
+        "npx",
+        "-y",
+        "opensrc-mcp"
+      ],
       "enabled": true,
       "type": "local"
     },
     "snyk": {
-      "command": ["npx", "-y", "@mettle/boxed-snyk-mcp-server"],
+      "command": [
+        "npx",
+        "-y",
+        "@mettle/boxed-snyk-mcp-server"
+      ],
       "enabled": false,
       "type": "local"
     }
   },
   "model": "github-copilot/claude-sonnet-4.5",
+  "permission": {},
   "plugin": [],
   "provider": {
     "github-copilot": {
@@ -78,6 +97,7 @@
         "gpt-5-mini",
         "gpt-5.1",
         "gpt-5.1-codex",
+        "gpt-5.1-codex-max",
         "gpt-5.2",
         "gpt-5.2-codex",
         "claude-haiku-4.5",

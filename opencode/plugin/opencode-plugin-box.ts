@@ -304,10 +304,10 @@ See https://github.com/eeveebank/box for configuration help.`,
   return { ok: true, config };
 };
 
-// Allowlist of theoreticaly safe commands when run in the sandboxed shell.
+// Allowlist of theoretically safe commands when run in the sandboxed shell.
 // Goal is to provide safe defaults whilst allowing the user to loosen explicitly.
 // This list should grow naturally with discussion.
-// Allow prompts are secrity theatre.
+// Allow prompts are security theatre.
 // The sandbox should prevent real damage.
 const defaultBashPermission = {
   "*": "ask",
@@ -491,7 +491,7 @@ export const BoxPlugin: Plugin = async ({ client, $, directory, worktree }) => {
       // Always allow project root to prevent blocking entire project
       if (pathInfo.path === ".") return;
 
-      const isBlocked = await isPathBlocked(
+      const isBlocked = isPathBlocked(
         result.config.filesystem,
         pathInfo.path,
         projectRoot,
@@ -535,14 +535,14 @@ const handleApplyPatch = (
 ) => {
   const paths = Patch.parseFilePaths(patchText);
 
-  const restrictedPaths = paths.filter((path) =>
-    isPathBlocked(config, path, projectRoot, "write"),
-  );
+  const restrictedPaths = paths
+    .filter((path) => isPathBlocked(config, path, projectRoot, "write"))
+    .map((path) => `  - ${path}`);
 
   if (restrictedPaths.length > 0) {
     throw new Error(`apply_patch: Write operation not permitted for paths:
 
-  - ${restrictedPaths.join("\n")}`);
+${restrictedPaths.join("\n")}`);
   }
 };
 

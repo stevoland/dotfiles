@@ -1,0 +1,84 @@
+{
+  "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/master/assets/oh-my-opencode.schema.json",
+
+  "background_task": {
+    "defaultConcurrency": 8,
+    "modelConcurrency": {
+      "github-copilot/claude-opus-4.5": 2
+    }
+  },
+
+  "agents": {
+    "atlas": {
+      "model": "github-copilot/claude-sonnet-4.5"
+    },
+    "document-writer": {
+      "model": "github-copilot/claude-sonnet-4.5"
+    },
+    "explore": {
+      "model": "github-copilot/gpt-5-mini"
+    },
+    "frontend-ui-ux-engineer": {
+      "model": "github-copilot/claude-sonnet-4.5"
+    },
+    "librarian": {
+      "model": "github-copilot/claude-sonnet-4.5"
+    },
+    "metis": {
+      "model": "github-copilot/gpt-5.2"
+    },
+    "momus": {
+      "model": "github-copilot/gpt-5.2"
+    },
+    "multimodal-looker": {
+      "model": "github-copilot/claude-haiku-4.5"
+    },
+    "oracle": {
+      "model": "github-copilot/gpt-5.2"
+    },
+    "prometheus": {
+      "model": "github-copilot/gpt-5.2"
+    },
+    "sisyphus": {
+      "model": "github-copilot/claude-opus-4.5"
+    },
+    "sisyphus-junior": {
+      "model": "github-copilot/claude-sonnet-4.5"
+    },
+    "OpenCode-Builder": {
+      "model": "github-copilot/claude-sonnet-4.5"
+    }
+  },
+
+  "categories": {
+    "artistry": {
+      "model": "github-copilot/claude-sonnet-4.5"
+    },
+    "quick": {
+      "model": "github-copilot/claude-haiku-4.5"
+    },
+    "unspecified-low": {
+      "model": "github-copilot/claude-sonnet-4.5"
+    },
+    "unspecified-high": {
+      "model": "github-copilot/claude-opus-4.5"
+    },
+    "visual-engineering": {
+      "model": "github-copilot/claude-sonnet-4.5"
+    },
+    "writing": {
+      "model": "github-copilot/claude-sonnet-4.5"
+    }
+  },
+
+  "disabled_skills": [],
+
+  "disabled_mcps": ["context7", "websearch"],
+
+  "disabled_hooks": ["auto-update-checker", "think-mode"],
+
+  "git_master": {
+    "commit_footer": false,
+    "include_co_authored_by": false
+  }
+}
