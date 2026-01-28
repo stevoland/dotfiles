@@ -205,6 +205,7 @@ brew readline
 brew ripgrep
 brew rubberband
 brew ruby-build
+brew ruff
 brew rust
 brew sdl2
 brew showkey
@@ -351,6 +352,8 @@ cask raycast
 cask switch
 cask visual-studio-code
 
+tap anomalyco/tap
+
 tap argoproj/tap
 brew kubectl-argo-rollouts
 
@@ -368,6 +371,7 @@ brew switcher
 
 tap dmmulroy/tap
 brew jj-starship
+brew lmv
 
 tap eeveebank/tap
 brew box
@@ -464,6 +468,7 @@ vscode ms-vsliveshare.vsliveshare
 vscode msjsdiag.vscode-react-native
 vscode obstinate.vesper-pp
 vscode orta.vscode-twoslash-queries
+vscode oxc.oxc-vscode
 vscode p42ai.refactor
 vscode pomber.git-file-history
 vscode raunofreiberg.vesper

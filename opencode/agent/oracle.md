@@ -14,6 +14,8 @@ permission:
   glob: allow
   webfetch: allow
   lsp: allow
+tools:
+  datadog*: true
 ---
 
 You are the Oracle - an expert AI advisor with advanced reasoning capabilities.

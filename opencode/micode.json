@@ -1,52 +1,104 @@
 {
   "agents": {
     "brainstormer": {
-      "model": "github-copilot/gpt-5.2",
-      "maxTokens": 128000
+      "model": "github-copilot/gpt-5.2-codex",
+      "maxTokens": 272000
+    },
+    "bootstrapper": {
+      "model": "github-copilot/gpt-5.2-codex",
+      "maxTokens": 272000
     },
     "codebase-locator": {
-      "model": "github-copilot/claude-haiku-4.5",
-      "maxTokens": 128000
+      "model": "github-copilot/gpt-5.2-codex",
+      "maxTokens": 272000
     },
     "codebase-analyzer": {
-      "model": "github-copilot/claude-haiku-4.5",
-      "maxTokens": 128000
+      "model": "github-copilot/gpt-5.2-codex",
+      "maxTokens": 272000
     },
     "commander": {
-      "model": "github-copilot/claude-sonnet-4.5",
-      "maxTokens": 128000
+      "model": "github-copilot/gpt-5.2-codex",
+      "maxTokens": 272000
     },
     "pattern-finder": {
-      "model": "github-copilot/claude-haiku-4.5",
-      "maxTokens": 128000
+      "model": "github-copilot/gpt-5.2-codex",
+      "maxTokens": 272000
     },
     "planner": {
-      "model": "github-copilot/gpt-5.2",
-      "maxTokens": 128000
+      "model": "github-copilot/gpt-5.2-codex",
+      "maxTokens": 272000
     },
     "implementer": {
-      "model": "github-copilot/claude-sonnet-4.5",
-      "maxTokens": 128000
+      "model": "github-copilot/gpt-5.2-codex",
+      "maxTokens": 272000
     },
     "reviewer": {
-      "model": "github-copilot/claude-sonnet-4.5",
-      "maxTokens": 128000
+      "model": "github-copilot/gpt-5.2-codex",
+      "maxTokens": 272000
     },
     "executor": {
-      "model": "github-copilot/claude-sonnet-4.5",
-      "maxTokens": 128000
+      "model": "github-copilot/gpt-5.2-codex",
+      "maxTokens": 272000
     },
     "project-initializer": {
-      "model": "github-copilot/claude-sonnet-4.5",
-      "maxTokens": 128000
+      "model": "github-copilot/gpt-5.2-codex",
+      "maxTokens": 272000
     },
     "ledger-creator": {
-      "model": "github-copilot/claude-haiku-4.5",
-      "maxTokens": 128000
+      "model": "github-copilot/gpt-5.2-codex",
+      "maxTokens": 272000
     },
     "artifact-searcher": {
-      "model": "github-copilot/claude-haiku-4.5",
-      "maxTokens": 128000
+      "model": "github-copilot/gpt-5.2-codex",
+      "maxTokens": 272000
+    },
+    "octto": {
+      "model": "github-copilot/gpt-5.2-codex",
+      "maxTokens": 272000
+    },
+    "probe": {
+      "model": "github-copilot/gpt-5.2-codex",
+      "maxTokens": 272000
+    },
+    "mm-stack-detector": {
+      "model": "github-copilot/gpt-5.2-codex",
+      "maxTokens": 272000
+    },
+    "mm-pattern-discoverer": {
+      "model": "github-copilot/gpt-5.2-codex",
+      "maxTokens": 272000
+    },
+    "mm-example-extractor": {
+      "model": "github-copilot/gpt-5.2-codex",
+      "maxTokens": 272000
+    },
+    "mm-orchestrator": {
+      "model": "github-copilot/gpt-5.2-codex",
+      "maxTokens": 272000
+    },
+    "mm-dependency-mapper": {
+      "model": "github-copilot/gpt-5.2-codex",
+      "maxTokens": 272000
+    },
+    "mm-convention-extractor": {
+      "model": "github-copilot/gpt-5.2-codex",
+      "maxTokens": 272000
+    },
+    "mm-domain-extractor": {
+      "model": "github-copilot/gpt-5.2-codex",
+      "maxTokens": 272000
+    },
+    "mm-code-clusterer": {
+      "model": "github-copilot/gpt-5.2-codex",
+      "maxTokens": 272000
+    },
+    "mm-constraint-writer": {
+      "model": "github-copilot/gpt-5.2-codex",
+      "maxTokens": 272000
+    },
+    "mm-constraint-reviewer": {
+      "model": "github-copilot/gpt-5.2-codex",
+      "maxTokens": 272000
     }
   }
 }

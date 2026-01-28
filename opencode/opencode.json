@@ -1,9 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "agent": {
-    "bedrock": {
-      "model": "amazon-bedrock/claude-sonnet-4.5"
-    },
     "build": {
       "model": "github-copilot/claude-sonnet-4.5"
     },
@@ -18,9 +15,7 @@
     }
   },
   "autoupdate": false,
-  "enabled_providers": [
-    "github-copilot"
-  ],
+  "enabled_providers": ["github-copilot"],
   "experimental": {
     "batch_tool": true,
     "openTelemetry": true
@@ -30,7 +25,7 @@
   ],
   "mcp": {
     "atlassian": {
-      "enabled": false,
+      "enabled": true,
       "type": "remote",
       "url": "https://mcp.atlassian.com/v1/mcp"
     },
@@ -40,7 +35,7 @@
       "url": "https://mcp.context7.com/mcp"
     },
     "datadog": {
-      "enabled": false,
+      "enabled": true,
       "type": "remote",
       "url": "https://mcp.datadoghq.eu/api/unstable/mcp-server/mcp"
     },
@@ -50,45 +45,33 @@
       "url": "https://mcp.grep.app"
     },
     "kubernetes": {
-      "command": [
-        "npx",
-        "-y",
-        "@mettle/boxed-kubernetes-mcp-server"
-      ],
+      "command": ["npx", "-y", "@mettle/boxed-kubernetes-mcp-server"],
       "enabled": false,
       "type": "local"
     },
     "maven": {
-      "command": [
-        "npx",
-        "-y",
-        "@mettle/boxed-maven-mcp-server"
-      ],
+      "command": ["npx", "-y", "@mettle/boxed-maven-mcp-server"],
       "enabled": false,
       "type": "local"
     },
     "opensrc": {
-      "command": [
-        "npx",
-        "-y",
-        "opensrc-mcp"
-      ],
+      "command": ["npx", "-y", "opensrc-mcp"],
       "enabled": true,
       "type": "local"
     },
+    "overseer": {
+      "command": ["npx", "-y", "@dmmulroy/overseer"],
+      "type": "local"
+    },
     "snyk": {
-      "command": [
-        "npx",
-        "-y",
-        "@mettle/boxed-snyk-mcp-server"
-      ],
+      "command": ["npx", "-y", "@mettle/boxed-snyk-mcp-server"],
       "enabled": false,
       "type": "local"
     }
   },
   "model": "github-copilot/claude-sonnet-4.5",
   "permission": {},
-  "plugin": [],
+  // "plugin": ["/Users/stephen.collings/workspace/github.com/vtemian/micode"],
   "provider": {
     "github-copilot": {
       "whitelist": [
@@ -112,7 +95,9 @@
   "small_model": "github-copilot/gpt-5-mini",
   "tools": {
     "codesearch": false,
-    "websearch": false
+    "websearch": false,
+    "atlassian*": false,
+    "datadog*": false
   },
   "tui": {
     "scroll_acceleration": {

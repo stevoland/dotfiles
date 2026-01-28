@@ -11,7 +11,7 @@ email = "stephen@mettle.co.uk"
 
 [ui]
 diff-formatter = ":git"
-default-command = "log"
+default-command = ["log", "--limit", "14"]
 
 [colors]
 "diff token" = { underline = false }
@@ -20,6 +20,9 @@ default-command = "log"
 
 [snapshot]
 max-new-file-size = "10MiB"
+
+[revsets]
+log = '@ | ancestors(trunk()..(visible_heads() & mine()), 2) | trunk()'
 
 [revset-aliases]
 'closest_bookmark(to)' = 'heads(::to & bookmarks())'
@@ -40,6 +43,13 @@ push = ["git", "push"]
 track = ["bookmark", "track"]
 
 raf = ["resolve", "--tool", "mergiraf"]
+
+sync = ['git', 'fetch', '--all-remotes']
+evolve = ['rebase', '--skip-empty', '-d', 'master']
+
+[merge-tools.jj-hunk]
+program = "jj-hunk"
+edit-args = ["select", "$left", "$right"]
 
 [templates]
 log_node = '''
