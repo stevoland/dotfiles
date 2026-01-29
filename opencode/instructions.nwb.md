@@ -1,2 +1,1 @@
-Always run `jest` commands with `--no-watchman` flag to fix "Operation not permitted" errors.
-On other "Operation not permitted" or "blocked by network allowlist" errors: Advise the user they can override restrictions in `~/.nwb/box/box.json` then restart `boxedcode --continue` and consider reporting to #squad-developer-productivity with details so they can consider updating the defaults for everyone.
+

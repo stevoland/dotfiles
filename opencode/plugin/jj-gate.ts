@@ -74,7 +74,8 @@ const plugin: Plugin = async ({ $, client }) => {
 
       throw new Error(
         `Describe your intent before editing:\n\n` +
-          `    jj describe -m "what you're about to do"\n\n` +
+          `    jj describe -m "scope: what you're about to do"\n\n` +
+          `Use conventional commit scopes (chore, feat, fix, docs, refactor)\n\n` +
           `When done, run \`jj new\` to commit and start fresh.`,
       );
     },

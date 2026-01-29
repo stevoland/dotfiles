@@ -132,7 +132,6 @@ export const JjPlugin: Plugin = async ({ $, directory }) => {
         }
         output.system[i] = transformSystemPrompt(prompt);
       }
-      output.system = output.system.map(transformSystemPrompt);
     },
     "tool.execute.before": async ({ tool }, { args }) => {
       if (tool !== "bash") {

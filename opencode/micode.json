@@ -60,6 +60,10 @@
       "model": "github-copilot/gpt-5.2-codex",
       "maxTokens": 272000
     },
+    "mm-anti-pattern-detector": {
+      "model": "github-copilot/gpt-5.2-codex",
+      "maxTokens": 272000
+    },
     "mm-stack-detector": {
       "model": "github-copilot/gpt-5.2-codex",
       "maxTokens": 272000

@@ -37,6 +37,7 @@ Deep codebase exploration across remote repositories.
 
 | Tool | Best For | Limitations |
 |------|----------|-------------|
+| **gh cli** | For private repos from mettle/nwboxed/eeveebank | eeveebank org only |
 | **grep_app** | Find patterns across ALL public GitHub | Literal search only |
 | **context7** | Library docs, API examples, usage | Known libraries only |
 | **opensrc** | Fetch full source for deep exploration | Must fetch before read |

@@ -60,7 +60,7 @@
       "type": "local"
     },
     "overseer": {
-      "command": ["npx", "-y", "@dmmulroy/overseer"],
+      "command": ["npx", "-y", "@dmmulroy/overseer", "mcp"],
       "type": "local"
     },
     "snyk": {
@@ -96,7 +96,7 @@
   "tools": {
     "codesearch": false,
     "websearch": false,
-    "atlassian*": false,
+    // "atlassian*": false,
     "datadog*": false
   },
   "tui": {

@@ -2,6 +2,10 @@
 - NEVER stop to get a response from the user - use the question tool instead.
 - In all interaction and commit messages, be extremely concise and sacrifice grammar for the sake of concision.
 
+## Github links
+
+All links for eeveebank org - use the gh cli tool or you won't have access to private repos
+
 ## Code Quality Standards
 
 - Make minimal, surgical changes
@@ -42,3 +46,6 @@ Invoke for: code review, architecture decisions, debugging analysis, refactor pl
 
 ### Librarian
 Invoke for: understanding 3rd party libraries/packages, exploring remote repositories, discovering open source patterns.
+
+### Overseer
+Invoke for: task orchestration, milestone/task/subtask management, finding next ready work, recording learnings, tracking multi-session work.

@@ -432,6 +432,32 @@ export const BoxPlugin: Plugin = async ({ client, $, directory, worktree }) => {
       }
     },
 
+    "experimental.chat.system.transform": async (
+      _input: { sessionID: string },
+      output: { system: string[] },
+    ) => {
+      // Very important branding excercise
+      for (let i = 0; i < output.system.length; i++) {
+        const prompt = output.system[i];
+        if (typeof prompt != "string") {
+          continue;
+        }
+        output.system[i] = prompt.replace(/\bOpenCode\b/g, "BoxedCode");
+      }
+
+      if (result.ok === false) {
+        return;
+      }
+
+      output.system.push(
+        `Your environment is sandboxed - file system and network access are restricted.
+  If an operation is not permitted, inform the user they can configure overrides in ~/.nwb/box/box.json. and restart with \`boxedcode --continue\`
+  
+  Always run \`jest\` commands with \`--no-watchman\` flag to avoid "Operation not permitted" errors.
+  `,
+      );
+    },
+
     "chat.message": async () => {
       // Seems to be the earliest hook we can use to show a toast
       if (configToastShown) {

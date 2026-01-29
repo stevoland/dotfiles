@@ -1,5 +1,7 @@
 import { describe, it, expect, beforeEach } from "bun:test";
 import { BoxPlugin } from "../opencode-plugin-box";
+import type { PluginInput } from "@opencode-ai/plugin";
+import { fromPartial } from "@total-typescript/shoehorn";
 
 // Minimal mock types
 type MockExec = {
@@ -7,13 +9,7 @@ type MockExec = {
   stderr: Buffer;
 };
 
-type MockClient = {
-  tui: {
-    showToast: () => Promise<void>;
-  };
-};
-
-const createMockExec = (stdout: string, stderr = ""): MockExec => ({
+const createMockExec = (stdout: string, stderr = "") => ({
   stdout: Buffer.from(stdout),
   stderr: Buffer.from(stderr),
 });
@@ -26,7 +22,7 @@ const createMock$ = (execResult: MockExec) => {
   return () => chain;
 };
 
-const createMockClient = (): MockClient => ({
+const createMockClient = () => ({
   tui: {
     showToast: async () => {},
   },
@@ -60,7 +56,7 @@ describe("BoxPlugin tool.execute.before apply_patch", () => {
     };
 
     const plugin = await BoxPlugin({
-      client: createMockClient(),
+      client: fromPartial(createMockClient()),
       $: createMock$(createMockExec(JSON.stringify(config))),
       directory: projectRoot,
       worktree: projectRoot,
@@ -70,10 +66,9 @@ describe("BoxPlugin tool.execute.before apply_patch", () => {
     expect(hook).toBeDefined();
 
     // Should not throw
-    await hook!(
-      { tool: "apply_patch" },
-      { args: { patchText: makePatch(["allowed/a.txt"]) } },
-    );
+    await hook!(fromPartial({ tool: "apply_patch" }), {
+      args: { patchText: makePatch(["allowed/a.txt"]) },
+    });
   });
 
   it("blocks patch when a touched path is not allowlisted", async () => {
@@ -87,7 +82,7 @@ describe("BoxPlugin tool.execute.before apply_patch", () => {
     };
 
     const plugin = await BoxPlugin({
-      client: createMockClient(),
+      client: fromPartial(createMockClient()),
       $: createMock$(createMockExec(JSON.stringify(config))),
       directory: projectRoot,
       worktree: projectRoot,
@@ -97,17 +92,15 @@ describe("BoxPlugin tool.execute.before apply_patch", () => {
     expect(hook).toBeDefined();
 
     await expect(
-      hook!(
-        { tool: "apply_patch" },
-        { args: { patchText: makePatch(["blocked/b.txt"]) } },
-      ),
+      hook!(fromPartial({ tool: "apply_patch" }), {
+        args: { patchText: makePatch(["blocked/b.txt"]) },
+      }),
     ).rejects.toThrow("apply_patch: Write operation not permitted");
 
     await expect(
-      hook!(
-        { tool: "apply_patch" },
-        { args: { patchText: makePatch(["blocked/b.txt"]) } },
-      ),
+      hook!(fromPartial({ tool: "apply_patch" }), {
+        args: { patchText: makePatch(["blocked/b.txt"]) },
+      }),
     ).rejects.toThrow("blocked/b.txt");
   });
 
@@ -122,7 +115,7 @@ describe("BoxPlugin tool.execute.before apply_patch", () => {
     };
 
     const plugin = await BoxPlugin({
-      client: createMockClient(),
+      client: fromPartial(createMockClient()),
       $: createMock$(createMockExec(JSON.stringify(config))),
       directory: projectRoot,
       worktree: projectRoot,
@@ -132,10 +125,9 @@ describe("BoxPlugin tool.execute.before apply_patch", () => {
     expect(hook).toBeDefined();
 
     await expect(
-      hook!(
-        { tool: "apply_patch" },
-        { args: { patchText: makePatch(["allowed/secret/s.txt"]) } },
-      ),
+      hook!(fromPartial({ tool: "apply_patch" }), {
+        args: { patchText: makePatch(["allowed/secret/s.txt"]) },
+      }),
     ).rejects.toThrow("allowed/secret/s.txt");
   });
 
@@ -150,7 +142,7 @@ describe("BoxPlugin tool.execute.before apply_patch", () => {
     };
 
     const plugin = await BoxPlugin({
-      client: createMockClient(),
+      client: fromPartial(createMockClient()),
       $: createMock$(createMockExec(JSON.stringify(config))),
       directory: projectRoot,
       worktree: projectRoot,
@@ -159,8 +151,8 @@ describe("BoxPlugin tool.execute.before apply_patch", () => {
     const hook = plugin["tool.execute.before"];
     expect(hook).toBeDefined();
 
-    await expect(hook!({ tool: "apply_patch" }, { args: {} })).rejects.toThrow(
-      "patchText is required",
-    );
+    await expect(
+      hook!(fromPartial({ tool: "apply_patch" }), { args: {} }),
+    ).rejects.toThrow("patchText is required");
   });
 });

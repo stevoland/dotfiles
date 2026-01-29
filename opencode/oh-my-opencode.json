@@ -40,7 +40,7 @@
       "model": "github-copilot/gpt-5.2"
     },
     "sisyphus": {
-      "model": "github-copilot/claude-opus-4.5"
+      "model": "github-copilot/claude-sonnet-4.5"
     },
     "sisyphus-junior": {
       "model": "github-copilot/claude-sonnet-4.5"
@@ -80,5 +80,10 @@
   "git_master": {
     "commit_footer": false,
     "include_co_authored_by": false
+  },
+
+  "tmux": {
+    "enabled": true,
+    "layout": "main-vertical"
   }
 }

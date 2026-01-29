@@ -27,6 +27,16 @@ log = '@ | ancestors(trunk()..(visible_heads() & mine()), 2) | trunk()'
 [revset-aliases]
 'closest_bookmark(to)' = 'heads(::to & bookmarks())'
 
+# Find commits authored by you
+"mine()" = "author(exact:'stephen@mettle.co.uk') | author(exact:'stevoland@gmail.com')"
+
+# View the entire branch being worked on
+'slice()' = 'slice(@)'
+'slice(from)' = 'ancestors(reachable(from, mutable()), 2)'
+
+# The latest commit on the branch. Works with squash workflow. Use: jj new tip
+tip = "exactly(heads(@-::~@), 1)"
+
 # [[--scope]]
 # --when.repositories = ["~/workspace/github.com/eeveebank"]
 # [--scope.revset-aliases]
@@ -43,9 +53,26 @@ push = ["git", "push"]
 track = ["bookmark", "track"]
 
 raf = ["resolve", "--tool", "mergiraf"]
+difft = ["diff", "--tool", "difft"]
 
 sync = ['git', 'fetch', '--all-remotes']
 evolve = ['rebase', '--skip-empty', '-d', 'master']
+
+long = ["log", "-T", "builtin_log_detailed"]
+
+open = ["log", "-r", "heads(mine()) ~ ::trunk()"]
+
+prek = [
+  "util",
+  "exec",
+  "--",
+  "bash",
+  "-c",
+  "jj diff $1 $2 --name-only --no-pager | xargs pre-commit run --files",
+  "",
+]
+
+slice = ["log", "-r", "slice()"]
 
 [merge-tools.jj-hunk]
 program = "jj-hunk"
