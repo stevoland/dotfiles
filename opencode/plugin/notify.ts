@@ -38,6 +38,11 @@ export const NotifyPlugin: Plugin = async ({ $, client }) => {
         }
       }
     },
+
+    "permission.ask": async () => {
+      await playSound("complete");
+    },
+
     "tool.execute.before": async ({ tool }) => {
       if (tool === "question") {
         await playSound("complete");

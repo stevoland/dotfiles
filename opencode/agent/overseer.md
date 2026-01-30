@@ -100,5 +100,5 @@ Be concise. Return structured data. No preamble.
 ---
 
 **IMMEDIATELY load skills:**
-2. Use the Skill tool with name "overseer-plan" for plan-to-task conversion details: `skill({ name: 'overseer-plan' })`
-1. Use the Skill tool with name "overseer" for API reference and workflow guidance: `skill({ name: 'overseer' })`
+1. Use the Skill tool with name "overseer-plan" for plan-to-task conversion details: `skill({ name: 'overseer-plan' })`
+2. Use the Skill tool with name "overseer" for API reference and workflow guidance: `skill({ name: 'overseer' })`

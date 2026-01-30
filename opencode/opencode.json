@@ -15,7 +15,12 @@
     }
   },
   "autoupdate": false,
-  "enabled_providers": ["github-copilot"],
+  "enabled_providers": [
+    "github-copilot"
+  ],
+  "enterprise": {
+    "url": "http://localhost:3000"
+  },
   "experimental": {
     "batch_tool": true,
     "openTelemetry": true
@@ -45,33 +50,56 @@
       "url": "https://mcp.grep.app"
     },
     "kubernetes": {
-      "command": ["npx", "-y", "@mettle/boxed-kubernetes-mcp-server"],
+      "command": [
+        "npx",
+        "-y",
+        "@mettle/boxed-kubernetes-mcp-server"
+      ],
       "enabled": false,
       "type": "local"
     },
     "maven": {
-      "command": ["npx", "-y", "@mettle/boxed-maven-mcp-server"],
+      "command": [
+        "npx",
+        "-y",
+        "@mettle/boxed-maven-mcp-server"
+      ],
       "enabled": false,
       "type": "local"
     },
     "opensrc": {
-      "command": ["npx", "-y", "opensrc-mcp"],
+      "command": [
+        "npx",
+        "-y",
+        "opensrc-mcp"
+      ],
       "enabled": true,
       "type": "local"
     },
     "overseer": {
-      "command": ["npx", "-y", "@dmmulroy/overseer", "mcp"],
+      "command": [
+        "npx",
+        "-y",
+        "@dmmulroy/overseer",
+        "mcp"
+      ],
       "type": "local"
     },
     "snyk": {
-      "command": ["npx", "-y", "@mettle/boxed-snyk-mcp-server"],
+      "command": [
+        "npx",
+        "-y",
+        "@mettle/boxed-snyk-mcp-server"
+      ],
       "enabled": false,
       "type": "local"
     }
   },
   "model": "github-copilot/claude-sonnet-4.5",
   "permission": {},
-  // "plugin": ["/Users/stephen.collings/workspace/github.com/vtemian/micode"],
+  "plugin": [
+    "/Users/stephen.collings/workspace/github.com/eeveebank/boxedcode-pro"
+  ],
   "provider": {
     "github-copilot": {
       "whitelist": [
@@ -92,12 +120,16 @@
     }
   },
   "share": "disabled",
+  "skills": {
+    "paths": [
+      "~/.github/skills",
+      ".github/skills"
+    ]
+  },
   "small_model": "github-copilot/gpt-5-mini",
   "tools": {
     "codesearch": false,
-    "websearch": false,
-    // "atlassian*": false,
-    "datadog*": false
+    "websearch": false
   },
   "tui": {
     "scroll_acceleration": {
