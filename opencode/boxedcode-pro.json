@@ -3,6 +3,9 @@
   "feature": {
     "structuredCompaction": {
       "enabled": true
+    },
+    "openTelemetry": {
+      "enabled": true
     }
   }
 }

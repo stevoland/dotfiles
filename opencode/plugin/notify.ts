@@ -39,7 +39,7 @@ export const NotifyPlugin: Plugin = async ({ $, client }) => {
       }
     },
 
-    "permission.ask": async () => {
+    "permission.updated": async () => {
       await playSound("complete");
     },
 

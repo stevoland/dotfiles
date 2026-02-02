@@ -25,23 +25,25 @@ Think: "Would someone understand the what, why, and how from this task alone AND
 
 ## Overseer vs OpenCode's TodoWrite
 
-|                 | Overseer                              | TodoWrite              |
-| --------------- | ------------------------------------- | ---------------------- |
-| **Persistence** | SQLite database                       | Session-only           |
-| **Context**     | Rich (description + context + result) | Basic                  |
-| **Hierarchy**   | 3-level (milestone -> task -> subtask)| Flat                   |
+|                 | Overseer                               | TodoWrite    |
+| --------------- | -------------------------------------- | ------------ |
+| **Persistence** | SQLite database                        | Session-only |
+| **Context**     | Rich (description + context + result)  | Basic        |
+| **Hierarchy**   | 3-level (milestone -> task -> subtask) | Flat         |
 
 Use **Overseer** for persistent work. Use **TodoWrite** for ephemeral in-session tracking only.
 
 ## When to Use Overseer
 
 **Use Overseer when:**
+
 - Breaking down complexity into subtasks
 - Work spans multiple sessions
 - Context needs to persist for handoffs
 - Recording decisions for future reference
 
 **Skip Overseer when:**
+
 - Work is a single atomic action
 - Everything fits in one message exchange
 - Overhead exceeds value
@@ -72,20 +74,20 @@ const task = await tasks.nextReady();
 if (!task) return "No ready tasks";
 
 // 2. Review context (available on TaskWithContext)
-console.log(task.context.own);       // This task's context
-console.log(task.context.parent);    // Parent's context (if depth > 0)
+console.log(task.context.own); // This task's context
+console.log(task.context.parent); // Parent's context (if depth > 0)
 console.log(task.context.milestone); // Root milestone context (if depth > 1)
-console.log(task.learnings.own);     // Learnings attached to this task (bubbled from children)
+console.log(task.learnings.own); // Learnings attached to this task (bubbled from children)
 
-// 3. Start work (auto-creates VCS bookmark)
+// 3. Start work (VCS required - creates bookmark, records start commit)
 await tasks.start(task.id);
 
 // 4. Implement...
 
-// 5. Complete with learnings (auto-squashes commits, bubbles learnings to parent)
+// 5. Complete with learnings (VCS required - commits changes, bubbles learnings to parent)
 await tasks.complete(task.id, {
   result: "Implemented login endpoint with JWT tokens",
-  learnings: ["bcrypt rounds should be 12 for production"]
+  learnings: ["bcrypt rounds should be 12 for production"],
 });
 ```
 
@@ -107,19 +109,20 @@ const task = await tasks.get(taskId); // Returns TaskWithContext
 
 ## Return Type Summary
 
-| Method | Returns | Notes |
-|--------|---------|-------|
-| `tasks.get(id)` | `TaskWithContext` | Full context chain + inherited learnings |
-| `tasks.nextReady()` | `TaskWithContext \| null` | Deepest ready leaf with full context |
-| `tasks.list()` | `Task[]` | Basic task fields only |
-| `tasks.create()` | `Task` | No context chain |
-| `tasks.start/complete()` | `Task` | No context chain |
+| Method                   | Returns                   | Notes                                    |
+| ------------------------ | ------------------------- | ---------------------------------------- |
+| `tasks.get(id)`          | `TaskWithContext`         | Full context chain + inherited learnings |
+| `tasks.nextReady()`      | `TaskWithContext \| null` | Deepest ready leaf with full context     |
+| `tasks.list()`           | `Task[]`                  | Basic task fields only                   |
+| `tasks.create()`         | `Task`                    | No context chain                         |
+| `tasks.start/complete()` | `Task`                    | No context chain                         |
 
 ## Blockers
 
 Blockers prevent a task from being ready until the blocker completes.
 
 **Constraints:**
+
 - Blockers cannot be self
 - Blockers cannot be ancestors (parent, grandparent, etc.)
 - Blockers cannot be descendants
@@ -137,13 +140,14 @@ await tasks.unblock(taskA.id, taskB.id);
 
 Three levels: **Milestone** (depth 0) -> **Task** (depth 1) -> **Subtask** (depth 2).
 
-| Level | Name | Purpose | Example |
-|-------|------|---------|---------|
-| 0 | **Milestone** | Large initiative | "Add user authentication system" |
-| 1 | **Task** | Significant work item | "Implement JWT middleware" |
-| 2 | **Subtask** | Atomic step | "Add token verification function" |
+| Level | Name          | Purpose               | Example                           |
+| ----- | ------------- | --------------------- | --------------------------------- |
+| 0     | **Milestone** | Large initiative      | "Add user authentication system"  |
+| 1     | **Task**      | Significant work item | "Implement JWT middleware"        |
+| 2     | **Subtask**   | Atomic step           | "Add token verification function" |
 
 **Choosing the right level:**
+
 - Small feature (1-2 files) -> Single task
 - Medium feature (3-7 steps) -> Task with subtasks
 - Large initiative (5+ tasks) -> Milestone with tasks
@@ -153,6 +157,7 @@ See @file references/hierarchies.md for detailed guidance.
 ## Recording Results
 
 Complete tasks **immediately after implementing AND verifying**:
+
 - Capture decisions while fresh
 - Note deviations from plan
 - Document verification performed
@@ -172,20 +177,20 @@ Your result must include explicit verification evidence. See @file references/ve
 
 ## Reading Order
 
-| Task | File |
-|------|------|
-| Understanding API | @file references/api.md |
-| Implementation workflow | @file references/workflow.md |
-| Task decomposition | @file references/hierarchies.md |
-| Good/bad examples | @file references/examples.md |
-| Verification checklist | @file references/verification.md |
+| Task                    | File                             |
+| ----------------------- | -------------------------------- |
+| Understanding API       | @file references/api.md          |
+| Implementation workflow | @file references/workflow.md     |
+| Task decomposition      | @file references/hierarchies.md  |
+| Good/bad examples       | @file references/examples.md     |
+| Verification checklist  | @file references/verification.md |
 
 ## In This Reference
 
-| File | Purpose |
-|------|---------|
-| `references/api.md` | Overseer MCP codemode API types/methods |
-| `references/workflow.md` | Start->implement->complete workflow |
-| `references/hierarchies.md` | Milestone/task/subtask organization |
-| `references/examples.md` | Good/bad context and result examples |
-| `references/verification.md` | Verification checklist and process |
+| File                         | Purpose                                 |
+| ---------------------------- | --------------------------------------- |
+| `references/api.md`          | Overseer MCP codemode API types/methods |
+| `references/workflow.md`     | Start->implement->complete workflow     |
+| `references/hierarchies.md`  | Milestone/task/subtask organization     |
+| `references/examples.md`     | Good/bad context and result examples    |
+| `references/verification.md` | Verification checklist and process      |
