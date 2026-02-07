@@ -6,9 +6,9 @@
 // This plugin enforces path/url restrictions for OpenCode tools excluding bash
 // It reads the config from `box print-config`
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { isAbsolute, join } from 'path';
+import { isAbsolute, join } from "path";
 
-import type { Plugin, PluginInput } from '@opencode-ai/plugin';
+import type { Plugin, PluginInput } from "@opencode-ai/plugin";
 
 type FileSystemConfig = {
   denyRead: string[];
@@ -37,22 +37,33 @@ async function resolveFilesystemConfig(
   };
 
   if (filesystem.denyRead && Array.isArray(filesystem.denyRead)) {
-    config.denyRead = filesystem.denyRead.map((p: string) => normalizePath(p, projectRoot));
+    config.denyRead = filesystem.denyRead.map((p: string) =>
+      normalizePath(p, projectRoot),
+    );
   }
   if (filesystem.allowWrite && Array.isArray(filesystem.allowWrite)) {
-    config.allowWrite = filesystem.allowWrite.map((p: string) => normalizePath(p, projectRoot));
+    config.allowWrite = filesystem.allowWrite.map((p: string) =>
+      normalizePath(p, projectRoot),
+    );
   }
   if (filesystem.denyWrite && Array.isArray(filesystem.denyWrite)) {
-    config.denyWrite = filesystem.denyWrite.map((p: string) => normalizePath(p, projectRoot));
+    config.denyWrite = filesystem.denyWrite.map((p: string) =>
+      normalizePath(p, projectRoot),
+    );
   }
 
   return config;
 }
 
 function normalizePath(targetPath: string, projectRoot: string): string {
-  const expandedPath = targetPath.replace(/^~(?=$|\/|\\)/, Bun.env['HOME'] || '~');
+  const expandedPath = targetPath.replace(
+    /^~(?=$|\/|\\)/,
+    Bun.env["HOME"] || "~",
+  );
 
-  const absolutePath = isAbsolute(expandedPath) ? expandedPath : join(projectRoot, expandedPath);
+  const absolutePath = isAbsolute(expandedPath)
+    ? expandedPath
+    : join(projectRoot, expandedPath);
 
   return absolutePath;
 }
@@ -65,7 +76,7 @@ function isPathBlocked(
 ): boolean {
   const normalizedPath = normalizePath(targetPath, projectRoot);
 
-  if (operation === 'write') {
+  if (operation === "write") {
     for (const denyPath of config.denyWrite) {
       if (normalizedPath.startsWith(denyPath)) {
         return true;
@@ -90,13 +101,17 @@ function isPathBlocked(
   return false;
 }
 
-function filterGlobResults(result: any, config: FileSystemConfig, projectRoot: string) {
+function filterGlobResults(
+  result: any,
+  config: FileSystemConfig,
+  projectRoot: string,
+) {
   if (!result?.files || !Array.isArray(result.files)) return result;
 
   const filteredFiles = result.files.filter((filePath: string) => {
     try {
       const normalized = normalizePath(filePath, projectRoot);
-      return !isPathBlocked(config, normalized, projectRoot, 'read');
+      return !isPathBlocked(config, normalized, projectRoot, "read");
     } catch {
       // If normalization fails, filter out the file (safer approach)
       return false;
@@ -106,7 +121,11 @@ function filterGlobResults(result: any, config: FileSystemConfig, projectRoot: s
   return { ...result, files: filteredFiles };
 }
 
-function filterGrepResults(result: any, config: FileSystemConfig, projectRoot: string) {
+function filterGrepResults(
+  result: any,
+  config: FileSystemConfig,
+  projectRoot: string,
+) {
   if (!result?.matches || !Array.isArray(result.matches)) return result;
 
   const filteredMatches = result.matches.filter((match: any) => {
@@ -114,7 +133,7 @@ function filterGrepResults(result: any, config: FileSystemConfig, projectRoot: s
 
     try {
       const normalized = normalizePath(match.file, projectRoot);
-      return !isPathBlocked(config, normalized, projectRoot, 'read');
+      return !isPathBlocked(config, normalized, projectRoot, "read");
     } catch {
       // If normalization fails, filter out the match (safer approach)
       return false;
@@ -130,20 +149,20 @@ async function filterResults(
   result: any,
   projectRoot: string,
 ): Promise<any> {
-  if (tool !== 'glob' && tool !== 'grep') return result;
+  if (tool !== "glob" && tool !== "grep") return result;
 
-  if (tool === 'glob') {
+  if (tool === "glob") {
     return filterGlobResults(result, config, projectRoot);
   }
 
-  if (tool === 'grep') {
+  if (tool === "grep") {
     return filterGrepResults(result, config, projectRoot);
   }
 
   return result;
 }
 
-type Operation = 'read' | 'write';
+type Operation = "read" | "write";
 
 interface PathInfo {
   path: string;
@@ -151,43 +170,50 @@ interface PathInfo {
   operation: Operation;
 }
 
-const writeToolNames = ['edit', 'multiedit', 'write'];
+const writeToolNames = ["edit", "multiedit", "write"];
 
-function extractPathFromTool(tool: string, args: Record<string, unknown>): PathInfo | null {
+function extractPathFromTool(
+  tool: string,
+  args: Record<string, unknown>,
+): PathInfo | null {
   // File operations - operate on individual files
-  if (tool === 'read')
-    return args['filePath']
-      ? { path: args['filePath'] as string, isDirectory: false, operation: 'read' }
+  if (tool === "read")
+    return args["filePath"]
+      ? {
+          path: args["filePath"] as string,
+          isDirectory: false,
+          operation: "read",
+        }
       : null;
 
   if (writeToolNames.includes(tool))
-    return args['filePath']
+    return args["filePath"]
       ? {
-          path: args['filePath'] as string,
+          path: args["filePath"] as string,
           isDirectory: false,
-          operation: 'write',
+          operation: "write",
         }
       : null;
 
   // Directory operations - search/list within directories
   // Default to "." (project root) if path not specified
-  if (tool === 'glob')
+  if (tool === "glob")
     return {
-      path: (args['path'] as string) || '.',
+      path: (args["path"] as string) || ".",
       isDirectory: true,
-      operation: 'read',
+      operation: "read",
     };
-  if (tool === 'grep')
+  if (tool === "grep")
     return {
-      path: (args['path'] as string) || '.',
+      path: (args["path"] as string) || ".",
       isDirectory: true,
-      operation: 'read',
+      operation: "read",
     };
-  if (tool === 'list')
+  if (tool === "list")
     return {
-      path: (args['path'] as string) || '.',
+      path: (args["path"] as string) || ".",
       isDirectory: true,
-      operation: 'read',
+      operation: "read",
     };
   // Unknown tool - no path checking needed
   return null;
@@ -197,7 +223,7 @@ const hostMatches = (host: string, patterns: string[]): boolean => {
   for (const pattern of patterns) {
     if (pattern === host) return true;
     // Simple wildcard matching for patterns like *.example.com
-    if (pattern.startsWith('*.')) {
+    if (pattern.startsWith("*.")) {
       const domain = pattern.slice(1);
       if (host.endsWith(domain)) return true;
     }
@@ -232,12 +258,15 @@ type GetConfigError = {
 
 type GetConfigResult = GetConfigOk | GetConfigError;
 
-const getConfig = async ($: PluginInput['$'], projectRoot: string): Promise<GetConfigResult> => {
+const getConfig = async (
+  $: PluginInput["$"],
+  projectRoot: string,
+): Promise<GetConfigResult> => {
   const { SHELL } = process.env;
   if (!SHELL || !SHELL.match(/opencode-shell$/)) {
     return {
       ok: false,
-      error: 'Run `boxedcode` to get filesystem and network sandboxing.',
+      error: "Run `boxedcode` to get filesystem and network sandboxing.",
     };
   }
 
@@ -260,7 +289,10 @@ See https://github.com/eeveebank/box for configuration help.`,
   let config: Config;
   try {
     config = JSON.parse(configString);
-    config.filesystem = await resolveFilesystemConfig(config.filesystem, projectRoot);
+    config.filesystem = await resolveFilesystemConfig(
+      config.filesystem,
+      projectRoot,
+    );
   } catch (e) {
     return {
       ok: false,
@@ -281,58 +313,58 @@ See https://github.com/eeveebank/box for configuration help.`,
 // Allow prompts are security theatre.
 // The sandbox should prevent real damage.
 const defaultBashPermission = {
-  '*': 'ask',
-  './gradlew*': 'allow',
-  'awk*': 'allow',
-  'bun*': 'allow',
-  'cat*': 'allow',
-  'cut*': 'allow',
-  'diff*': 'allow',
-  'du*': 'allow',
-  'echo*': 'allow',
-  'file*': 'allow',
-  'find*': 'allow',
-  'gh co*': 'allow',
-  'gh pr checkout*': 'allow',
-  'gh pr checks*': 'allow',
-  'gh pr diff*': 'allow',
-  'gh pr list*': 'allow',
-  'gh pr status*': 'allow',
-  'gh pr view*': 'allow',
-  'gh search*': 'allow',
-  'git branch': 'allow',
-  'git branch -v': 'allow',
-  'git diff*': 'allow',
-  'git log*': 'allow',
-  'git show*': 'allow',
-  'git status*': 'allow',
-  'go*': 'allow',
-  'grep*': 'allow',
-  'gsed*': 'allow',
-  'head*': 'allow',
-  'jj*': 'allow',
-  'jj git*': 'ask',
-  'less*': 'allow',
-  'ls*': 'allow',
-  'mkdir*': 'allow',
-  'more*': 'allow',
-  'npm add*': 'ask',
-  'npm*': 'allow',
-  'pwd*': 'allow',
-  'rg*': 'allow',
-  'sed*': 'allow',
-  'sort*': 'allow',
-  'stat*': 'allow',
-  'tail*': 'allow',
-  'tree*': 'allow',
-  'uniq*': 'allow',
-  'wc*': 'allow',
-  'whereis*': 'allow',
-  'which*': 'allow',
-  'xargs*': 'allow',
+  "*": "ask",
+  "./gradlew*": "allow",
+  "awk*": "allow",
+  "bun*": "allow",
+  "cat*": "allow",
+  "cut*": "allow",
+  "diff*": "allow",
+  "du*": "allow",
+  "echo*": "allow",
+  "file*": "allow",
+  "find*": "allow",
+  "gh co*": "allow",
+  "gh pr checkout*": "allow",
+  "gh pr checks*": "allow",
+  "gh pr diff*": "allow",
+  "gh pr list*": "allow",
+  "gh pr status*": "allow",
+  "gh pr view*": "allow",
+  "gh search*": "allow",
+  "git branch": "allow",
+  "git branch -v": "allow",
+  "git diff*": "allow",
+  "git log*": "allow",
+  "git show*": "allow",
+  "git status*": "allow",
+  "go*": "allow",
+  "grep*": "allow",
+  "gsed*": "allow",
+  "head*": "allow",
+  "jj*": "allow",
+  "jj git*": "ask",
+  "less*": "allow",
+  "ls*": "allow",
+  "mkdir*": "allow",
+  "more*": "allow",
+  "npm add*": "ask",
+  "npm*": "allow",
+  "pwd*": "allow",
+  "rg*": "allow",
+  "sed*": "allow",
+  "sort*": "allow",
+  "stat*": "allow",
+  "tail*": "allow",
+  "tree*": "allow",
+  "uniq*": "allow",
+  "wc*": "allow",
+  "whereis*": "allow",
+  "which*": "allow",
+  "xargs*": "allow",
 } as const;
 
-const checkHasJest = async ($: PluginInput['$']) => {
+const checkHasJest = async ($: PluginInput["$"]) => {
   const { exitCode } = await $`rg jest package.json`.nothrow().quiet();
   return exitCode === 0;
 };
@@ -355,12 +387,12 @@ export const BoxPlugin: Plugin = async ({ client, $, directory, worktree }) => {
         if (!agent) continue;
 
         // These inbuilt agents have bash deny so ignore
-        if (agentName === 'plan' || agentName === 'explore') {
+        if (agentName === "plan" || agentName === "explore") {
           continue;
         }
 
         // These inbuilt agents have `bash: allow`: Override to safer defaults
-        if (agentName === 'build' || agentName === 'general') {
+        if (agentName === "build" || agentName === "general") {
           if (!agent.permission) {
             agent.permission = {
               bash: {
@@ -386,7 +418,7 @@ export const BoxPlugin: Plugin = async ({ client, $, directory, worktree }) => {
         }
 
         // Custom agents with bash: "allow", make safe
-        if (agent.permission.bash === 'allow') {
+        if (agent.permission.bash === "allow") {
           agent.permission.bash = {
             ...defaultBashPermission,
           };
@@ -394,9 +426,12 @@ export const BoxPlugin: Plugin = async ({ client, $, directory, worktree }) => {
         }
 
         // Custom agents with bash.* "allow", make safe but allow overrides
-        if (typeof agent.permission.bash === 'object' && agent.permission.bash['*'] === 'allow') {
+        if (
+          typeof agent.permission.bash === "object" &&
+          agent.permission.bash["*"] === "allow"
+        ) {
           const oldBashPermission = agent.permission.bash;
-          delete oldBashPermission['*'];
+          delete oldBashPermission["*"];
 
           agent.permission.bash = {
             ...defaultBashPermission,
@@ -407,17 +442,17 @@ export const BoxPlugin: Plugin = async ({ client, $, directory, worktree }) => {
       }
     },
 
-    'experimental.chat.system.transform': async (
+    "experimental.chat.system.transform": async (
       _input: { sessionID?: string },
       output: { system: string[] },
     ) => {
       // Very important branding excercise
       for (let i = 0; i < output.system.length; i++) {
         const prompt = output.system[i];
-        if (typeof prompt != 'string') {
+        if (typeof prompt != "string") {
           continue;
         }
-        output.system[i] = prompt.replace(/\bOpenCode\b/g, 'BoxedCode');
+        output.system[i] = prompt.replace(/\bOpenCode\b/g, "BoxedCode");
       }
 
       if (result.ok === false) {
@@ -437,7 +472,7 @@ export const BoxPlugin: Plugin = async ({ client, $, directory, worktree }) => {
       }
     },
 
-    'chat.message': async () => {
+    "chat.message": async () => {
       // Seems to be the earliest hook we can use to show a toast
       if (configToastShown) {
         return;
@@ -447,9 +482,9 @@ export const BoxPlugin: Plugin = async ({ client, $, directory, worktree }) => {
       if (result.ok === false) {
         await client.tui.showToast({
           body: {
-            title: 'No sandbox detected',
+            title: "No sandbox detected",
             message: result.error,
-            variant: 'warning',
+            variant: "warning",
           },
         });
         return;
@@ -457,9 +492,9 @@ export const BoxPlugin: Plugin = async ({ client, $, directory, worktree }) => {
 
       await client.tui.showToast({
         body: {
-          title: 'Sandbox activated',
+          title: "Sandbox activated",
           message: `Configure: ~/.nwb/box/box.json`,
-          variant: 'success',
+          variant: "success",
         },
       });
     },
@@ -467,21 +502,21 @@ export const BoxPlugin: Plugin = async ({ client, $, directory, worktree }) => {
     /**
      * Hook that runs before any tool execution
      */
-    'tool.execute.before': async ({ tool }, { args }) => {
+    "tool.execute.before": async ({ tool }, { args }) => {
       if (result.ok === false) {
         return;
       }
 
-      if (tool === 'webfetch') {
+      if (tool === "webfetch") {
         await checkWebfetch(result.config.network, args);
         return;
       }
 
-      if (tool === 'apply_patch') {
+      if (tool === "apply_patch") {
         const patchText = args.patchText;
 
-        if (!patchText || typeof patchText !== 'string') {
-          throw new Error('patchText is required');
+        if (!patchText || typeof patchText !== "string") {
+          throw new Error("patchText is required");
         }
 
         handleApplyPatch(patchText, result.config.filesystem, projectRoot);
@@ -494,7 +529,7 @@ export const BoxPlugin: Plugin = async ({ client, $, directory, worktree }) => {
       if (!pathInfo) return;
 
       // Always allow project root to prevent blocking entire project
-      if (pathInfo.path === '.') return;
+      if (pathInfo.path === ".") return;
 
       const isBlocked = isPathBlocked(
         result.config.filesystem,
@@ -504,7 +539,9 @@ export const BoxPlugin: Plugin = async ({ client, $, directory, worktree }) => {
       );
 
       if (isBlocked) {
-        throw new Error(`${pathInfo.operation} ${pathInfo.path}: Operation not permitted`);
+        throw new Error(
+          `${pathInfo.operation} ${pathInfo.path}: Operation not permitted`,
+        );
       }
     },
 
@@ -512,31 +549,40 @@ export const BoxPlugin: Plugin = async ({ client, $, directory, worktree }) => {
      * Hook that runs after tool execution
      * Filters glob/grep results to remove blocked files
      */
-    'tool.execute.after': async ({ tool }, context) => {
+    "tool.execute.after": async ({ tool }, context) => {
       if (result.ok === false) {
         return;
       }
 
       // Only process glob and grep tools
-      if (tool !== 'glob' && tool !== 'grep') return context.output;
+      if (tool !== "glob" && tool !== "grep") return context.output;
 
       // Filter results to remove blocked files
-      return await filterResults(result.config.filesystem, tool, context.output, projectRoot);
+      return await filterResults(
+        result.config.filesystem,
+        tool,
+        context.output,
+        projectRoot,
+      );
     },
   };
 };
 
-const handleApplyPatch = (patchText: string, config: FileSystemConfig, projectRoot: string) => {
+const handleApplyPatch = (
+  patchText: string,
+  config: FileSystemConfig,
+  projectRoot: string,
+) => {
   const paths = Patch.parseFilePaths(patchText);
 
   const restrictedPaths = paths
-    .filter((path) => isPathBlocked(config, path, projectRoot, 'write'))
+    .filter((path) => isPathBlocked(config, path, projectRoot, "write"))
     .map((path) => `  - ${path}`);
 
   if (restrictedPaths.length > 0) {
     throw new Error(`apply_patch: Write operation not permitted for paths:
 
-${restrictedPaths.join('\n')}`);
+${restrictedPaths.join("\n")}`);
   }
 };
 
@@ -546,31 +592,38 @@ namespace Patch {
   function parsePatchHeader(
     lines: string[],
     startIdx: number,
-  ): { filePath: string; movePath?: string | undefined; nextIdx: number } | null {
+  ): {
+    filePath: string;
+    movePath?: string | undefined;
+    nextIdx: number;
+  } | null {
     const line = lines[startIdx];
 
     if (!line) {
       return null;
     }
 
-    if (line.startsWith('*** Add File:')) {
-      const filePath = line.split(':', 2)[1]?.trim();
+    if (line.startsWith("*** Add File:")) {
+      const filePath = line.split(":", 2)[1]?.trim();
       return filePath ? { filePath, nextIdx: startIdx + 1 } : null;
     }
 
-    if (line.startsWith('*** Delete File:')) {
-      const filePath = line.split(':', 2)[1]?.trim();
+    if (line.startsWith("*** Delete File:")) {
+      const filePath = line.split(":", 2)[1]?.trim();
       return filePath ? { filePath, nextIdx: startIdx + 1 } : null;
     }
 
-    if (line.startsWith('*** Update File:')) {
-      const filePath = line.split(':', 2)[1]?.trim();
+    if (line.startsWith("*** Update File:")) {
+      const filePath = line.split(":", 2)[1]?.trim();
       let movePath: string | undefined;
       let nextIdx = startIdx + 1;
 
       // Check for move directive
-      if (nextIdx < lines.length && lines[nextIdx]?.startsWith('*** Move to:')) {
-        movePath = lines[nextIdx]?.split(':', 2)[1]?.trim();
+      if (
+        nextIdx < lines.length &&
+        lines[nextIdx]?.startsWith("*** Move to:")
+      ) {
+        movePath = lines[nextIdx]?.split(":", 2)[1]?.trim();
         nextIdx++;
       }
 
@@ -580,18 +633,25 @@ namespace Patch {
     return null;
   }
 
-  function parseUpdateFileChunks(lines: string[], startIdx: number): { nextIdx: number } {
+  function parseUpdateFileChunks(
+    lines: string[],
+    startIdx: number,
+  ): { nextIdx: number } {
     let i = startIdx;
 
-    while (i < lines.length && !lines[i]?.startsWith('***')) {
-      if (lines[i]?.startsWith('@@')) {
+    while (i < lines.length && !lines[i]?.startsWith("***")) {
+      if (lines[i]?.startsWith("@@")) {
         i++;
 
         // Parse change lines
-        while (i < lines.length && !lines[i]?.startsWith('@@') && !lines[i]?.startsWith('***')) {
+        while (
+          i < lines.length &&
+          !lines[i]?.startsWith("@@") &&
+          !lines[i]?.startsWith("***")
+        ) {
           const changeLine = lines[i];
 
-          if (changeLine === '*** End of File') {
+          if (changeLine === "*** End of File") {
             i++;
             break;
           }
@@ -606,16 +666,19 @@ namespace Patch {
     return { nextIdx: i };
   }
 
-  function parseAddFileContent(lines: string[], startIdx: number): { nextIdx: number } {
-    let content = '';
+  function parseAddFileContent(
+    lines: string[],
+    startIdx: number,
+  ): { nextIdx: number } {
+    let content = "";
     let i = startIdx;
 
-    while (i < lines.length && !lines[i]?.startsWith('***')) {
+    while (i < lines.length && !lines[i]?.startsWith("***")) {
       i++;
     }
 
     // Remove trailing newline
-    if (content.endsWith('\n')) {
+    if (content.endsWith("\n")) {
       content = content.slice(0, -1);
     }
 
@@ -624,7 +687,9 @@ namespace Patch {
 
   function stripHeredoc(input: string): string {
     // Match heredoc patterns like: cat <<'EOF'\n...\nEOF or <<EOF\n...\nEOF
-    const heredocMatch = input.match(/^(?:cat\s+)?<<['"]?(\w+)['"]?\s*\n([\s\S]*?)\n\1\s*$/);
+    const heredocMatch = input.match(
+      /^(?:cat\s+)?<<['"]?(\w+)['"]?\s*\n([\s\S]*?)\n\1\s*$/,
+    );
     if (heredocMatch && heredocMatch[2]) {
       return heredocMatch[2];
     }
@@ -633,18 +698,18 @@ namespace Patch {
 
   export function parseFilePaths(patchText: string): string[] {
     const cleaned = stripHeredoc(patchText.trim());
-    const lines = cleaned.split('\n');
+    const lines = cleaned.split("\n");
     const paths: string[] = [];
     let i = 0;
 
-    const beginMarker = '*** Begin Patch';
-    const endMarker = '*** End Patch';
+    const beginMarker = "*** Begin Patch";
+    const endMarker = "*** End Patch";
 
     const beginIdx = lines.findIndex((line) => line.trim() === beginMarker);
     const endIdx = lines.findIndex((line) => line.trim() === endMarker);
 
     if (beginIdx === -1 || endIdx === -1 || beginIdx >= endIdx) {
-      throw new Error('Invalid patch format: missing Begin/End markers');
+      throw new Error("Invalid patch format: missing Begin/End markers");
     }
 
     i = beginIdx + 1;
@@ -657,14 +722,14 @@ namespace Patch {
         continue;
       }
 
-      if (line.startsWith('*** Add File:')) {
+      if (line.startsWith("*** Add File:")) {
         const { nextIdx } = parseAddFileContent(lines, header.nextIdx);
         paths.push(header.filePath);
         i = nextIdx;
-      } else if (line.startsWith('*** Delete File:')) {
+      } else if (line.startsWith("*** Delete File:")) {
         paths.push(header.filePath);
         i = header.nextIdx;
-      } else if (line.startsWith('*** Update File:')) {
+      } else if (line.startsWith("*** Update File:")) {
         const { nextIdx } = parseUpdateFileChunks(lines, header.nextIdx);
         paths.push(header.filePath);
         if (header.movePath) {
