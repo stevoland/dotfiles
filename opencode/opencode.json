@@ -10,17 +10,26 @@
     "general": {
       "model": "github-copilot/claude-haiku-4.5"
     },
+    "image-looker": {
+      "description": "Analyze image files. Describes visual content. Use when you need analyzed/extracted data rather than literal file contents.",
+      "mode": "subagent",
+      "model": "github-copilot/gpt-5.2",
+      "prompt": "You interpret image files that cannot be read as plain text.\n\nYour job: examine the attached file and extract ONLY what was requested.\n\nWhen to use you:\n- Media files the Read tool cannot interpret\n- Extracting specific information or summaries from documents\n- Describing visual content in images or diagrams\n- When analyzed/extracted data is needed, not raw file contents\n\nWhen NOT to use you:\n- Source code or plain text files needing exact contents (use Read)\n- Files that need editing afterward (need literal content from Read)\n- Simple file reading where no interpretation is needed\n\nHow you work:\n1. Receive a file path and a goal describing what to extract\n2. Read and analyze the file deeply\n3. Return ONLY the relevant extracted information\n4. The main agent never processes the raw file - you save context tokens\n\nFor images: describe layouts, UI elements, text, diagrams, charts\nFor diagrams: explain relationships, flows, architecture depicted\n\nResponse rules:\n- Return extracted information directly, no preamble\n- If info not found, state clearly what's missing\n- Match the language of the request\n- Be thorough on the goal, concise on everything else\n\nYour output goes straight to the main agent for continued work.",
+      "temperature": 0.1
+    },
     "plan": {
       "model": "github-copilot/gpt-5.2"
     }
   },
   "autoupdate": false,
-  "enabled_providers": ["github-copilot"],
-  "enterprise": {
-    "url": "http://localhost:3000"
-  },
+  "enabled_providers": [
+    "github-copilot"
+  ],
   "experimental": {
-    "batch_tool": true
+    "batch_tool": true,
+    "quotaToast": {
+      "enableToast": false
+    }
   },
   "instructions": [
     "/Users/stephen.collings/.config/opencode/instructions.nwb.md"
@@ -41,37 +50,84 @@
       "type": "remote",
       "url": "https://mcp.datadoghq.eu/api/unstable/mcp-server/mcp"
     },
+    "github": {
+      "command": [
+        "/Users/stephen.collings/dotfiles/opencode-commands/github.sh"
+      ],
+      "enabled": false,
+      "type": "local"
+    },
     "grep_app": {
       "enabled": true,
       "type": "remote",
       "url": "https://mcp.grep.app"
     },
     "kubernetes": {
-      "command": ["npx", "-y", "@mettle/boxed-kubernetes-mcp-server"],
+      "command": [
+        "npx",
+        "-y",
+        "@mettle/boxed-kubernetes-mcp-server"
+      ],
       "enabled": false,
       "type": "local"
     },
     "kubeview": {
-      "command": ["npx", "-y", "kubeview-mcp"],
+      "command": [
+        "npx",
+        "-y",
+        "kubeview-mcp"
+      ],
       "enabled": false,
+      "environment": {
+        "MCP_MODE": "code"
+      },
+      "type": "local"
+    },
+    "kubeview_mcp": {
+      "command": [
+        "npx",
+        "-y",
+        "kubeview-mcp"
+      ],
+      "enabled": false,
+      "environment": {
+        "MCP_MODE": "tools"
+      },
       "type": "local"
     },
     "maven": {
-      "command": ["npx", "-y", "@mettle/boxed-maven-mcp-server"],
+      "command": [
+        "npx",
+        "-y",
+        "@mettle/boxed-maven-mcp-server"
+      ],
       "enabled": false,
       "type": "local"
     },
     "opensrc": {
-      "command": ["npx", "-y", "opensrc-mcp"],
+      "command": [
+        "npx",
+        "-y",
+        "opensrc-mcp"
+      ],
       "enabled": true,
       "type": "local"
     },
     "overseer": {
-      "command": ["npx", "-y", "@dmmulroy/overseer", "mcp"],
+      "command": [
+        "npx",
+        "-y",
+        "@dmmulroy/overseer",
+        "mcp"
+      ],
       "type": "local"
     },
     "snyk": {
-      "command": ["npx", "-y", "@mettle/boxed-snyk-mcp-server"],
+      "command": [
+        "npx",
+        "-y",
+        "@mettle/boxed-snyk-mcp-server"
+      ],
       "enabled": false,
       "type": "local"
     }
@@ -79,19 +135,83 @@
   "model": "github-copilot/claude-sonnet-4.5",
   "permission": {},
   "plugin": [
-    "/Users/stephen.collings/workspace/github.com/eeveebank/boxedcode-pro"
+    "@slkiser/opencode-quota",
+    "/Users/stephen.collings/.boxedcode-pro/0.7.1/boxedcode-pro"
   ],
   "provider": {
     "github-copilot": {
+      "models": {
+        "claude-haiku-4.5": {
+          "modalities": {
+            "input": [
+              "text"
+            ],
+            "output": [
+              "text"
+            ]
+          }
+        },
+        "claude-opus-4.5": {
+          "modalities": {
+            "input": [
+              "text"
+            ],
+            "output": [
+              "text"
+            ]
+          }
+        },
+        "claude-opus-4.6": {
+          "modalities": {
+            "input": [
+              "text"
+            ],
+            "output": [
+              "text"
+            ]
+          }
+        },
+        "claude-sonnet-4.5": {
+          "modalities": {
+            "input": [
+              "text"
+            ],
+            "output": [
+              "text"
+            ]
+          }
+        },
+        "claude-sonnet-4.6": {
+          "modalities": {
+            "input": [
+              "text"
+            ],
+            "output": [
+              "text"
+            ]
+          }
+        },
+        "gemini-2.5-pro": {
+          "modalities": {
+            "input": [
+              "text"
+            ],
+            "output": [
+              "text"
+            ]
+          }
+        }
+      },
       "whitelist": [
         "claude-sonnet-4.5",
-        "gpt-5",
+        "claude-sonnet-4.6",
         "gpt-5-mini",
         "gpt-5.1",
         "gpt-5.1-codex",
         "gpt-5.1-codex-max",
         "gpt-5.2",
         "gpt-5.2-codex",
+        "gpt-5.3-codex",
         "claude-haiku-4.5",
         "claude-opus-4.5",
         "claude-opus-4.6",
@@ -103,7 +223,10 @@
   },
   "share": "disabled",
   "skills": {
-    "paths": ["~/.github/skills", ".github/skills"]
+    "paths": [
+      "~/.github/skills",
+      ".github/skills"
+    ]
   },
   "small_model": "github-copilot/gpt-5-mini",
   "tools": {

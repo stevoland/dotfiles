@@ -119,6 +119,7 @@ brew libgit2
 brew libgpg-error
 brew libidn2
 brew libksba
+brew libmaxminddb
 brew libmicrohttpd
 brew libnghttp2
 brew libnghttp3
@@ -128,6 +129,7 @@ brew libpng
 brew librist
 brew libsamplerate
 brew libslirp
+brew libsmi
 brew libsndfile
 brew libsodium
 brew libsoxr
@@ -157,6 +159,7 @@ brew little-cms2
 brew llvm
 brew lnav
 brew lpeg
+brew lua
 brew luajit
 brew lume
 brew luv
@@ -215,12 +218,15 @@ brew snag
 brew snappy
 brew snitch
 brew speex
+brew speexdsp
 brew sqlite
 brew srt
 brew starship
 brew stern
 brew svt-av1
+brew terraform
 brew tesseract
+brew tflint
 brew theora
 brew tidy-viewer
 brew tig
@@ -247,6 +253,7 @@ brew wangle
 brew watchman
 brew webp
 brew wget
+brew wireshark
 brew x264
 brew x265
 brew xcodes
@@ -268,6 +275,7 @@ tap homebrew/cask
 cask 1password
 cask 1password-cli
 cask android-studio
+cask copilot-cli
 cask copyq
 cask coscreen
 cask font-0xproto-nerd-font
@@ -350,6 +358,7 @@ cask ngrok
 cask raycast
 cask switch
 cask visual-studio-code
+cask wireshark-app
 
 tap anomalyco/tap
 
@@ -442,13 +451,13 @@ vscode editorconfig.editorconfig
 vscode eriklynd.json-tools
 vscode esbenp.prettier-vscode
 vscode fabiospampinato.vscode-diff
-vscode github.copilot
 vscode github.copilot-chat
 vscode github.remotehub
 vscode github.vscode-github-actions
 vscode github.vscode-pull-request-github
 vscode golang.go
 vscode intility.vscode-backstage
+vscode jjk.jjk
 vscode mads-hartmann.bash-ide-vscode
 vscode mathiasfrohlich.kotlin
 vscode mechatroner.rainbow-csv

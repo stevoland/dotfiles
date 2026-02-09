@@ -43,7 +43,7 @@ export const NotifyPlugin: Plugin = async ({ $, client }) => {
       await playSound("complete");
     },
 
-    "tool.execute.before": async ({ tool }) => {
+    "tool.execute.before": async ({ tool }, { args }) => {
       if (tool === "question") {
         await playSound("complete");
       }

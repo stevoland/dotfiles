@@ -1,1 +1,1 @@
-export * from "./ast-grep";
+export * from "./ast-grep/tools";

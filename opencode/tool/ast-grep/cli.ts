@@ -1,14 +1,10 @@
 import { spawn } from "bun";
-import { existsSync } from "fs";
 import {
   getSgCliPath,
-  setSgCliPath,
-  findSgCliPathSync,
   DEFAULT_TIMEOUT_MS,
   DEFAULT_MAX_OUTPUT_BYTES,
   DEFAULT_MAX_MATCHES,
 } from "./constants";
-import { ensureAstGrepBinary } from "./downloader";
 import type { CliMatch, CliLanguage, SgResult } from "./types";
 
 export interface RunOptions {
@@ -19,46 +15,6 @@ export interface RunOptions {
   rewrite?: string;
   context?: number;
   updateAll?: boolean;
-}
-
-let resolvedCliPath: string | null = null;
-let initPromise: Promise<string | null> | null = null;
-
-export async function getAstGrepPath(): Promise<string | null> {
-  if (resolvedCliPath !== null && existsSync(resolvedCliPath)) {
-    return resolvedCliPath;
-  }
-
-  if (initPromise) {
-    return initPromise;
-  }
-
-  initPromise = (async () => {
-    const syncPath = findSgCliPathSync();
-    if (syncPath && existsSync(syncPath)) {
-      resolvedCliPath = syncPath;
-      setSgCliPath(syncPath);
-      return syncPath;
-    }
-
-    const downloadedPath = await ensureAstGrepBinary();
-    if (downloadedPath) {
-      resolvedCliPath = downloadedPath;
-      setSgCliPath(downloadedPath);
-      return downloadedPath;
-    }
-
-    return null;
-  })();
-
-  return initPromise;
-}
-
-export function startBackgroundInit(): void {
-  if (!initPromise) {
-    initPromise = getAstGrepPath();
-    initPromise.catch(() => {});
-  }
 }
 
 export async function runSg(options: RunOptions): Promise<SgResult> {
@@ -92,14 +48,7 @@ export async function runSg(options: RunOptions): Promise<SgResult> {
     options.paths && options.paths.length > 0 ? options.paths : ["."];
   args.push(...paths);
 
-  let cliPath = getSgCliPath();
-
-  if (!existsSync(cliPath) && cliPath !== "sg") {
-    const downloadedPath = await getAstGrepPath();
-    if (downloadedPath) {
-      cliPath = downloadedPath;
-    }
-  }
+  const cliPath = getSgCliPath();
 
   const timeout = DEFAULT_TIMEOUT_MS;
 
@@ -145,24 +94,17 @@ export async function runSg(options: RunOptions): Promise<SgResult> {
       nodeError.message?.includes("ENOENT") ||
       nodeError.message?.includes("not found")
     ) {
-      const downloadedPath = await ensureAstGrepBinary();
-      if (downloadedPath) {
-        resolvedCliPath = downloadedPath;
-        setSgCliPath(downloadedPath);
-        return runSg(options);
-      } else {
-        return {
-          matches: [],
-          totalMatches: 0,
-          truncated: false,
-          error:
-            `ast-grep CLI binary not found.\n\n` +
-            `Auto-download failed. Manual install options:\n` +
-            `  bun add -D @ast-grep/cli\n` +
-            `  cargo install ast-grep --locked\n` +
-            `  brew install ast-grep`,
-        };
-      }
+      return {
+        matches: [],
+        totalMatches: 0,
+        truncated: false,
+        error:
+          `ast-grep CLI binary not found.\n\n` +
+          `Manual install options:\n` +
+          `  bun add -D @ast-grep/cli\n` +
+          `  cargo install ast-grep --locked\n` +
+          `  brew install ast-grep`,
+      };
     }
 
     return {
@@ -245,14 +187,4 @@ export async function runSg(options: RunOptions): Promise<SgResult> {
         ? "max_matches"
         : undefined,
   };
-}
-
-export function isCliAvailable(): boolean {
-  const path = findSgCliPathSync();
-  return path !== null && existsSync(path);
-}
-
-export async function ensureCliAvailable(): Promise<boolean> {
-  const path = await getAstGrepPath();
-  return path !== null && existsSync(path);
 }

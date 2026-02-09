@@ -1,5 +1,5 @@
 {
-  "$schema": "/Users/stephen.collings/workspace/github.com/eeveebank/boxedcode-pro/assets/boxedcode-pro.schema.json",
+  "$schema": "../../.boxedcode-pro/boxedcode-pro.schema.json",
   "feature": {
     "structuredCompaction": {
       "enabled": true
