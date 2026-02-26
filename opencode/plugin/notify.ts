@@ -36,11 +36,12 @@ export const NotifyPlugin: Plugin = async ({ $, client }) => {
         if (await isMainSession(sessionID)) {
           await playSound("success");
         }
+        return;
       }
-    },
 
-    "permission.updated": async () => {
-      await playSound("complete");
+      if (event.type === "permission.updated") {
+        await playSound("complete");
+      }
     },
 
     "tool.execute.before": async ({ tool }, { args }) => {

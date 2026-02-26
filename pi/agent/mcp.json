@@ -1,0 +1,30 @@
+{
+  "mcpServers": {
+    "atlassian": {
+      "auth": "oauth",
+      "url": "https://mcp.atlassian.com/v1/mcp"
+    },
+    "context7": {
+      "url": "https://mcp.context7.com/mcp"
+    },
+    "datadog": {
+      "auth": "oauth",
+      "url": "https://mcp.datadoghq.eu/api/unstable/mcp-server/mcp?toolsets=core,apm,software-delivery"
+    },
+    "grep_app": {
+      "url": "https://mcp.grep.app"
+    },
+    "kubeview": {
+      "command": "npx",
+      "args": ["npx", "-y", "kubeview-mcp"]
+    },
+    "opensrc": {
+      "command": "npx",
+      "args": ["npx", "-y", "opensrc-mcp"]
+    },
+    "overseer": {
+      "command": "npx",
+      "args": ["-y", "@dmmulroy/overseer", "mcp"]
+    }
+  }
+}

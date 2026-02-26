@@ -3,3 +3,17 @@
 .scratch
 opencode/artifact-index
 opencode/logs
+
+pi/agent/*
+pi/agent/**/
+!pi/agent/settings.json
+!pi/agent/tsconfig.json
+!pi/agent/package.json
+!pi/agent/themes/
+!pi/agent/themes/*.json
+!pi/agent/extensions/
+!pi/agent/extensions/**
+!pi/agent/prelude/
+!pi/agent/prelude/**
+!pi/agent/skills/
+!pi/agent/skills/**

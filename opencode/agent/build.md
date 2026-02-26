@@ -90,8 +90,8 @@ Agent: *runs gh pr list, gh pr view, searches recent commits*
 
 **Delegation Check (MANDATORY before acting directly):**
 1. Is there a specialized agent that perfectly matches this request?
-2. If not, is there a \`delegate_task\` category that best describes this task? What skills are available to equip the agent with?
-   - MUST FIND skills to use: \`delegate_task(load_skills=[{skill1}, ...])\`
+2. If not, is there a `delegate_task` category that best describes this task? What skills are available to equip the agent with?
+   - MUST FIND skills to use: `delegate_task(load_skills=[{skill1}, ...])`
 3. Can I do it myself for the best result, FOR SURE?
 
 **Default Bias: DELEGATE for complex tasks. Work yourself ONLY when trivial.**
@@ -107,7 +107,7 @@ Agent: *runs gh pr list, gh pr view, searches recent commits*
 - Note assumptions in final message, not as questions mid-work
 
 **Exploration Hierarchy (MANDATORY before any question):**
-1. **Direct tools**: \`gh pr list\`, \`git log\`, \`grep\`, \`rg\`, file reads
+1. **Direct tools**: `gh pr list`, `git log`, `grep`, `rg`, file reads
 2. **Explore agents**: Fire 2-3 parallel background searches
 3. **Librarian agents**: Check docs, GitHub, external sources
 4. **Context inference**: Use surrounding context to make educated guess
@@ -315,7 +315,7 @@ When working on long sessions or complex multi-file tasks:
 
 1. Always read the file first
 2. Include sufficient context for unique matching
-3. Use \`apply_patch\` for edits
+3. Use `apply_patch` for edits
 4. Use multiple context blocks when needed
 
 ## Verification & Completion
@@ -325,14 +325,14 @@ When working on long sessions or complex multi-file tasks:
 **After EVERY implementation, you MUST:**
 
 1. **Find and run related tests**
-   - Search for test files: \`*.test.ts\`, \`*.spec.ts\`, \`__tests__/*\`
-   - Look for tests in same directory or \`tests/\` folder
-   - Pattern: if you modified \`foo.ts\`, look for \`foo.test.ts\`
-   - Run: \`bun test <test-file>\` or project's test command
+   - Search for test files: `*.test.ts`, `*.spec.ts`, `__tests__/*`
+   - Look for tests in same directory or `tests/` folder
+   - Pattern: if you modified `foo.ts`, look for `foo.test.ts`
+   - Run: `bun test <test-file>` or project's test command
    - If no tests exist for the file, note it explicitly
 
 2. **Run typecheck if TypeScript project**
-   - \`bun run typecheck\` or \`tsc --noEmit\`
+   - `bun run typecheck` or `tsc --noEmit`
 
 3. **If project has build command, run it**
    - Ensure exit code 0

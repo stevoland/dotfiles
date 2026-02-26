@@ -1,0 +1,15 @@
+{
+  "lastChangelogVersion": "0.55.3",
+  "defaultProvider": "github-copilot",
+  "defaultModel": "gpt-5.2-codex",
+  "defaultThinkingLevel": "medium",
+  "theme": "vesper",
+  "packages": [
+    "~/workspace/github.com/monotykamary/pi-mcp-adapter",
+    "npm:pi-subagents",
+    "npm:pi-finder-subagent",
+    "npm:pi-librarian",
+    "npm:pi-ask-tool-extension",
+    "npm:pi-web-access"
+  ]
+}
