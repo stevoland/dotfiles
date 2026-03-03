@@ -214,7 +214,6 @@ brew sdl2
 brew showkey
 brew simdjson
 brew skaffold
-brew snag
 brew snappy
 brew snitch
 brew speex
@@ -275,6 +274,7 @@ tap homebrew/cask
 cask 1password
 cask 1password-cli
 cask android-studio
+cask cmux
 cask copilot-cli
 cask copyq
 cask coscreen
@@ -390,6 +390,7 @@ brew borders
 brew sketchybar
 
 tap grantcarthew/tap
+brew snag
 
 tap hmarr/tap
 brew codeowners
@@ -435,7 +436,7 @@ appstore 1608041266 Jamf Trust (2.23.0)
 appstore 409183694 Keynote (14.2)
 appstore 409203825 Numbers (14.4)
 appstore 409201541 Pages (14.2)
-appstore 497799835 Xcode (26.2)
+appstore 497799835 Xcode (26.3)
 
 # VSCode extensions
 vscode aaron-bond.better-comments
@@ -451,6 +452,7 @@ vscode editorconfig.editorconfig
 vscode eriklynd.json-tools
 vscode esbenp.prettier-vscode
 vscode fabiospampinato.vscode-diff
+vscode formulahendry.acp-client
 vscode github.copilot-chat
 vscode github.remotehub
 vscode github.vscode-github-actions

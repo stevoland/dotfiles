@@ -6,8 +6,6 @@ tools:
   write: false
   edit: false
   bash: false
-  atlassian*: false
-  datadog*: false
 permission:
   edit: deny
   write: deny

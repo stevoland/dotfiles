@@ -1,9 +1,9 @@
 {
-  "lastChangelogVersion": "0.55.3",
+  "lastChangelogVersion": "0.55.4",
   "defaultProvider": "github-copilot",
   "defaultModel": "gpt-5.2-codex",
   "defaultThinkingLevel": "medium",
-  "theme": "vesper",
+  "theme": "violet-dusk",
   "packages": [
     "~/workspace/github.com/monotykamary/pi-mcp-adapter",
     "npm:pi-subagents",
@@ -11,5 +11,17 @@
     "npm:pi-librarian",
     "npm:pi-ask-tool-extension",
     "npm:pi-web-access"
+  ],
+  "extensions": [
+    "-extensions/whimsical.ts"
+  ],
+  "skills": [
+    "+../../.agents/skills/build-skill/SKILL.md"
+  ],
+  "enabledModels": [
+    "github-copilot/claude-sonnet-4.6",
+    "github-copilot/gpt-5-mini",
+    "github-copilot/gpt-5.2-codex",
+    "github-copilot/gpt-5.2"
   ]
 }

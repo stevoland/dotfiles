@@ -7,8 +7,9 @@ options:
   reasoningSummary: auto
   include:
     - reasoning.encrypted_content
-tools:
-  datadog*: true
+permission:
+  bash:
+    "gh*": allow
 ---
 
 ## Reasoning Configuration (ROUTER NUDGE - GPT 5.2)

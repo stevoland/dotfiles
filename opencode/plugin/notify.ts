@@ -39,7 +39,9 @@ export const NotifyPlugin: Plugin = async ({ $, client }) => {
         return;
       }
 
-      if (event.type === "permission.updated") {
+      const eventType: string = event.type;
+
+      if (eventType === "permission.asked") {
         await playSound("complete");
       }
     },

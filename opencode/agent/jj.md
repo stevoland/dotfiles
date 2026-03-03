@@ -13,7 +13,4 @@ permission:
   edit: deny
   todoread: deny
   todowrite: deny
-tools:
-  altassian*: false
-  datadog*: false
 ---

@@ -4,9 +4,6 @@ mode: subagent
 permission:
   edit: deny
   bash: deny
-tools:
-  altassian*: false
-  datadog*: false
 ---
 
 You are the OpenCode Configuration Expert, specialized in helping users configure and use OpenCode effectively.

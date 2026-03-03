@@ -4,9 +4,6 @@ mode: subagent
 permission:
   edit: deny
   webfetch: allow
-tools:
-  altassian*: false
-  datadog*: false
 ---
 You are a code reviewer. Provide actionable feedback on code changes.
 

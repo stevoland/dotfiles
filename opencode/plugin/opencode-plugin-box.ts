@@ -309,6 +309,7 @@ const defaultBashPermission = {
   'more*': 'allow',
   'npm add*': 'ask',
   'npm*': 'allow',
+  'npx skills*': 'allow',
   'pwd*': 'allow',
   'rg*': 'allow',
   'sed*': 'allow',
@@ -354,29 +355,12 @@ export const BoxPlugin: Plugin = async ({ client, $, directory, worktree }) => {
         const agent = agents[agentName];
         if (!agent) continue;
 
-        // These inbuilt agents have bash deny so ignore
-        if (agentName === 'plan' || agentName === 'explore') {
-          continue;
-        }
-
-        // These inbuilt agents have `bash: allow`: Override to safer defaults
-        if (agentName === 'build' || agentName === 'general') {
-          if (!agent.permission) {
-            agent.permission = {
-              bash: {
-                ...defaultBashPermission,
-              },
-            };
+        if (!agent.permission) {
+          // These inbuilt agents have bash deny so ignore
+          if (agentName === 'plan' || agentName === 'explore') {
             continue;
           }
-          agent.permission.bash = {
-            ...defaultBashPermission,
-          };
-          continue;
-        }
 
-        // Custom agents without any bash permission would get default `bash: allow` so make safe
-        if (!agent.permission) {
           agent.permission = {
             bash: {
               ...defaultBashPermission,
@@ -385,22 +369,25 @@ export const BoxPlugin: Plugin = async ({ client, $, directory, worktree }) => {
           continue;
         }
 
-        // Custom agents with bash: "allow", make safe
-        if (agent.permission.bash === 'allow') {
+        // Agents with bash.* "allow", make safe but allow overrides
+        if (typeof agent.permission.bash === 'object') {
+          const userBashPermission = agent.permission.bash;
+          if (userBashPermission['*'] === 'allow') {
+            delete userBashPermission['*'];
+          }
+
           agent.permission.bash = {
             ...defaultBashPermission,
+            ...userBashPermission,
           };
+
           continue;
         }
 
-        // Custom agents with bash.* "allow", make safe but allow overrides
-        if (typeof agent.permission.bash === 'object' && agent.permission.bash['*'] === 'allow') {
-          const oldBashPermission = agent.permission.bash;
-          delete oldBashPermission['*'];
-
+        // Agents with bash: "allow", make safe
+        if (agent.permission.bash === 'allow') {
           agent.permission.bash = {
             ...defaultBashPermission,
-            ...oldBashPermission,
           };
           continue;
         }
