@@ -1,6 +1,6 @@
 ---
 description: Use for project managment, jira/confluence/atlassian
-mode: subagent
+mode: all
 model: github-copilot/claude-sonnet-4.6
 name: Project Manager
 options:

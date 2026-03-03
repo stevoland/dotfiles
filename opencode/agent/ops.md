@@ -1,6 +1,6 @@
 ---
 description: Use for debugging services or anything related to datadog
-mode: subagent
+mode: all
 model: github-copilot/claude-sonnet-4.6
 options:
   thinking:
