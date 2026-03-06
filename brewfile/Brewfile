@@ -28,6 +28,7 @@ brew capstone
 brew chrome-cli
 brew cjson
 brew claude-squad
+brew cliproxyapi
 brew colima
 brew coreutils
 brew dav1d

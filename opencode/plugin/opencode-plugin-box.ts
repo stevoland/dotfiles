@@ -57,6 +57,92 @@ function normalizePath(targetPath: string, projectRoot: string): string {
   return absolutePath;
 }
 
+function normalizeForPatternMatch(pathValue: string): string {
+  return pathValue.replaceAll('\\', '/');
+}
+
+function hasGlobSyntax(pattern: string): boolean {
+  return pattern.includes('*') || pattern.includes('?') || pattern.includes('[');
+}
+
+function escapeRegexChar(char: string): string {
+  return /[\\^$+?.()|{}]/.test(char) ? `\\${char}` : char;
+}
+
+function globToRegex(pattern: string): RegExp {
+  let regexPattern = '^';
+  let index = 0;
+
+  while (index < pattern.length) {
+    const char = pattern[index];
+    if (char === undefined) {
+      break;
+    }
+
+    if (char === '*') {
+      if (pattern[index + 1] === '*') {
+        if (pattern[index + 2] === '/') {
+          regexPattern += '(?:.*/)?';
+          index += 3;
+          continue;
+        }
+
+        regexPattern += '.*';
+        index += 2;
+        continue;
+      }
+
+      regexPattern += '[^/]*';
+      index++;
+      continue;
+    }
+
+    if (char === '?') {
+      regexPattern += '[^/]';
+      index++;
+      continue;
+    }
+
+    if (char === '[') {
+      let classEnd = index + 1;
+      while (classEnd < pattern.length && pattern[classEnd] !== ']') {
+        classEnd++;
+      }
+
+      if (classEnd < pattern.length) {
+        const classBody = pattern.slice(index + 1, classEnd).replaceAll('\\', '\\\\');
+        regexPattern += `[${classBody}]`;
+        index = classEnd + 1;
+        continue;
+      }
+    }
+
+    regexPattern += escapeRegexChar(char);
+    index++;
+  }
+
+  regexPattern += '$';
+  return new RegExp(regexPattern);
+}
+
+function matchesPathPattern(targetPath: string, patternPath: string): boolean {
+  const normalizedTarget = normalizeForPatternMatch(targetPath);
+  const normalizedPattern = normalizeForPatternMatch(patternPath);
+
+  if (!hasGlobSyntax(normalizedPattern)) {
+    if (normalizedTarget === normalizedPattern) {
+      return true;
+    }
+
+    const directoryPattern = normalizedPattern.endsWith('/')
+      ? normalizedPattern
+      : `${normalizedPattern}/`;
+    return normalizedTarget.startsWith(directoryPattern);
+  }
+
+  return globToRegex(normalizedPattern).test(normalizedTarget);
+}
+
 function isPathBlocked(
   config: FileSystemConfig,
   targetPath: string,
@@ -67,13 +153,13 @@ function isPathBlocked(
 
   if (operation === 'write') {
     for (const denyPath of config.denyWrite) {
-      if (normalizedPath.startsWith(denyPath)) {
+      if (matchesPathPattern(normalizedPath, denyPath)) {
         return true;
       }
     }
 
     for (const allowPath of config.allowWrite) {
-      if (normalizedPath.startsWith(allowPath)) {
+      if (matchesPathPattern(normalizedPath, allowPath)) {
         return false;
       }
     }
@@ -82,7 +168,7 @@ function isPathBlocked(
   }
 
   for (const denyPath of config.denyRead) {
-    if (normalizedPath.startsWith(denyPath)) {
+    if (matchesPathPattern(normalizedPath, denyPath)) {
       return true;
     }
   }
@@ -355,12 +441,12 @@ export const BoxPlugin: Plugin = async ({ client, $, directory, worktree }) => {
         const agent = agents[agentName];
         if (!agent) continue;
 
-        if (!agent.permission) {
-          // These inbuilt agents have bash deny so ignore
-          if (agentName === 'plan' || agentName === 'explore') {
-            continue;
-          }
+        // These inbuilt agents have bash deny so ignore
+        if (agentName === 'compaction') {
+          continue;
+        }
 
+        if (!agent.permission) {
           agent.permission = {
             bash: {
               ...defaultBashPermission,
@@ -384,8 +470,8 @@ export const BoxPlugin: Plugin = async ({ client, $, directory, worktree }) => {
           continue;
         }
 
-        // Agents with bash: "allow", make safe
-        if (agent.permission.bash === 'allow') {
+        // Agents with bash: allow or unset, make safe
+        if (agent.permission.bash !== 'deny' && agent.permission.bash !== 'ask') {
           agent.permission.bash = {
             ...defaultBashPermission,
           };
@@ -401,7 +487,7 @@ export const BoxPlugin: Plugin = async ({ client, $, directory, worktree }) => {
       // Very important branding excercise
       for (let i = 0; i < output.system.length; i++) {
         const prompt = output.system[i];
-        if (typeof prompt != 'string') {
+        if (typeof prompt !== 'string') {
           continue;
         }
         output.system[i] = prompt.replace(/\bOpenCode\b/g, 'BoxedCode');

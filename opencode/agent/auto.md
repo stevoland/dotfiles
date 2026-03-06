@@ -1,4 +1,5 @@
 ---
+hidden: true
 mode: primary
 model: github-copilot/claude-sonnet-4.5
 tools:

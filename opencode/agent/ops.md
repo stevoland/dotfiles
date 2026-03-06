@@ -7,11 +7,10 @@ options:
     type: enabled
     budgetTokens: 16000
 permission:
+  datadog_*: allow
   todoread: deny
   todowrite: deny
   edit: deny
-tools:
-  datadog*: true
 ---
 
 You have access to datadog tools. Use them extensively to complete the task.

@@ -134,9 +134,14 @@
     }
   },
   "model": "github-copilot/claude-sonnet-4.6",
-  "permission": {},
+  "permission": {
+    "atlassian_*": "deny",
+    "codesearch": "deny",
+    "datadog_*": "deny",
+    "websearch": "deny"
+  },
   "plugin": [
-    "/Users/stephen.collings/.boxedcode-pro/0.8.0/boxedcode-pro",
+    "/Users/stephen.collings/.boxedcode-pro/0.10.1/boxedcode-pro",
     "@slkiser/opencode-quota@2.1.0"
   ],
   "provider": {
@@ -158,6 +163,11 @@
           }
         },
         "claude-opus-4.5": {
+          "limit": {
+            "context": 200000,
+            "input": 168000,
+            "output": 32000
+          },
           "modalities": {
             "input": [
               "text"
@@ -168,6 +178,11 @@
           }
         },
         "claude-opus-4.6": {
+          "limit": {
+            "context": 200000,
+            "input": 168000,
+            "output": 32000
+          },
           "modalities": {
             "input": [
               "text"
@@ -178,6 +193,11 @@
           }
         },
         "claude-sonnet-4.5": {
+          "limit": {
+            "context": 200000,
+            "input": 168000,
+            "output": 32000
+          },
           "modalities": {
             "input": [
               "text"
@@ -188,6 +208,11 @@
           }
         },
         "claude-sonnet-4.6": {
+          "limit": {
+            "context": 200000,
+            "input": 168000,
+            "output": 32000
+          },
           "modalities": {
             "input": [
               "text"
@@ -206,58 +231,6 @@
               "text"
             ]
           }
-        },
-        "gpt-5.3-codex": {
-          "modalities": {
-            "input": [
-              "text",
-              "image"
-            ],
-            "output": [
-              "text"
-            ]
-          },
-          "variants": {
-            "high": {
-              "include": [
-                "reasoning.encrypted_content"
-              ],
-              "reasoningEffort": "high",
-              "reasoningSummary": "auto"
-            },
-            "low": {
-              "include": [
-                "reasoning.encrypted_content"
-              ],
-              "reasoningEffort": "low",
-              "reasoningSummary": "auto"
-            },
-            "medium": {
-              "include": [
-                "reasoning.encrypted_content"
-              ],
-              "reasoningEffort": "medium",
-              "reasoningSummary": "auto"
-            },
-            "xhigh": {
-              "include": [
-                "reasoning.encrypted_content"
-              ],
-              "reasoningEffort": "xhigh",
-              "reasoningSummary": "auto"
-            }
-          }
-        },
-        "gpt-5.4": {
-          "modalities": {
-            "input": [
-              "text",
-              "image"
-            ],
-            "output": [
-              "text"
-            ]
-          }
         }
       }
     }
@@ -271,9 +244,7 @@
   },
   "small_model": "github-copilot/gpt-5-mini",
   "tools": {
-    "atlassian*": false,
     "codesearch": false,
-    "datadog*": false,
     "websearch": false
   }
 }

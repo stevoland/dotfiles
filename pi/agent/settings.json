@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.55.4",
+  "lastChangelogVersion": "0.57.1",
   "defaultProvider": "github-copilot",
   "defaultModel": "gpt-5.2-codex",
   "defaultThinkingLevel": "medium",
@@ -10,7 +10,9 @@
     "npm:pi-finder-subagent",
     "npm:pi-librarian",
     "npm:pi-ask-tool-extension",
-    "npm:pi-web-access"
+    "npm:pi-web-access",
+    "npm:pi-messenger",
+    "npm:@plannotator/pi-extension"
   ],
   "extensions": [
     "-extensions/whimsical.ts"
@@ -23,5 +25,6 @@
     "github-copilot/gpt-5-mini",
     "github-copilot/gpt-5.2-codex",
     "github-copilot/gpt-5.2"
-  ]
+  ],
+  "hideThinkingBlock": true
 }
