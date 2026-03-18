@@ -1,4 +1,8 @@
 {
   "$schema": "/Users/stephen.collings/workspace/github.com/eeveebank/boxedcode-pro/assets/boxedcode-pro.schema.json",
-  "feature": {}
+  "feature": {
+    "openTelemetry": {
+      "enabled": true
+    }
+  }
 }

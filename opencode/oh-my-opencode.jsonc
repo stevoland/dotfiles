@@ -3,27 +3,29 @@
 // Add override settings to boxedcode-omo.jsonc.
 // See: https://github.com/eeveebank/boxedcode-pro
 {
-  "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/master/assets/oh-my-opencode.schema.json",
+  "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/dev/assets/oh-my-opencode.schema.json",
   "auto_update": false,
+  "model_fallback": false,
   "background_task": {
-    "defaultConcurrency": 8,
+    "defaultConcurrency": 5,
+    "maxDepth": 1,
     "modelConcurrency": {
-      "github-copilot/claude-opus-4.6": 2
+      "github-copilot/claude-opus-4.6": 1
     }
   },
   "agents": {
     "atlas": {
-      "model": "github-copilot/gpt-5.4"
+      "model": "github-copilot/claude-opus-4.6"
     },
     "explore": {
-      "model": "github-copilot/gpt-5.4"
+      "model": "github-copilot/gpt-5.4-mini"
     },
     "hephaestus": {
       "model": "github-copilot/gpt-5.3-codex",
       "variant": "medium"
     },
     "librarian": {
-      "model": "github-copilot/gpt-5.4"
+      "model": "github-copilot/gpt-5.4-mini"
     },
     "metis": {
       "model": "github-copilot/gpt-5.4",
@@ -42,12 +44,16 @@
       "variant": "high"
     },
     "prometheus": {
-      "model": "github-copilot/gpt-5.4",
+      "model": "github-copilot/claude-opus-4.6",
       "variant": "high"
     },
     "sisyphus": {
       "model": "github-copilot/gpt-5.4",
-      "variant": "medium"
+      "variant": "medium",
+      "ultrawork": {
+        "model": "github-copilot/gpt-5.4",
+        "variant": "high"
+      }
     },
     "sisyphus-junior": {
       "model": "github-copilot/gpt-5.4"
@@ -55,8 +61,9 @@
   },
   "categories": {
     "artistry": {
-      "model": "github-copilot/claude-sonnet-4.6",
-      "variant": "max"
+      "model": "github-copilot/gpt-5.4",
+      "variant": "high",
+      "temperature": 0.3
     },
     "deep": {
       "model": "github-copilot/gpt-5.3-codex",
@@ -86,15 +93,16 @@
       "model": "github-copilot/claude-sonnet-4.6"
     }
   },
+  "disabled_hooks": [
+    "startup-toast"
+  ],
   "disabled_mcps": [
     "context7",
     "websearch"
   ],
   "git_master": {
     "commit_footer": false,
-    "include_co_authored_by": false
-  },
-  "tmux": {
-    "enabled": true
+    "include_co_authored_by": false,
+    "git_env_prefix": ""
   }
 }

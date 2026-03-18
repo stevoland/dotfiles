@@ -1,12 +1,6 @@
 ---
 name: librarian
 description: Multi-repository codebase exploration. Research library internals, find code patterns, understand architecture, compare implementations across GitHub/npm/PyPI/crates. Use when needing deep understanding of how libraries work, finding implementations across open source, or exploring remote repository structure.
-references:
-  - references/tool-routing.md
-  - references/opensrc-api.md
-  - references/opensrc-examples.md
-  - references/linking.md
-  - references/diagrams.md
 ---
 
 # Librarian Skill
@@ -17,13 +11,13 @@ Deep codebase exploration across remote repositories.
 
 ### Reference Structure
 
-| File | Purpose | When to Read |
-|------|---------|--------------|
-| `tool-routing.md` | Tool selection decision trees | **Always read first** |
-| `opensrc-api.md` | API reference, types | Writing opensrc code |
-| `opensrc-examples.md` | JavaScript patterns, workflows | Implementation examples |
-| `linking.md` | GitHub URL patterns | Formatting responses |
-| `diagrams.md` | Mermaid patterns | Visualizing architecture |
+| File                  | Purpose                        | When to Read             |
+| --------------------- | ------------------------------ | ------------------------ |
+| `tool-routing.md`     | Tool selection decision trees  | **Always read first**    |
+| `opensrc-api.md`      | API reference, types           | Writing opensrc code     |
+| `opensrc-examples.md` | JavaScript patterns, workflows | Implementation examples  |
+| `linking.md`          | GitHub URL patterns            | Formatting responses     |
+| `diagrams.md`         | Mermaid patterns               | Visualizing architecture |
 
 ### Reading Order
 
@@ -35,12 +29,12 @@ Deep codebase exploration across remote repositories.
 
 ## Tool Arsenal
 
-| Tool | Best For | Limitations |
-|------|----------|-------------|
-| **gh cli** | For private repos from mettle/nwboxed/eeveebank | eeveebank org only |
-| **grep_app** | Find patterns across ALL public GitHub | Literal search only |
-| **context7** | Library docs, API examples, usage | Known libraries only |
-| **opensrc** | Fetch full source for deep exploration | Must fetch before read |
+| Tool         | Best For                                        | Limitations            |
+| ------------ | ----------------------------------------------- | ---------------------- |
+| **gh cli**   | For private repos from mettle/nwboxed/eeveebank | eeveebank org only     |
+| **grep_app** | Find patterns across ALL public GitHub          | Literal search only    |
+| **context7** | Library docs, API examples, usage               | Known libraries only   |
+| **opensrc**  | Fetch full source for deep exploration          | Must fetch before read |
 
 ## Quick Decision Trees
 
@@ -88,23 +82,23 @@ const [{ source }] = await opensrc.fetch("vercel/ai");
 const files = await opensrc.files(source.name, "**/*.ts");
 ```
 
-| Type | Fetch Spec | Source Name |
-|------|------------|-------------|
-| npm | `"zod"` | `"zod"` |
+| Type       | Fetch Spec                | Source Name               |
+| ---------- | ------------------------- | ------------------------- |
+| npm        | `"zod"`                   | `"zod"`                   |
 | npm scoped | `"@tanstack/react-query"` | `"@tanstack/react-query"` |
-| pypi | `"pypi:requests"` | `"requests"` |
-| crates | `"crates:serde"` | `"serde"` |
-| GitHub | `"vercel/ai"` | `"github.com/vercel/ai"` |
-| GitLab | `"gitlab:org/repo"` | `"gitlab.com/org/repo"` |
+| pypi       | `"pypi:requests"`         | `"requests"`              |
+| crates     | `"crates:serde"`          | `"serde"`                 |
+| GitHub     | `"vercel/ai"`             | `"github.com/vercel/ai"`  |
+| GitLab     | `"gitlab:org/repo"`       | `"gitlab.com/org/repo"`   |
 
 ## When NOT to Use opensrc
 
-| Scenario | Use Instead |
-|----------|-------------|
-| Simple library API questions | context7 |
-| Finding examples across many repos | grep_app |
-| Very large monorepos (>10GB) | Clone locally |
-| Private repositories | Direct access |
+| Scenario                           | Use Instead   |
+| ---------------------------------- | ------------- |
+| Simple library API questions       | context7      |
+| Finding examples across many repos | grep_app      |
+| Very large monorepos (>10GB)       | Clone locally |
+| Private repositories               | Direct access |
 
 ## Output Guidelines
 

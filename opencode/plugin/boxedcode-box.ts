@@ -361,53 +361,169 @@ See https://github.com/eeveebank/box for configuration help.`,
   return { ok: true, config };
 };
 
+// Allowlist of safe-ish bash commands for use when no sandbox detected
+// and for default builtin plan/explore
+// Some technically unsafe but trying to strike a balance with usability
+const defaultSafeishBashPermission = {
+  '*': 'ask',
+  'ast-grep *': 'allow',
+  'awk *': 'allow',
+  'base64 *': 'allow',
+  'basename *': 'allow',
+  'cat *': 'allow',
+  'cut *': 'allow',
+  'date *': 'allow',
+  'diff *': 'allow',
+  'dirname *': 'allow',
+  'dot *': 'allow',
+  'du *': 'allow',
+  'echo *': 'allow',
+  'fd *': 'allow',
+  'file *': 'allow',
+  'find *': 'allow',
+  'fzf *': 'allow',
+  'grep *': 'allow',
+  'gsed *': 'allow',
+  'head *': 'allow',
+  hostname: 'allow',
+  id: 'allow',
+  'jq *': 'allow',
+  'ls *': 'allow',
+  'make *': 'allow',
+  'mkdir *': 'allow',
+  'more *': 'allow',
+  'npx skills *': 'allow',
+  'nwb *': 'allow',
+  'open *': 'allow',
+  'printf *': 'allow',
+  pwd: 'allow',
+  'readlink *': 'allow',
+  'realpath *': 'allow',
+  'rg *': 'allow',
+  'sed *': 'allow',
+  'sg *': 'allow',
+  'sleep *': 'allow',
+  'sort *': 'allow',
+  'stat *': 'allow',
+  'tail *': 'allow',
+  'tee *': 'allow',
+  'time *': 'allow',
+  'tr *': 'allow',
+  'tree *': 'allow',
+  true: 'allow',
+  'uname *': 'allow',
+  'uniq *': 'allow',
+  'wc *': 'allow',
+  'which *': 'allow',
+  whoami: 'allow',
+  'xargs *': 'allow',
+} as const;
+
 // Allowlist of theoretically safe commands when run in the sandboxed shell.
 // Goal is to provide safe defaults whilst allowing the user to loosen explicitly.
 // This list should grow naturally with discussion.
 // Allow prompts are security theatre.
 // The sandbox should prevent real damage.
-const defaultBashPermission = {
+const defaultSandboxBashPermission = {
   '*': 'ask',
   './gradlew*': 'allow',
-  'awk*': 'allow',
-  'bun*': 'allow',
-  'cat*': 'allow',
-  'cut*': 'allow',
-  'diff*': 'allow',
-  'du*': 'allow',
-  'echo*': 'allow',
-  'file*': 'allow',
-  'find*': 'allow',
-  'gh co*': 'allow',
-  'gh pr*': 'allow',
-  'gh search*': 'allow',
-  'git*': 'allow',
-  'go*': 'allow',
-  'grep*': 'allow',
-  'gsed*': 'allow',
-  'head*': 'allow',
-  'jj*': 'allow',
-  'jj git*': 'ask',
-  'less*': 'allow',
-  'ls*': 'allow',
-  'make*': 'allow',
-  'mkdir*': 'allow',
-  'more*': 'allow',
-  'npm add*': 'ask',
-  'npm*': 'allow',
-  'npx skills*': 'allow',
-  'pwd*': 'allow',
-  'rg*': 'allow',
-  'sed*': 'allow',
-  'sort*': 'allow',
-  'stat*': 'allow',
-  'tail*': 'allow',
-  'tree*': 'allow',
-  'uniq*': 'allow',
-  'wc*': 'allow',
-  'whereis*': 'allow',
-  'which*': 'allow',
-  'xargs*': 'allow',
+  'ast-grep *': 'allow',
+  'awk *': 'allow',
+  'base64 *': 'allow',
+  'basename *': 'allow',
+  'biome *': 'allow',
+  'bun *': 'allow',
+  'cargo *': 'allow',
+  'cat *': 'allow',
+  'cloc *': 'allow',
+  'cp *': 'allow',
+  'curl *': 'allow',
+  'cut *': 'allow',
+  'date *': 'allow',
+  'diff *': 'allow',
+  'dirname *': 'allow',
+  'docker *': 'allow',
+  'dot *': 'allow',
+  'du *': 'allow',
+  'echo *': 'allow',
+  'fd *': 'allow',
+  'file *': 'allow',
+  'find *': 'allow',
+  'fnm *': 'allow',
+  'fzf *': 'allow',
+  'gh checkout *': 'allow',
+  'gh co *': 'allow',
+  'gh pr *': 'allow',
+  'gh search *': 'allow',
+  'git *': 'allow',
+  'git push *': 'ask',
+  'go *': 'allow',
+  'grep *': 'allow',
+  'gsed *': 'allow',
+  'gunzip *': 'allow',
+  'gzip *': 'allow',
+  'head *': 'allow',
+  hostname: 'allow',
+  id: 'allow',
+  'java *': 'allow',
+  'jj *': 'allow',
+  'jj git push *': 'ask',
+  'jj push *': 'ask',
+  'jq *': 'allow',
+  'kill *': 'allow',
+  'ls *': 'allow',
+  'lsof *': 'allow',
+  'make *': 'allow',
+  'mkdir *': 'allow',
+  'more *': 'allow',
+  'mv *': 'allow',
+  'npm *': 'allow',
+  'npx skills *': 'allow',
+  'nwb *': 'allow',
+  'open *': 'allow',
+  'pkill *': 'allow',
+  pbcopy: 'allow',
+  pbpaste: 'allow',
+  'pnpm *': 'allow',
+  'prettier *': 'allow',
+  'printf *': 'allow',
+  'ps *': 'allow',
+  pwd: 'allow',
+  'python *': 'allow',
+  'python3 *': 'allow',
+  'readlink *': 'allow',
+  'realpath *': 'allow',
+  'rg *': 'allow',
+  'sdk *': 'allow',
+  'sed *': 'allow',
+  'sg *': 'allow',
+  'shellcheck *': 'allow',
+  'sleep *': 'allow',
+  'sort *': 'allow',
+  'stat *': 'allow',
+  'tail *': 'allow',
+  'tar *': 'allow',
+  'tee *': 'allow',
+  'time *': 'allow',
+  'touch *': 'allow',
+  'tr *': 'allow',
+  'tree *': 'allow',
+  true: 'allow',
+  'tsc *': 'allow',
+  'turbo *': 'allow',
+  'uname *': 'allow',
+  'uniq *': 'allow',
+  'unzip *': 'allow',
+  'uv *': 'allow',
+  'vite *': 'allow',
+  'vitest *': 'allow',
+  'wc *': 'allow',
+  'wget *': 'allow',
+  'which *': 'allow',
+  whoami: 'allow',
+  'xargs *': 'allow',
+  'yarn *': 'allow',
+  'zip *': 'allow',
 } as const;
 
 const checkHasJest = async ($: PluginInput['$']) => {
@@ -428,6 +544,10 @@ export const BoxPlugin: Plugin = async ({ client, $, directory, worktree }) => {
 
   return {
     config: async (config) => {
+      const defaultBashPermission = hasSandbox
+        ? defaultSandboxBashPermission
+        : defaultSafeishBashPermission;
+
       // Allow external_directory if sandbox detected
       if (hasSandbox && !config.permission?.external_directory) {
         config.permission = {
@@ -436,7 +556,14 @@ export const BoxPlugin: Plugin = async ({ client, $, directory, worktree }) => {
         };
       }
 
-      const agents = config.agent;
+      const agents = config.agent ?? {};
+
+      // Ensure permissions on builtin agents
+      agents.build = agents.build || {};
+      agents.explore = agents.explore || {};
+      agents.general = agents.general || {};
+      agents.plan = agents.plan || {};
+
       for (const agentName in agents) {
         const agent = agents[agentName];
         if (!agent) continue;
@@ -446,10 +573,15 @@ export const BoxPlugin: Plugin = async ({ client, $, directory, worktree }) => {
           continue;
         }
 
+        const agentBashPermission =
+          agentName === 'plan' || agentName === 'explore'
+            ? defaultSafeishBashPermission
+            : defaultBashPermission;
+
         if (!agent.permission) {
           agent.permission = {
             bash: {
-              ...defaultBashPermission,
+              ...agentBashPermission,
             },
           };
           continue;
@@ -463,7 +595,7 @@ export const BoxPlugin: Plugin = async ({ client, $, directory, worktree }) => {
           }
 
           agent.permission.bash = {
-            ...defaultBashPermission,
+            ...agentBashPermission,
             ...userBashPermission,
           };
 
@@ -473,11 +605,13 @@ export const BoxPlugin: Plugin = async ({ client, $, directory, worktree }) => {
         // Agents with bash: allow or unset, make safe
         if (agent.permission.bash !== 'deny' && agent.permission.bash !== 'ask') {
           agent.permission.bash = {
-            ...defaultBashPermission,
+            ...agentBashPermission,
           };
           continue;
         }
       }
+
+      config.agent = agents;
     },
 
     'experimental.chat.system.transform': async (
