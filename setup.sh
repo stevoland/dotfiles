@@ -33,9 +33,11 @@ ln -s ~/dotfiles/ohmytmux/.tmux.conf ~/.config/tmux/tmux.conf
 
 # terminal
 ln -s $HOME/dotfiles/ghostty $HOME/.config
-ln -s ~/dotfiles/starship.toml ~/.config/starship.toml
+ln -s $HOME/dotfiles/starship.toml $HOME/.config/starship.toml
 ln -s $HOME/dotfiles/glow $HOME/Library/Preferences
 ln -s $HOME/dotfiles/opencode $HOME/.config
+ln -s $HOME/dotfiles/agents $HOME/.agents
+
 
 # npm
 ln -s ~/dotfiles/.npmrc ~/.npmrc

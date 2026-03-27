@@ -1,10 +1,6 @@
-- If you have a question tool, ALWAYS use it to ask the user a question.
-- NEVER stop to get a response from the user - use the question tool instead.
-- In all interaction and commit messages, be extremely concise and sacrifice grammar for the sake of concision.
+When your task is done, use the "question" tool to ask the user what they would like next
 
-## Github links
-
-All links for eeveebank org - use the gh cli tool or you won't have access to private repos
+In all interaction and commit messages, be extremely concise and sacrifice grammar for the sake of concision.
 
 ## Tracer Bullets
 

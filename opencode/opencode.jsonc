@@ -22,6 +22,11 @@
       "type": "remote",
       "url": "https://mcp.datadoghq.eu/api/unstable/mcp-server/mcp?toolsets=core,apm,software-delivery"
     },
+    "executor": {
+      "enabled": false,
+      "type": "remote",
+      "url": "http://127.0.0.1:8788/mcp"
+    },
     "github": {
       "command": [
         "/Users/stephen.collings/dotfiles/opencode-commands/github.sh"

@@ -5,12 +5,10 @@
 {
   "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/dev/assets/oh-my-opencode.schema.json",
   "auto_update": false,
-  "model_fallback": false,
   "background_task": {
-    "defaultConcurrency": 5,
-    "maxDepth": 1,
+    "defaultConcurrency": 8,
     "modelConcurrency": {
-      "github-copilot/claude-opus-4.6": 1
+      "github-copilot/claude-opus-4.6": 2
     }
   },
   "agents": {
@@ -18,14 +16,14 @@
       "model": "github-copilot/claude-opus-4.6"
     },
     "explore": {
-      "model": "github-copilot/gpt-5.4-mini"
+      "model": "github-copilot/gpt-5.4"
     },
     "hephaestus": {
       "model": "github-copilot/gpt-5.3-codex",
       "variant": "medium"
     },
     "librarian": {
-      "model": "github-copilot/gpt-5.4-mini"
+      "model": "github-copilot/gpt-5.4"
     },
     "metis": {
       "model": "github-copilot/gpt-5.4",
@@ -49,11 +47,7 @@
     },
     "sisyphus": {
       "model": "github-copilot/gpt-5.4",
-      "variant": "medium",
-      "ultrawork": {
-        "model": "github-copilot/gpt-5.4",
-        "variant": "high"
-      }
+      "variant": "medium"
     },
     "sisyphus-junior": {
       "model": "github-copilot/gpt-5.4"
@@ -61,9 +55,8 @@
   },
   "categories": {
     "artistry": {
-      "model": "github-copilot/gpt-5.4",
-      "variant": "high",
-      "temperature": 0.3
+      "model": "github-copilot/claude-sonnet-4.6",
+      "variant": "max"
     },
     "deep": {
       "model": "github-copilot/gpt-5.3-codex",
@@ -94,7 +87,7 @@
     }
   },
   "disabled_hooks": [
-    "startup-toast"
+    "preemptive-compaction"
   ],
   "disabled_mcps": [
     "context7",
@@ -102,7 +95,9 @@
   ],
   "git_master": {
     "commit_footer": false,
-    "include_co_authored_by": false,
-    "git_env_prefix": ""
+    "include_co_authored_by": false
+  },
+  "experimental": {
+    "preemptive_compaction": false
   }
 }

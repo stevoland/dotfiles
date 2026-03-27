@@ -1,6 +1,9 @@
 .DS_Store
 **/secret*
 .scratch
+
+jj/repos/**
+
 opencode/artifact-index
 opencode/logs
 

@@ -1,0 +1,35 @@
+{
+  "version": 3,
+  "skills": {
+    "find-skills": {
+      "source": "eeveebank/agent-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/eeveebank/agent-skills.git",
+      "skillPath": "skills/find-skills/SKILL.md",
+      "skillFolderHash": "54215c7cf0d8d116661bbb0b97860201078c338d",
+      "installedAt": "2026-03-04T15:28:47.969Z",
+      "updatedAt": "2026-03-05T15:34:24.606Z"
+    },
+    "configure-boxedcode": {
+      "source": "eeveebank/agent-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/eeveebank/agent-skills.git",
+      "skillPath": "skills/configure-boxedcode/SKILL.md",
+      "skillFolderHash": "785ade9665ca80c30f695937090659e834f3d680",
+      "installedAt": "2026-03-04T15:28:50.002Z",
+      "updatedAt": "2026-03-05T15:34:27.329Z"
+    }
+  },
+  "dismissed": {
+    "findSkillsPrompt": true
+  },
+  "lastSelectedAgents": [
+    "amp",
+    "codex",
+    "cursor",
+    "gemini-cli",
+    "github-copilot",
+    "kimi-cli",
+    "opencode"
+  ]
+}

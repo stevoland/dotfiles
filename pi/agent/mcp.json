@@ -16,11 +16,11 @@
     },
     "kubeview": {
       "command": "npx",
-      "args": ["npx", "-y", "kubeview-mcp"]
+      "args": ["-y", "kubeview-mcp"]
     },
     "opensrc": {
       "command": "npx",
-      "args": ["npx", "-y", "opensrc-mcp"]
+      "args": ["-y", "opensrc-mcp"]
     },
     "overseer": {
       "command": "npx",

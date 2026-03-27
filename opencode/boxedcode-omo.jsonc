@@ -1,4 +1,17 @@
 {
   "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/dev/assets/oh-my-opencode.schema.json",
-  "agents": {}
+  "agents": {
+    "atlas": {
+      "model": "github-copilot/claude-opus-4.6"
+    },
+    "prometheus": {
+      "model": "github-copilot/claude-opus-4.6"
+    }
+  },
+  "experimental": {
+    "preemptive_compaction": false
+  },
+  "disabled_hooks": [
+    "preemptive-compaction"
+  ]
 }

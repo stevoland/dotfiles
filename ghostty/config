@@ -65,7 +65,21 @@ window-colorspace = "display-p3"
 copy-on-select = clipboard
 
 theme = vesper
-# theme = Black Metal (Burzum)
+# Shift Vesper pink/magenta accents toward orange
+# ANSI red/magenta lanes
+palette = 1=#c8744f
+palette = 5=#d9925b
+palette = 9=#e08a5c
+palette = 13=#f2ad67
+# Shift greens further toward cyan-blue
+palette = 2=#008a96
+palette = 10=#1692a6
+palette = 22=#006f8a
+palette = 28=#0099bc
+palette = 34=#00bee8
+palette = 40=#17d1ee
+palette = 46=#5feafa
+
 minimum-contrast = 3
 window-padding-x = 6
 

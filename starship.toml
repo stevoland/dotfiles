@@ -13,6 +13,9 @@ $directory$all$character'''
 success_symbol = '[\$](bright white)' # The 'success_symbol' segment is being set to '➜' with the color 'bold green'
 error_symbol = '[\$](bold red)'
 
+[directory]
+style = '#d9925b'
+
 # Disable the package module, hiding it from the prompt completely
 [package]
 disabled = true
