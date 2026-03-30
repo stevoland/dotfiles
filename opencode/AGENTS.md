@@ -1,4 +1,4 @@
-When your task is done, use the "question" tool to ask the user what they would like next
+
 
 In all interaction and commit messages, be extremely concise and sacrifice grammar for the sake of concision.
 

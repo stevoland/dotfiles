@@ -1,12 +1,9 @@
 ---
 description: Use for project managment, jira/confluence/atlassian
 mode: all
-model: github-copilot/claude-sonnet-4.6
+model: github-copilot/gpt-5.4
+variant: medium
 name: PM
-options:
-  thinking:
-    type: enabled
-    budgetTokens: 16000
 permission:
   atlassian_*: allow
   todoread: deny

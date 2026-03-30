@@ -40,10 +40,10 @@ process.stdout.write(v);
 GLOBAL_UPDATED=no
 if [ "${GLOBAL_CURRENT}" != "${LATEST}" ]; then
   echo "Updating global pi-coding-agent: ${GLOBAL_CURRENT:-<none>} -> ${LATEST}"
-  npm install -g "@mariozechner/pi-coding-agent@${LATEST}"
+  npmig "@mariozechner/pi-coding-agent@${LATEST}"
   GLOBAL_UPDATED=yes
 else
-  echo "Global pi-coding-agent already at ${LATEST}; skipping npm install -g"
+  echo "Global pi-coding-agent already at ${LATEST}; skipping npmig"
 fi
 
 # 3) Sync dotfiles Pi package versions only when drift exists

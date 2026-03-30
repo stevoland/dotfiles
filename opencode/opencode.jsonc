@@ -1,21 +1,19 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "agent": {
-    "build": {
-      "model": "github-copilot/gpt-5.4",
-      "variant": "medium"
+    "explore": {
+      "model": "github-copilot/gpt-5.4-mini"
     }
+  },
+  "compaction": {
+    "auto": false,
+    "prune": false
   },
   "mcp": {
     "atlassian": {
-      "enabled": true,
+      "enabled": false,
       "type": "remote",
       "url": "https://mcp.atlassian.com/v1/mcp"
-    },
-    "context7": {
-      "enabled": true,
-      "type": "remote",
-      "url": "https://mcp.context7.com/mcp"
     },
     "datadog": {
       "enabled": true,
@@ -26,6 +24,13 @@
       "enabled": false,
       "type": "remote",
       "url": "http://127.0.0.1:8788/mcp"
+    },
+    "fff": {
+      "command": [
+        "fff-mcp"
+      ],
+      "enabled": true,
+      "type": "local"
     },
     "github": {
       "command": [
@@ -118,7 +123,8 @@
     "datadog_*": "deny"
   },
   "plugin": [
-    "/Users/stephen.collings/workspace/github.com/eeveebank/boxedcode-pro",
+    "@xesrevinu/opencode-jj-enforcer@0.1.2",
+    "/Users/stephen.collings/.boxedcode-pro/0.12.0/boxedcode-pro",
     "@slkiser/opencode-quota@2.1.0"
   ],
   "skills": {

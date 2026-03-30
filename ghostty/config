@@ -79,6 +79,9 @@ palette = 28=#0099bc
 palette = 34=#00bee8
 palette = 40=#17d1ee
 palette = 46=#5feafa
+# Shift Vesper cyan lanes from pink to light teal
+palette = 6=#4bb7b1
+palette = 14=#78d7ce
 
 minimum-contrast = 3
 window-padding-x = 6
@@ -86,11 +89,18 @@ window-padding-x = 6
 macos-option-as-alt = true
 macos-titlebar-style = hidden
 
+cursor-style = bar
+adjust-cursor-thickness = 4
+
 # custom-shader = ./shaders/bettercrt.glsl
 # custom-shader = ./shaders/bloom.glsl
 # custom-shader = ./shaders/glitchy.glsl
 # custom-shader = ./shaders/retro-terminal.glsl
 # custom-shader = ./shaders/glow-rgbsplit-twitchy.glsl
+
+custom-shader = ./shaders/cursor_blaze_tapered.glsl
+custom-shader = ./shaders/blaze_sparks.glsl
+
 
 # custom-shader = ./shaders/tft.glsl
 

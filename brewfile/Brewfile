@@ -28,7 +28,6 @@ brew capstone
 brew chrome-cli
 brew cjson
 brew claude-squad
-brew cliproxyapi
 brew colima
 brew coreutils
 brew dav1d
@@ -157,6 +156,7 @@ brew libyaml
 brew lima
 brew lima-additional-guestagents
 brew little-cms2
+brew llhttp
 brew llvm
 brew lnav
 brew lpeg
@@ -195,6 +195,7 @@ brew pinentry
 brew pipx
 brew pixman
 brew pkgconf
+brew pnpm
 brew procs
 brew pyenv
 brew pyenv-virtualenv
@@ -224,7 +225,6 @@ brew srt
 brew starship
 brew stern
 brew svt-av1
-brew terraform
 brew tesseract
 brew tflint
 brew theora
@@ -251,6 +251,7 @@ brew visidata
 brew walk
 brew wangle
 brew watchman
+brew weave
 brew webp
 brew wget
 brew wireshark
@@ -353,10 +354,12 @@ cask gcloud-cli
 cask ghostty
 cask helium-browser
 cask keycastr
+cask kitlangton-hex
 cask meld
 cask mitmproxy
 cask ngrok
 cask raycast
+cask supacode
 cask switch
 cask visual-studio-code
 cask wireshark-app
@@ -382,13 +385,15 @@ tap dmmulroy/tap
 brew jj-starship
 brew lmv
 
+tap eddmann/tap
+cask revu
+
 tap eeveebank/tap
 brew box
 brew nwb
 
 tap felixkratz/formulae
 brew borders
-brew sketchybar
 
 tap grantcarthew/tap
 brew snag
@@ -402,6 +407,12 @@ brew hookdeck
 tap int128/kubelogin
 
 tap jbangdev/tap
+
+tap kostyay/tap
+cask httpmon
+
+tap neurosnap/tap
+brew zmx
 
 tap nikitabobko/tap
 cask aerospace
@@ -430,6 +441,9 @@ brew poltergeist
 
 tap trycua/lume
 
+# Other Homebrew packages
+brew terraform
+
 # App Store applications
 appstore 682658836 GarageBand (10.4.11)
 appstore 408981434 iMovie (10.4.2)
@@ -437,7 +451,7 @@ appstore 1608041266 Jamf Trust (2.23.0)
 appstore 409183694 Keynote (14.2)
 appstore 409203825 Numbers (14.4)
 appstore 409201541 Pages (14.2)
-appstore 497799835 Xcode (26.3)
+appstore 497799835 Xcode (26.4.1)
 
 # VSCode extensions
 vscode aaron-bond.better-comments

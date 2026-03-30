@@ -1,30 +1,27 @@
 {
-  "lastChangelogVersion": "0.64.0",
+  "lastChangelogVersion": "0.67.68",
   "defaultProvider": "github-copilot",
-  "defaultModel": "gpt-5.3-codex",
-  "defaultThinkingLevel": "medium",
-  "theme": "ghostty-sync-05e5060b",
+  "defaultModel": "gpt-5.5",
+  "defaultThinkingLevel": "low",
+  "theme": "ghostty-sync-181e36be",
   "packages": [
     "~/workspace/github.com/monotykamary/pi-mcp-adapter",
-    "npm:pi-subagents",
-    "npm:pi-finder-subagent",
     "npm:pi-librarian",
     "npm:pi-ask-tool-extension",
     "npm:pi-web-access",
-    "npm:pi-messenger",
     "npm:@ogulcancelik/pi-ghostty-theme-sync",
     "npm:glimpseui",
-    "npm:pi-interview"
+    "npm:pi-interview",
+    "git:https://github.com/badlogic/pi-diff-review"
   ],
-  "extensions": [
-    "-extensions/whimsical.ts"
-  ],
+  "extensions": [],
   "enabledModels": [
     "github-copilot/claude-sonnet-4.6",
     "github-copilot/claude-opus-4.6",
     "github-copilot/gpt-5-mini",
     "github-copilot/gpt-5.3-codex",
-    "github-copilot/gpt-5.4"
+    "github-copilot/gpt-5.4",
+    "github-copilot/gpt-5.5"
   ],
   "hideThinkingBlock": false
 }

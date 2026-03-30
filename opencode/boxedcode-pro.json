@@ -3,6 +3,9 @@
   "feature": {
     "openTelemetry": {
       "enabled": true
+    },
+    "javaLsp": {
+      "enabled": true
     }
   }
 }

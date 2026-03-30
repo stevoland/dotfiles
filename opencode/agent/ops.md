@@ -1,11 +1,8 @@
 ---
 description: Use for debugging services or anything related to datadog
 mode: all
-model: github-copilot/claude-sonnet-4.6
-options:
-  thinking:
-    type: enabled
-    budgetTokens: 16000
+model: github-copilot/gpt-5.4
+variant: medium
 permission:
   datadog_*: allow
   todoread: deny

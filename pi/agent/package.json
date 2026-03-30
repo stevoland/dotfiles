@@ -7,9 +7,9 @@
     "bench:lsp": "bun run ./extensions/lsp/bench/run-parity.ts"
   },
   "dependencies": {
-    "@mariozechner/pi-ai": "^0.64.0",
-    "@mariozechner/pi-coding-agent": "^0.64.0",
-    "@mariozechner/pi-tui": "^0.64.0",
+    "@mariozechner/pi-ai": "^0.66.1",
+    "@mariozechner/pi-coding-agent": "^0.66.1",
+    "@mariozechner/pi-tui": "^0.66.1",
     "picomatch": "^4.0.3"
   }
 }

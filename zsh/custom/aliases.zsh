@@ -104,3 +104,21 @@ export OPENCODE_ENABLE_EXA=1
 # export OPENCODE_EXPERIMENTAL_FILEWATCHER=true
 
 # export PATH="$HOME/workspace/github.com/stevoland/opencode/packages/opencode/dist/opencode-darwin-arm64/bin:$PATH"
+
+
+w() {
+  local URL=$1
+  # 1. Get the ID of the focused workspace
+  local CURRENT_WORKSPACE=$(aerospace list-workspaces --focused)
+
+  # 2. Check if there is a Chrome window in the current workspace
+  local CHROME_IN_WORKSPACE=$(aerospace list-windows --workspace "$CURRENT_WORKSPACE" --app-id com.google.Chrome)
+
+  if [ -z "$CHROME_IN_WORKSPACE" ]; then
+      # 3. No Chrome window here? Open a new one.
+      open -na "Google Chrome" --args --new-window "$URL"
+  else
+      # 4. Chrome exists here? Just open the URL (usually opens in a new tab).
+      open -a "Google Chrome" "$URL"
+  fi
+}

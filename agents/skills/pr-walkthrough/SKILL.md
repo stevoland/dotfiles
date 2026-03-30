@@ -1,6 +1,6 @@
 ---
 name: pr-walkthrough
-description: Generate an interactive visual walkthrough of any pull/merge request as a local HTML webapp. Produces a multi-slide presentation with SVG diagrams, annotated code, and architecture visuals. Pass a PR/MR URL and optional audience context (e.g. "assume I don't know Rust"). Use when the user says "walkthrough this PR", "explain this MR", "visual walkthrough", "PR presentation", or provides a PR/MR URL and asks for a walkthrough.
+description: Generate an interactive visual walkthrough of any pull/merge request as a local HTML webapp. Produces a multi-slide presentation with SVG diagrams, annotated code, and architecture visuals. Pass a PR URL and optional audience context (e.g. "assume I don't know Rust"). Use when the user says "walkthrough this PR", "explain this MR", "visual walkthrough", "PR presentation", or provides a PR URL and asks for a walkthrough.
 ---
 
 # PR Walkthrough
@@ -79,7 +79,7 @@ Adapt the count and structure to the PR. Small PRs might need 4–5 slides. Larg
 
 ### 4. Generate the HTML
 
-Write a single self-contained HTML file to `.scratch/walkthrough/index.html` in the project root. Use the [HTML template reference](references/html-template.md) for the exact CSS framework, component library, and JavaScript.
+Write a single self-contained HTML file to `.scratch/walkthrough-<PR_NUMBER>/index.html` in the project root. Use the [HTML template reference](references/html-template.md) for the exact CSS framework, component library, and JavaScript.
 
 **Critical quality requirements:**
 
@@ -91,7 +91,7 @@ Write a single self-contained HTML file to `.scratch/walkthrough/index.html` in 
 - **Responsive** — works on mobile (cards stack vertically).
 - **Zero external dependencies** — no CDN links, no Google Fonts, no JS libraries. Everything inline.
 
-`open .scratch/walkthrough/index.html`
+`open .scratch/walkthrough-<PR_NUMBER>/index.html`
 
 ## Principles
 

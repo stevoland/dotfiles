@@ -1,4 +1,8 @@
-import type { BashOperations, ExtensionAPI, ToolResultEvent } from "@mariozechner/pi-coding-agent";
+import type {
+  BashOperations,
+  ExtensionAPI,
+  ToolResultEvent,
+} from "@mariozechner/pi-coding-agent";
 import {
   createBashTool,
   isFindToolResult,
@@ -71,7 +75,12 @@ function toStringArray(value: unknown): string[] {
 }
 
 function hasGlobSyntax(pattern: string): boolean {
-  return pattern.includes("*") || pattern.includes("?") || pattern.includes("[") || pattern.includes("{");
+  return (
+    pattern.includes("*") ||
+    pattern.includes("?") ||
+    pattern.includes("[") ||
+    pattern.includes("{")
+  );
 }
 
 function normalizeForPatternMatch(value: string): string {
@@ -88,14 +97,25 @@ function expandHome(pathValue: string): string {
 
 function normalizePath(pathValue: string, projectRoot: string): string {
   const expanded = expandHome(pathValue);
-  return isAbsolute(expanded) ? resolve(expanded) : resolve(projectRoot, expanded);
+  return isAbsolute(expanded)
+    ? resolve(expanded)
+    : resolve(projectRoot, expanded);
 }
 
-function resolveFilesystemConfig(filesystem: FileSystemConfig, projectRoot: string): FileSystemConfig {
+function resolveFilesystemConfig(
+  filesystem: FileSystemConfig,
+  projectRoot: string,
+): FileSystemConfig {
   return {
-    denyRead: filesystem.denyRead.map((entry) => normalizePath(entry, projectRoot)),
-    allowWrite: filesystem.allowWrite.map((entry) => normalizePath(entry, projectRoot)),
-    denyWrite: filesystem.denyWrite.map((entry) => normalizePath(entry, projectRoot)),
+    denyRead: filesystem.denyRead.map((entry) =>
+      normalizePath(entry, projectRoot),
+    ),
+    allowWrite: filesystem.allowWrite.map((entry) =>
+      normalizePath(entry, projectRoot),
+    ),
+    denyWrite: filesystem.denyWrite.map((entry) =>
+      normalizePath(entry, projectRoot),
+    ),
   };
 }
 
@@ -168,7 +188,9 @@ function globToRegex(pattern: string): RegExp {
       }
 
       if (classEnd < pattern.length) {
-        const classBody = pattern.slice(index + 1, classEnd).replaceAll("\\", "\\\\");
+        const classBody = pattern
+          .slice(index + 1, classEnd)
+          .replaceAll("\\", "\\\\");
         regexPattern += `[${classBody}]`;
         index = classEnd + 1;
         continue;
@@ -293,7 +315,7 @@ function createBoxBashOperations(): BashOperations {
   return {
     async exec(command, cwd, { onData, signal, timeout, env }) {
       return new Promise((resolvePromise, rejectPromise) => {
-        const child = spawn("box", ["bash", "-lc", command], {
+        const child = spawn("box", [command], {
           cwd,
           env,
           detached: true,
@@ -377,10 +399,15 @@ function createBoxBashOperations(): BashOperations {
   };
 }
 
-async function loadSandboxState(pi: ExtensionAPI, projectRoot: string): Promise<SandboxState> {
+async function loadSandboxState(
+  pi: ExtensionAPI,
+  projectRoot: string,
+): Promise<SandboxState> {
   const shell = process.env["SHELL"];
 
-  const commands: Array<{ cmd: string; args: string[] }> = [{ cmd: "box", args: ["print-config"] }];
+  const commands: Array<{ cmd: string; args: string[] }> = [
+    { cmd: "box", args: ["print-config"] },
+  ];
 
   if (shell && shell.match(/opencode-shell$/)) {
     commands.push({ cmd: shell, args: ["print-config"] });
@@ -464,7 +491,10 @@ export default function boxedcodeSandboxExtension(pi: ExtensionAPI) {
     }
 
     if (!state.active) {
-      ctx.ui.notify(`[boxedcode-sandbox] ${state.message ?? "Sandbox disabled."}`, "warning");
+      ctx.ui.notify(
+        `[boxedcode-sandbox] ${state.message ?? "Sandbox disabled."}`,
+        "warning",
+      );
       return;
     }
 
@@ -474,7 +504,10 @@ export default function boxedcodeSandboxExtension(pi: ExtensionAPI) {
 
     ctx.ui.setStatus(
       "boxedcode-sandbox",
-      ctx.ui.theme.fg("accent", `🔒 sandbox: read(${readRules}) write(${writeRules}) net(${networkRules})`),
+      ctx.ui.theme.fg(
+        "accent",
+        `🔒 sandbox: read(${readRules}) write(${writeRules}) net(${networkRules})`,
+      ),
     );
     ctx.ui.notify("[boxedcode-sandbox] Sandbox activated.", "info");
   });
@@ -512,14 +545,18 @@ export default function boxedcodeSandboxExtension(pi: ExtensionAPI) {
       const host = url.hostname;
 
       if (hostMatches(host, state.config.network.deniedDomains)) {
-        throw new Error(`webfetch ${urlValue}: blocked by sandbox deniedDomains`);
+        throw new Error(
+          `webfetch ${urlValue}: blocked by sandbox deniedDomains`,
+        );
       }
 
       if (
-        state.config.network.allowedDomains.length > 0
-        && !hostMatches(host, state.config.network.allowedDomains)
+        state.config.network.allowedDomains.length > 0 &&
+        !hostMatches(host, state.config.network.allowedDomains)
       ) {
-        throw new Error(`webfetch ${urlValue}: blocked by sandbox allowedDomains`);
+        throw new Error(
+          `webfetch ${urlValue}: blocked by sandbox allowedDomains`,
+        );
       }
 
       return;
@@ -537,7 +574,11 @@ export default function boxedcodeSandboxExtension(pi: ExtensionAPI) {
     } else if (isToolCallEventType("write", event)) {
       pathToCheck = event.input.path;
       operation = "write";
-    } else if (isToolCallEventType("grep", event) || isToolCallEventType("find", event) || isToolCallEventType("ls", event)) {
+    } else if (
+      isToolCallEventType("grep", event) ||
+      isToolCallEventType("find", event) ||
+      isToolCallEventType("ls", event)
+    ) {
       pathToCheck = event.input.path ?? ".";
       operation = "read";
     }
@@ -546,7 +587,12 @@ export default function boxedcodeSandboxExtension(pi: ExtensionAPI) {
       return;
     }
 
-    const blocked = isPathBlocked(state.config.filesystem, pathToCheck, ctx.cwd, operation);
+    const blocked = isPathBlocked(
+      state.config.filesystem,
+      pathToCheck,
+      ctx.cwd,
+      operation,
+    );
 
     if (blocked) {
       throw new Error(`${operation} ${pathToCheck}: blocked by sandbox`);
@@ -559,7 +605,8 @@ export default function boxedcodeSandboxExtension(pi: ExtensionAPI) {
     }
 
     if (isFindToolResult(event)) {
-      const basePath = typeof event.input["path"] === "string" ? event.input["path"] : ".";
+      const basePath =
+        typeof event.input["path"] === "string" ? event.input["path"] : ".";
       const baseAbsolute = normalizePath(basePath, ctx.cwd);
 
       return {
@@ -569,13 +616,19 @@ export default function boxedcodeSandboxExtension(pi: ExtensionAPI) {
           }
 
           const candidate = normalizePath(line.trim(), baseAbsolute);
-          return !isPathBlocked(state.config.filesystem, candidate, state.projectRoot, "read");
+          return !isPathBlocked(
+            state.config.filesystem,
+            candidate,
+            state.projectRoot,
+            "read",
+          );
         }),
       };
     }
 
     if (isGrepToolResult(event)) {
-      const basePath = typeof event.input["path"] === "string" ? event.input["path"] : ".";
+      const basePath =
+        typeof event.input["path"] === "string" ? event.input["path"] : ".";
       const baseAbsolute = normalizePath(basePath, ctx.cwd);
 
       return {
@@ -586,7 +639,12 @@ export default function boxedcodeSandboxExtension(pi: ExtensionAPI) {
           }
 
           const candidate = normalizePath(grepPath, baseAbsolute);
-          return !isPathBlocked(state.config.filesystem, candidate, state.projectRoot, "read");
+          return !isPathBlocked(
+            state.config.filesystem,
+            candidate,
+            state.projectRoot,
+            "read",
+          );
         }),
       };
     }

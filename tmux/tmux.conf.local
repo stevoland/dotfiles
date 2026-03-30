@@ -409,6 +409,10 @@ tmux_conf_urlscan_options="--compact --dedupe"
 # move status line to top
 #set -g status-position top
 
+# for pi
+set -g extended-keys on
+set -g extended-keys-format csi-u
+
 
 # -- tpm -----------------------------------------------------------------------
 

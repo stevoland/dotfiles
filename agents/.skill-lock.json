@@ -1,0 +1,35 @@
+{
+  "version": 3,
+  "skills": {
+    "cmux": {
+      "source": "manaflow-ai/cmux",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/manaflow-ai/cmux.git",
+      "skillPath": "skills/cmux/SKILL.md",
+      "skillFolderHash": "c51473e48c0c9a13cfc9dffe0a9f2193bbdfd6f2",
+      "installedAt": "2026-04-13T08:10:19.655Z",
+      "updatedAt": "2026-04-13T08:10:19.655Z"
+    },
+    "cmux-markdown": {
+      "source": "manaflow-ai/cmux",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/manaflow-ai/cmux.git",
+      "skillPath": "skills/cmux-markdown/SKILL.md",
+      "skillFolderHash": "c6cf70a1ad9f98867a652dc03ded80905c2706c8",
+      "installedAt": "2026-04-13T08:10:59.471Z",
+      "updatedAt": "2026-04-13T08:10:59.471Z"
+    },
+    "cmux-browser": {
+      "source": "manaflow-ai/cmux",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/manaflow-ai/cmux.git",
+      "skillPath": "skills/cmux-browser/SKILL.md",
+      "skillFolderHash": "6d5dfc4de15faae37f932fa71f2bc9943bd2dafe",
+      "installedAt": "2026-04-13T09:29:52.298Z",
+      "updatedAt": "2026-04-13T09:29:52.298Z"
+    }
+  },
+  "dismissed": {
+    "findSkillsPrompt": true
+  }
+}

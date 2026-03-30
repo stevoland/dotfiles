@@ -1,9 +1,11 @@
 source <(fzf --zsh)
 
+export FZF_FILE_COLORS='di=38;2;0;138;150:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43'
+
 export FZF_DEFAULT_OPTS="
---color=bg+:#232530,bg:#1c1e26,spinner:#24a8b4,hl:#df5273
---color=fg:#9da0a2,header:#df5273,info:#efb993,pointer:#24a8b4
---color=marker:#24a8b4,fg+:#dcdfe4,prompt:#efb993,hl+:#df5273
+--color=bg+:#1c1c1c,bg:#101010,spinner:#008a96,hl:#008a96
+--color=fg:#8f8f8f,header:#008a96,info:#e6b99d,pointer:#008a96
+--color=marker:#d9925b,fg+:#d4d4d4,prompt:#d9925b,hl+:#d9925b
 --ansi
 --height 50% --layout=reverse --margin 1,1
 --bind 'ctrl-j:jump-accept'
