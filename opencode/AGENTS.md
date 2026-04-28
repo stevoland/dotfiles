@@ -1,50 +1,33 @@
+Be concise.
 
+Don't commit unless the user asks.
 
-In all interaction and commit messages, be extremely concise and sacrifice grammar for the sake of concision.
+Do not preserve backward compatibility. Remove obsolete paths instead of
+adding compatibility layers, fallbacks, or migrations.
 
-## Tracer Bullets
+Choose the simplest implementation that fully meets the current
+requirements. Avoid speculative abstractions, configuration, and
+indirection.
 
-When building features, build a tiny, end-to-end slice of the feature first, seek feedback, then expand out from there.
+Tracer Bullets. Vertical slices. Grow the system in layers.
+Start from the smallest version that works end
+to end, and add each new capability on top of a product that already
+works. Never trade a working product for unfinished complexity.
 
-When building systems, you want to write code that gets you feedback as quickly as possible. Tracer bullets are small slices of functionality that go through all layers of the system, allowing you to test and validate your approach early. This helps in identifying potential issues and ensures that the overall architecture is sound before investing significant time in development.
+Keep components modular and concerns clearly separated.
 
-## Code Quality Standards
+Do not reimplement common functionality without a clear reason.
 
-- Make minimal, surgical changes
-- **Never compromise type safety**: No `any`, no non-null assertion operator (`!`), no type assertions (`as Type`)
-- **Make illegal states unrepresentable**: Model domain with ADTs/discriminated unions; parse inputs at boundaries into typed structures; if state can't exist, code can't mishandle it
-- **Abstractions**: Consciously constrained, pragmatically parameterised, doggedly documented
+Make architectural decisions for the long term. Do not accept a stopgap
+that only works for now and is meant to be replaced later.
 
-### **ENTROPY REMINDER**
-This codebase will outlive you. Every shortcut you take becomes
-someone else's burden. Every hack compounds into technical debt
-that slows the whole team down.
+Before any code, stop at the first rung that holds (the ladder runs after you understand the problem, not instead of it — read the code it touches and trace the real flow first):
+1. Does this need to be built at all? (YAGNI)
+2. Does it already exist in this codebase? Reuse what is already here, do not re-write it.
+3. Does the standard library do this? Use it.
+4. Does a native platform feature cover it? Use it.
+5. Does an already-installed dependency solve it? Use it.
+6. Can this be one line? Make it one line.
+7. Only then: write the minimum code that works.
 
-You are not just writing code. You are shaping the future of this
-project. The patterns you establish will be copied. The corners
-you cut will be cut again.
-
-**Fight entropy. Leave the codebase better than you found it.**
-
-
-## Testing
-
-- Write tests that verify semantically correct behavior
-- **Failing tests are acceptable** when they expose genuine bugs and test correct behavior
-
-## Git, jj, VCS, SCM, Pull Requests, Commits
-
-- **ALWAYS check for `.jj/` dir before ANY VCS command** - if present, use jj not git
-- **gh CLI available** for GitHub operations (PRs, issues, etc.)
-
-## Plans
-
-- At the end of each plan, give me a list of unresolved questions to answer, if any. Make the questions extremely concise. Sacrifice grammar for the sake of concision.
-
-## Specialized Subagents
-
-### Oracle
-Invoke for: code review, architecture decisions, debugging analysis, refactor planning, second opinion.
-
-### Librarian
-Invoke for: understanding 3rd party libraries/packages, exploring remote repositories, discovering open source patterns.
+Bug fix = root cause, not symptom: grep every caller of the function you touch and fix the shared function once (a smaller diff than one guard per caller); patching only the path the ticket names leaves a sibling caller broken.

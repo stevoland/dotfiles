@@ -50,7 +50,7 @@ When a user asks for help with something, identify:
 Before searching the broader ecosystem, list the available skills in NatWest Boxed:
 
 ```bash
-npx skills add eeveebank/agent-skills --list
+npx skills add eeveebank/agent-skills --list --full-depth
 ```
 
 If you find a relevant skill here jump to Step 4 to present it to the user.

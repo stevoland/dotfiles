@@ -1,132 +1,100 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "agent": {
-    "explore": {
-      "model": "github-copilot/gpt-5.4-mini"
+    "high": {
+      "color": "#ff8080",
+      "model": "github-copilot/gpt-5.6-sol",
+      "variant": "medium"
+    },
+    "low": {
+      "color": "#ffc799",
+      "model": "github-copilot/gpt-5.6-luna",
+      "variant": "high"
+    },
+    "plan": {
+      "hidden": true
     }
   },
-  "compaction": {
-    "auto": false,
-    "prune": false
-  },
+  "default_agent": "low",
   "mcp": {
     "atlassian": {
-      "enabled": false,
+      "enabled": true,
       "type": "remote",
-      "url": "https://mcp.atlassian.com/v1/mcp"
+      "url": "https://mcp.atlassian.com/v1/mcp/authv2"
+    },
+    "codesearch": {
+      "command": [
+        "/opt/homebrew/bin/codesearch",
+        "mcp"
+      ],
+      "cwd": "/opt/homebrew/bin",
+      "enabled": true,
+      "type": "local"
     },
     "datadog": {
       "enabled": true,
       "type": "remote",
-      "url": "https://mcp.datadoghq.eu/api/unstable/mcp-server/mcp?toolsets=core,apm,software-delivery"
+      "url": "https://mcp.datadoghq.eu/api/unstable/mcp-server/mcp?toolsets=all"
     },
-    "executor": {
-      "enabled": false,
-      "type": "remote",
-      "url": "http://127.0.0.1:8788/mcp"
-    },
-    "fff": {
+    "filesystem": {
       "command": [
-        "fff-mcp"
+        "mcp-server-filesystem",
       ],
       "enabled": true,
       "type": "local"
     },
     "github": {
-      "command": [
-        "/Users/stephen.collings/dotfiles/opencode-commands/github.sh"
-      ],
+      "type": "remote",
+      "url": "https://api.githubcopilot.com/mcp/x/all",
       "enabled": false,
-      "type": "local"
+      "oauth": false,
+      "headers": {
+        "Authorization": "Bearer {env:GITHUB_TOKEN}"
+      }
     },
-    "grep_app": {
+    "incidentio": {
       "enabled": true,
       "type": "remote",
-      "url": "https://mcp.grep.app"
+      "url": "https://mcp.incident.io/mcp"
     },
     "kubernetes": {
       "command": [
-        "npx",
-        "-y",
-        "@mettle/boxed-kubernetes-mcp-server"
-      ],
-      "enabled": false,
-      "type": "local"
-    },
-    "kubeview": {
-      "command": [
-        "npx",
-        "-y",
-        "kubeview-mcp"
-      ],
-      "enabled": false,
-      "environment": {
-        "MCP_MODE": "code"
-      },
-      "type": "local"
-    },
-    "kubeview_mcp": {
-      "command": [
-        "npx",
-        "-y",
-        "kubeview-mcp"
-      ],
-      "enabled": false,
-      "environment": {
-        "MCP_MODE": "tools"
-      },
-      "type": "local"
-    },
-    "maven": {
-      "command": [
-        "npx",
-        "-y",
-        "@mettle/boxed-maven-mcp-server"
+        "kubernetes-mcp-server",
       ],
       "enabled": true,
       "type": "local"
     },
-    "opensrc": {
-      "command": [
-        "npx",
-        "-y",
-        "opensrc-mcp"
-      ],
-      "enabled": true,
-      "type": "local"
-    },
-    "overseer": {
-      "command": [
-        "npx",
-        "-y",
-        "@dmmulroy/overseer",
-        "mcp"
-      ],
-      "enabled": false,
-      "type": "local"
-    },
-    "snyk": {
-      "command": [
-        "npx",
-        "-y",
-        "@mettle/boxed-snyk-mcp-server"
-      ],
-      "enabled": false,
-      "type": "local"
-    }
   },
   "permission": {
-    "atlassian_*": "deny",
-    "bash": {
-      "gh api *": "allow"
+    "skill": {
+      "*": "deny",
+      "boxed-infra": "allow",
+      "diagnosing-bugs": "allow",
+      "domain-modeling": "allow",
+      "grilling": "allow",
+      "implement-code": "allow",
+      "opencode": "allow",
+      "terminal-control": "allow",
+      "report": "allow",
+      "tdd": "allow",
+      "write-discoverable-code": "allow",
+      "writing-for-agents": "allow"
     },
-    "datadog_*": "deny"
+    "task": {
+      "*": "deny"
+    },
+    "todowrite": "deny"
   },
   "plugin": [
-    "@xesrevinu/opencode-jj-enforcer@0.1.2",
-    "/Users/stephen.collings/.boxedcode-pro/0.12.0/boxedcode-pro",
-    "@slkiser/opencode-quota@2.1.0"
+    "/Users/stephen.collings/workspace/github.com/eeveebank/nwb/opencode-plugins/v2/dist/boxedcode.js"
   ],
+  "references": {
+    "opencode-v2": {
+      "branch": "v2",
+      "description": "Use for opencode v2 source",
+      "repository": "anomalyco/opencode"
+    }
+  },
   "skills": {
     "paths": [
       "~/.github/skills",

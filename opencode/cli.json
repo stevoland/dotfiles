@@ -1,0 +1,56 @@
+{
+  "animations": true,
+  "attention": {
+    "enabled": true,
+    "volume": 0.30000000000000004
+  },
+  "debug": {
+    "devtools": false,
+    "timing": false,
+    "turn_tokens": true
+  },
+  "diffs": {
+    "wrap": "word"
+  },
+  "hints": {
+    "onboarding": false,
+    "tips": false
+  },
+  "keybinds": {
+    "agent.cycle": "tab"
+  },
+  "mini": {
+    "shell_output": "show",
+    "thinking": "show"
+  },
+  "plugins": [
+    "/Users/stephen.collings/workspace/github.com/eeveebank/nwb/opencode-plugins/v2/dist/tui.js"
+  ],
+  "prompt": {
+    "paste": "full",
+    "editor": true,
+    "image_preview": true
+  },
+  "scroll": {
+    "acceleration": true,
+    "speed": 3
+  },
+  "session": {
+    "grouping": "auto",
+    "markdown": "rendered",
+    "scrollbar": true,
+    "sidebar": "auto",
+    "thinking": "show",
+    "image_preview": true
+  },
+  "tabs": {
+    "enabled": true,
+    "layout": "horizontal",
+    "scope": "global",
+    "vertical": false
+  },
+  "theme": {
+    "mode": "dark",
+    "name": "vesper"
+  }
+}

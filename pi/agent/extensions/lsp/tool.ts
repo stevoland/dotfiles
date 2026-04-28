@@ -1,8 +1,11 @@
 import { accessSync, constants, existsSync, realpathSync } from "node:fs";
 import { basename, dirname, isAbsolute, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
-import { StringEnum } from "@mariozechner/pi-ai";
-import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
+import { StringEnum } from "@earendil-works/pi-ai";
+import type {
+  ExtensionAPI,
+  ExtensionContext,
+} from "@earendil-works/pi-coding-agent";
 import { Type, type Static } from "@sinclair/typebox";
 import type { LspClient } from "./client.js";
 import type { LspRuntime } from "./runtime.js";
@@ -52,7 +55,10 @@ export interface NormalizePathOptions {
   requireReadableFile?: boolean;
 }
 
-export function normalizeToolPath(rawPath: string, options: NormalizePathOptions): PathNormalizationResult {
+export function normalizeToolPath(
+  rawPath: string,
+  options: NormalizePathOptions,
+): PathNormalizationResult {
   const stripped = rawPath.startsWith("@") ? rawPath.slice(1) : rawPath;
   const normalizedInput = stripped.trim();
   const absolutePath = isAbsolute(normalizedInput)
@@ -65,7 +71,9 @@ export function normalizeToolPath(rawPath: string, options: NormalizePathOptions
   } catch (error) {
     const code = (error as NodeJS.ErrnoException).code;
     if (code !== "ENOENT") {
-      throw new Error(`Unable to resolve path '${rawPath}': ${(error as Error).message}`);
+      throw new Error(
+        `Unable to resolve path '${rawPath}': ${(error as Error).message}`,
+      );
     }
 
     try {
@@ -77,18 +85,26 @@ export function normalizeToolPath(rawPath: string, options: NormalizePathOptions
   }
 
   const normalizedRealPath = realPath.replace(/\\/g, "/");
-  const normalizedRoots = [...new Set(options.boundaryRoots.flatMap((root) => {
-    const roots = [root];
-    try {
-      roots.push(realpathSync(root));
-    } catch {
-      // Keep original root only.
-    }
-    return roots;
-  }).map((root) => root.replace(/\\/g, "/")))];
+  const normalizedRoots = [
+    ...new Set(
+      options.boundaryRoots
+        .flatMap((root) => {
+          const roots = [root];
+          try {
+            roots.push(realpathSync(root));
+          } catch {
+            // Keep original root only.
+          }
+          return roots;
+        })
+        .map((root) => root.replace(/\\/g, "/")),
+    ),
+  ];
 
   if (!options.allowExternalPaths) {
-    const withinBoundary = normalizedRoots.some((root) => isWithinRoot(normalizedRealPath, root));
+    const withinBoundary = normalizedRoots.some((root) =>
+      isWithinRoot(normalizedRealPath, root),
+    );
     if (!withinBoundary) {
       throw new Error(`Path '${rawPath}' is outside workspace boundary.`);
     }
@@ -102,7 +118,9 @@ export function normalizeToolPath(rawPath: string, options: NormalizePathOptions
     try {
       ensureReadableFile(realPath);
     } catch (error) {
-      throw new Error(`File is not readable: ${realPath} (${(error as Error).message})`);
+      throw new Error(
+        `File is not readable: ${realPath} (${(error as Error).message})`,
+      );
     }
   }
 
@@ -114,7 +132,10 @@ export function normalizeToolPath(rawPath: string, options: NormalizePathOptions
   };
 }
 
-export function toProtocolPosition(line: number, character: number): { line: number; character: number } {
+export function toProtocolPosition(
+  line: number,
+  character: number,
+): { line: number; character: number } {
   return {
     line: Math.max(0, line - 1),
     character: Math.max(0, character - 1),
@@ -122,12 +143,16 @@ export function toProtocolPosition(line: number, character: number): { line: num
 }
 
 function hasPosition(input: LspToolParameters): boolean {
-  return typeof input.filePath === "string"
-    && typeof input.line === "number"
-    && typeof input.character === "number";
+  return (
+    typeof input.filePath === "string" &&
+    typeof input.line === "number" &&
+    typeof input.character === "number"
+  );
 }
 
-export function validateOperationInput(input: LspToolParameters): { ok: true; value: LspToolInput } | { ok: false; error: string } {
+export function validateOperationInput(
+  input: LspToolParameters,
+): { ok: true; value: LspToolInput } | { ok: false; error: string } {
   if (!hasPosition(input)) {
     return {
       ok: false,
@@ -147,7 +172,13 @@ function getTextDocumentIdentifier(filePath: string): { uri: string } {
   };
 }
 
-function summarizeRunOutcomes(outcomes: Array<{ ok: boolean; error?: LspStructuredError; timedOut?: boolean }>): {
+function summarizeRunOutcomes(
+  outcomes: Array<{
+    ok: boolean;
+    error?: LspStructuredError;
+    timedOut?: boolean;
+  }>,
+): {
   errors: LspStructuredError[];
   timedOut: boolean;
 } {
@@ -185,7 +216,12 @@ function mapResponse(args: {
   const runDiagnostics = summarizeRunOutcomes(args.summary.outcomes);
 
   return {
-    content: [{ type: "text" as const, text: formatOutput(args.operation, args.result) }],
+    content: [
+      {
+        type: "text" as const,
+        text: formatOutput(args.operation, args.result),
+      },
+    ],
     details: {
       operation: args.operation,
       result: args.result,
@@ -229,7 +265,13 @@ export function registerLspTool(pi: ExtensionAPI, runtime: LspRuntime) {
       "Note: LSP servers must be configured for the file type. If no server is available, an error will be returned.",
     ].join("\n"),
     parameters: LspToolParametersSchema,
-    async execute(_toolCallId, params, signal, _onUpdate, ctx: ExtensionContext) {
+    async execute(
+      _toolCallId,
+      params,
+      signal,
+      _onUpdate,
+      ctx: ExtensionContext,
+    ) {
       runtime.setCwd(ctx.cwd);
 
       const validated = validateOperationInput(params as LspToolParameters);
@@ -267,22 +309,39 @@ export function registerLspTool(pi: ExtensionAPI, runtime: LspRuntime) {
         case "goToDefinition":
         case "findReferences":
         case "goToImplementation": {
-          const method = input.operation === "goToDefinition"
-            ? "textDocument/definition"
-            : input.operation === "findReferences"
-              ? "textDocument/references"
-              : "textDocument/implementation";
+          const method =
+            input.operation === "goToDefinition"
+              ? "textDocument/definition"
+              : input.operation === "findReferences"
+                ? "textDocument/references"
+                : "textDocument/implementation";
 
-          const summary = await runtime.run(filePath, async (client: LspClient) => {
-            return await client.request(method, {
-              textDocument: getTextDocumentIdentifier(filePath),
-              position,
-              context: input.operation === "findReferences" ? { includeDeclaration: true } : undefined,
-            }, { signal }).catch(() => input.operation === "findReferences" ? [] : null);
-          });
+          const summary = await runtime.run(
+            filePath,
+            async (client: LspClient) => {
+              return await client
+                .request(
+                  method,
+                  {
+                    textDocument: getTextDocumentIdentifier(filePath),
+                    position,
+                    context:
+                      input.operation === "findReferences"
+                        ? { includeDeclaration: true }
+                        : undefined,
+                  },
+                  { signal },
+                )
+                .catch(() =>
+                  input.operation === "findReferences" ? [] : null,
+                );
+            },
+          );
 
           const result = collectSuccessfulValues(summary)
-            .flatMap((value) => Array.isArray(value) ? value : value ? [value] : [])
+            .flatMap((value) =>
+              Array.isArray(value) ? value : value ? [value] : [],
+            )
             .filter(Boolean);
 
           return mapResponse({
@@ -294,12 +353,21 @@ export function registerLspTool(pi: ExtensionAPI, runtime: LspRuntime) {
         }
 
         case "hover": {
-          const summary = await runtime.run(filePath, async (client: LspClient) => {
-            return await client.request("textDocument/hover", {
-              textDocument: getTextDocumentIdentifier(filePath),
-              position,
-            }, { signal }).catch(() => null);
-          });
+          const summary = await runtime.run(
+            filePath,
+            async (client: LspClient) => {
+              return await client
+                .request(
+                  "textDocument/hover",
+                  {
+                    textDocument: getTextDocumentIdentifier(filePath),
+                    position,
+                  },
+                  { signal },
+                )
+                .catch(() => null);
+            },
+          );
 
           const result = collectSuccessfulValues(summary);
 
@@ -312,14 +380,23 @@ export function registerLspTool(pi: ExtensionAPI, runtime: LspRuntime) {
         }
 
         case "documentSymbol": {
-          const summary = await runtime.run(filePath, async (client: LspClient) => {
-            return await client.request("textDocument/documentSymbol", {
-              textDocument: getTextDocumentIdentifier(filePath),
-            }, { signal }).catch(() => []);
-          });
+          const summary = await runtime.run(
+            filePath,
+            async (client: LspClient) => {
+              return await client
+                .request(
+                  "textDocument/documentSymbol",
+                  {
+                    textDocument: getTextDocumentIdentifier(filePath),
+                  },
+                  { signal },
+                )
+                .catch(() => []);
+            },
+          );
 
           const result = collectSuccessfulValues(summary)
-            .flatMap((value) => Array.isArray(value) ? value : [])
+            .flatMap((value) => (Array.isArray(value) ? value : []))
             .filter(Boolean);
 
           return mapResponse({
@@ -332,9 +409,15 @@ export function registerLspTool(pi: ExtensionAPI, runtime: LspRuntime) {
 
         case "workspaceSymbol": {
           const summary = await runtime.runAll(async (client: LspClient) => {
-            const symbols = await client.request("workspace/symbol", {
-              query: "",
-            }, { signal }).catch(() => []);
+            const symbols = await client
+              .request(
+                "workspace/symbol",
+                {
+                  query: "",
+                },
+                { signal },
+              )
+              .catch(() => []);
 
             if (!Array.isArray(symbols)) {
               return [];
@@ -343,13 +426,15 @@ export function registerLspTool(pi: ExtensionAPI, runtime: LspRuntime) {
             return symbols
               .filter((symbol) => {
                 const kind = (symbol as { kind?: unknown })?.kind;
-                return typeof kind === "number" && WORKSPACE_SYMBOL_KINDS.has(kind);
+                return (
+                  typeof kind === "number" && WORKSPACE_SYMBOL_KINDS.has(kind)
+                );
               })
               .slice(0, 10);
           });
 
           const result = collectSuccessfulValues(summary)
-            .flatMap((value) => Array.isArray(value) ? value : [])
+            .flatMap((value) => (Array.isArray(value) ? value : []))
             .filter(Boolean);
 
           return mapResponse({
@@ -361,15 +446,24 @@ export function registerLspTool(pi: ExtensionAPI, runtime: LspRuntime) {
         }
 
         case "prepareCallHierarchy": {
-          const summary = await runtime.run(filePath, async (client: LspClient) => {
-            return await client.request("textDocument/prepareCallHierarchy", {
-              textDocument: getTextDocumentIdentifier(filePath),
-              position,
-            }, { signal }).catch(() => []);
-          });
+          const summary = await runtime.run(
+            filePath,
+            async (client: LspClient) => {
+              return await client
+                .request(
+                  "textDocument/prepareCallHierarchy",
+                  {
+                    textDocument: getTextDocumentIdentifier(filePath),
+                    position,
+                  },
+                  { signal },
+                )
+                .catch(() => []);
+            },
+          );
 
           const result = collectSuccessfulValues(summary)
-            .flatMap((value) => Array.isArray(value) ? value : [])
+            .flatMap((value) => (Array.isArray(value) ? value : []))
             .filter(Boolean);
 
           return mapResponse({
@@ -382,27 +476,43 @@ export function registerLspTool(pi: ExtensionAPI, runtime: LspRuntime) {
 
         case "incomingCalls":
         case "outgoingCalls": {
-          const method = input.operation === "incomingCalls"
-            ? "callHierarchy/incomingCalls"
-            : "callHierarchy/outgoingCalls";
+          const method =
+            input.operation === "incomingCalls"
+              ? "callHierarchy/incomingCalls"
+              : "callHierarchy/outgoingCalls";
 
-          const summary = await runtime.run(filePath, async (client: LspClient) => {
-            const prepared = await client.request("textDocument/prepareCallHierarchy", {
-              textDocument: getTextDocumentIdentifier(filePath),
-              position,
-            }, { signal }).catch(() => []);
+          const summary = await runtime.run(
+            filePath,
+            async (client: LspClient) => {
+              const prepared = await client
+                .request(
+                  "textDocument/prepareCallHierarchy",
+                  {
+                    textDocument: getTextDocumentIdentifier(filePath),
+                    position,
+                  },
+                  { signal },
+                )
+                .catch(() => []);
 
-            if (!Array.isArray(prepared) || prepared.length === 0) {
-              return [];
-            }
+              if (!Array.isArray(prepared) || prepared.length === 0) {
+                return [];
+              }
 
-            return await client.request(method, {
-              item: prepared[0],
-            }, { signal }).catch(() => []);
-          });
+              return await client
+                .request(
+                  method,
+                  {
+                    item: prepared[0],
+                  },
+                  { signal },
+                )
+                .catch(() => []);
+            },
+          );
 
           const result = collectSuccessfulValues(summary)
-            .flatMap((value) => Array.isArray(value) ? value : [])
+            .flatMap((value) => (Array.isArray(value) ? value : []))
             .filter(Boolean);
 
           return mapResponse({

@@ -1,13 +1,10 @@
 {
   "$schema": "https://opencode.ai/tui.json",
+  "attention": {
+    "enabled": true
+  },
   "plugin": [
-    "/Users/stephen.collings/.boxedcode-pro/0.12.0/boxedcode-pro",
-    [
-      "@ishaksebsib/opencode-tree",
-      {
-        "storageScope": "global"
-      }
-    ]
+    "/Users/stephen.collings/.boxedcode-pro/0.16.1/boxedcode-pro"
   ],
   "scroll_acceleration": {
     "enabled": true

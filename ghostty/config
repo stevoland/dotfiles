@@ -83,7 +83,7 @@ palette = 46=#5feafa
 palette = 6=#4bb7b1
 palette = 14=#78d7ce
 
-minimum-contrast = 3
+# minimum-contrast = 3
 window-padding-x = 6
 
 macos-option-as-alt = true

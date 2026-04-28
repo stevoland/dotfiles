@@ -10,8 +10,13 @@ email = "stevoland@gmail.com"
 email = "stephen@mettle.co.uk"
 
 [ui]
-# diff-formatter = ":git"
+pager = ["hunk", "pager"]
+diff-formatter = ":git"
 default-command = ["log", "--limit", "14"]
+
+# merge-editor = "oyui"
+diff-editor = "oyui"
+diff-instructions = false
 
 [colors]
 "diff token" = { underline = false }
@@ -37,6 +42,23 @@ log = '@ | ancestors(trunk()..(visible_heads() & mine()), 2) | trunk()'
 # The latest commit on the branch. Works with squash workflow. Use: jj new tip
 tip = "exactly(heads(@-::~@), 1)"
 
+# The current set of "open" works. It is defined as: all stacks that are
+# reachable from my working copy, or any other commit I wrote.
+# n = 1, meaning that nothing from `trunk()` is included, so all resulting
+# commits are mutable by definition.
+'open()' = 'stack(mine() | @, 1)'
+
+# Returns the closest merge commit to `to`
+"closest_merge(to)" = "heads(::to & merges())"
+
+# stack(x, n) is the set of mutable commits reachable from 'x', with 'n'
+# parents. 'n' is often useful to customize the display and return set for
+# certain operations. 'x' can be used to target the set of 'roots' to traverse,
+# e.g. @ is the current stack.
+'stack()' = 'stack(@)'
+'stack(x)' = 'stack(x, 2)'
+'stack(x, n)' = 'ancestors(reachable(x, mutable()), n)'
+
 # [[--scope]]
 # --when.repositories = ["~/workspace/github.com/eeveebank"]
 # [--scope.revset-aliases]
@@ -44,6 +66,15 @@ tip = "exactly(heads(@-::~@), 1)"
 # 'immutable_heads()' = "builtin_immutable_heads() | remote_bookmarks()"
 
 [aliases]
+# A truly genius alias from Martin that gracefully lets you do things like type
+# 'jj jj log' on the command line without getting a command-not-found error.
+jj = []
+
+u = ["undo"]
+r = ["redo"]
+
+# Find the closest ancestor with a bookmark pointing at it, and move it to the
+# parent of the working copy.
 tug = ["bookmark", "move", "--from", "closest_bookmark(@-)", "--to", "@-"]
 
 fetch = ["git", "fetch"]
@@ -60,7 +91,7 @@ evolve = ['rebase', '--skip-empty', '-d', 'master']
 
 long = ["log", "-T", "builtin_log_detailed"]
 
-open = ["log", "-r", "heads(mine()) ~ ::trunk()"]
+open = ["log", "-r", "open"]
 
 prek = [
   "util",
@@ -73,6 +104,51 @@ prek = [
 ]
 
 slice = ["log", "-r", "slice()"]
+
+# https://isaaccorbrey.com/notes/jujutsu-megamerges-for-fun-and-profit
+# Inserts the given revset as a new branch under the megamerge.
+stack = [
+  "rebase",
+  "--after",
+  "trunk()",
+  "--before",
+  "closest_merge(@)",
+  "--revision",
+]
+
+stage = ["stack", "closest_merge(@)+:: ~ empty()"]
+
+restack = [
+  "rebase",
+  "--onto",
+  "trunk()",
+  "--source",
+  "roots(trunk()..) & stack()",
+]
+
+# Retrunk revisions. Typically as `jj retrunk -s ...` -- notably can be used
+# with open:
+# - jj retrunk -s 'roots(open())'
+retrunk = ["rebase", "-d", "trunk()"]
+
+# Retrunk the current stack of work.
+reheat = ["rebase", "-d", "trunk()", "-s", "roots(trunk()..stack(@))"]
+
+# 'jj sandwich xyz' to move xyz into the megamerge in parallel to everything
+# else. See notes on 'megamerge()' above for how it's resolved.
+sandwich = ["rebase", "-B", "megamerge()", "-A", "trunk()", "-r"]
+
+# Take content from any change, and move it into @. The inverse of 'eject'
+# - jj consume xyz path/to/file`
+consume = ["squash", "--into", "@", "--from"]
+
+# Eject content from @ into any other change. The inverse of 'consume'
+# - jj eject xyz --interactive
+eject = ["squash", "--from", "@", "--into"]
+
+# EXPERIMENTAL: ultra-generalized command that subsumes both 'diff' and 'show'
+examine = ["log", "-T", "builtin_log_detailed", "-p", "-r"]
+spice = ["util", "exec", "--", "jj-spice"]
 
 [merge-tools.jj-hunk]
 program = "jj-hunk"
@@ -94,6 +170,16 @@ merge-args = [
 merge-conflict-exit-codes = [1]
 merge-tool-edits-conflict-markers = true
 conflict-marker-style = "git"
+
+[merge-tools.oyui]
+program = "oyui"
+edit-args = [
+  "-c",
+  "/Users/stephen.collings/.config/oyui/config.rn",
+  "diff",
+  "$left",
+  "$right",
+]
 
 [templates]
 log_node = '''
@@ -121,3 +207,13 @@ auto-track-bookmarks = "stevo/*"
 
 [git]
 track-default-bookmark-on-clone = true
+
+[fix.tools.oxfmt]
+enabled = false
+command = ["$root/node_modules/.bin/oxfmt", "--stdin-filepath=$path"]
+patterns = [
+  "glob:'**/*.ts'",
+  "glob:'**/*.tsx'",
+  "glob:'**/*.json'",
+  "glob:'**/*.md'",
+]

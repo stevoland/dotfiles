@@ -1,11 +1,7 @@
 ---
 description: Extract non-obvious learnings from session to AGENTS.md files to build codebase understanding
-model: github-copilot/gpt-5.2-codex
-options:
-  reasoningEffort: medium
-  reasoningSummary: auto
-  include:
-    - reasoning.encrypted_content
+model: github-copilot/gpt-5.6-terra
+variant: medium
 ---
 
 Analyze this session and extract non-obvious learnings to add to AGENTS.md files.

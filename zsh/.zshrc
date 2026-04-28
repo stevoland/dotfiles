@@ -143,3 +143,4 @@ export PATH="$PATH:/Users/stephen.collings/.lmstudio/bin"
 
 . "$HOME/.cargo/env" 
 
+export PATH="/opt/homebrew/opt/zig@0.15/bin:$PATH"

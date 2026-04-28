@@ -1,0 +1,41 @@
+{
+  "name": "opencode-plugins",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": {
+      "import": "./config.ts"
+    },
+    "./box": {
+      "import": "./box.ts"
+    },
+    "./tui": {
+      "import": "./tui/box.tsx"
+    }
+  },
+  "scripts": {
+    "lint": "oxlint -c oxlint.json .",
+    "format": "prettier \"**/*.{ts,tsx}\"",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "devDependencies": {
+    "@opencode-ai/theme": "0.0.0-next-16650",
+    "@total-typescript/shoehorn": "0.1.2",
+    "@trivago/prettier-plugin-sort-imports": "6.0.2",
+    "@tsconfig/strictest": "2.0.8",
+    "@types/bun": "latest",
+    "immer": "^11.1.15",
+    "oxlint": "1.71.0",
+    "prettier": "3.9.3",
+    "solid-js": "1.9.12"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@opencode-ai/plugin": "0.0.0-next-16650",
+    "@opentui/core": "0.4.5",
+    "@opentui/solid": "0.4.5"
+  }
+}

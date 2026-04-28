@@ -1,6 +1,6 @@
 ---
 name: configure-boxedcode
-description: Configure BoxedCode/OpenCode. Use when creating/customising agents, or when the sandbox prevents operations the user says are legitimate.
+description: Configure BoxedCode/OpenCode. Use when creating/customising agents, or when the sandbox prevents operations the user says are legitimate
 ---
 
 # Configure BoxedCode
@@ -13,7 +13,7 @@ BoxedCode is a simple wrapper around [OpenCode](https://opencode.ai/docs). It pr
 
 ## Create + customise agents (markdown)
 
-`boxedcode` writes config to `~/.config/opencode/opencode.json`. Don't edit this file to create agents; instead, create markdown files.
+`boxedcode` writes config to `~/.config/opencode/opencode.jsonc`. Don't edit this file to create agents; instead, create markdown files.
 
 ### 1) Choose scope + location
 
@@ -111,3 +111,19 @@ Path syntax:
 
 - macOS: git-style globs (`*`, `**`, `?`, `[abc]`).
 - All: absolute or relative; `~` expands to home.
+
+### git push
+
+The sandbox prevents auth with git remotes via ssh. Use https remotes with the `gh` cli credential helper.
+
+`gh auth setup-git` (one time)
+
+The user can remap any ssh remote-urls to https in via global git config:
+
+```
+# ~/.gitconfig
+[url "https://github.com/eeveebank/"]
+    insteadOf = "git@github.com:eeveebank/"
+```
+
+You cannot edit this file directly from the sandbox.

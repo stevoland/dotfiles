@@ -30,6 +30,7 @@ command = "jj-starship"
 detect_folders = [".jj", ".git"]
 shell = ["sh"]
 format = "$output "
+ignore_timeout = true
 
 [git_branch]
 disabled = true

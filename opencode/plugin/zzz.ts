@@ -13,7 +13,7 @@ export const ZzzPlugin: Plugin = async () => {
         const agent = agents[name];
 
         if (!agent) {
-          continue
+          continue;
         }
 
         if (
@@ -28,7 +28,7 @@ export const ZzzPlugin: Plugin = async () => {
               "*": "allow",
               "kubectl*": "ask",
               "kubectx*": "ask",
-            }
+            },
           };
         }
       }

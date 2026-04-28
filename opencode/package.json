@@ -1,6 +1,7 @@
 {
   "dependencies": {
-    "@opencode-ai/plugin": "1.14.19",
+    "@daytona/sdk": "^0.175.0",
+    "@opencode-ai/plugin": "1.18.16",
     "@types/bun": "^1.3.4",
     "detect-terminal": "^2.0.0",
     "effect": "^3.19.12",

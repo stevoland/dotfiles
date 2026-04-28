@@ -1,6 +1,10 @@
-import { visibleWidth } from "@mariozechner/pi-tui";
+import { visibleWidth } from "@earendil-works/pi-tui";
 
-export function truncateAnsiToWidth(str: string, width: number, ellipsis = "…"): string {
+export function truncateAnsiToWidth(
+  str: string,
+  width: number,
+  ellipsis = "…",
+): string {
   const maxWidth = Math.max(0, width - visibleWidth(ellipsis));
   let truncated = "";
   let currentWidth = 0;

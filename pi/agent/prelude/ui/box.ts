@@ -1,8 +1,14 @@
-import { visibleWidth } from "@mariozechner/pi-tui";
+import { visibleWidth } from "@earendil-works/pi-tui";
 
 export type BorderStyler = (s: string) => string;
 
-export function borderLine(boxWidth: number, left: string, right: string, border: BorderStyler, horizontal = "─"): string {
+export function borderLine(
+  boxWidth: number,
+  left: string,
+  right: string,
+  border: BorderStyler,
+  horizontal = "─",
+): string {
   return border(left + horizontal.repeat(Math.max(0, boxWidth - 2)) + right);
 }
 

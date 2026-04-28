@@ -1,5 +1,5 @@
 import type { ChildProcessWithoutNullStreams } from "node:child_process";
-import type { TextContent } from "@mariozechner/pi-ai";
+import type { TextContent } from "@earendil-works/pi-ai";
 
 export type LspOperation =
   | "goToDefinition"
@@ -80,7 +80,12 @@ export interface LspLoadWarning {
   message: string;
   filePath?: string;
   serverId?: string;
-  field?: "command" | "env" | "projectConfigPolicy" | "trustedProjectRoots" | "allowExternalPaths";
+  field?:
+    | "command"
+    | "env"
+    | "projectConfigPolicy"
+    | "trustedProjectRoots"
+    | "allowExternalPaths";
 }
 
 export type LspServerSource = "builtin" | "global" | "project" | "merged";
@@ -176,7 +181,13 @@ export interface LspPanelRow {
   connectedRoots: string[];
   spawningRoots: string[];
   broken?: { attempts: number; retryAt: number; lastError: string };
-  diagnostics?: { error: number; warning: number; info: number; hint: number; total: number };
+  diagnostics?: {
+    error: number;
+    warning: number;
+    info: number;
+    hint: number;
+    total: number;
+  };
   lastSeenAt?: number;
 }
 
@@ -251,7 +262,10 @@ export interface JsonRpcNotification {
   params?: unknown;
 }
 
-export type JsonRpcMessage = JsonRpcRequest | JsonRpcResponse | JsonRpcNotification;
+export type JsonRpcMessage =
+  | JsonRpcRequest
+  | JsonRpcResponse
+  | JsonRpcNotification;
 
 export interface PathNormalizationResult {
   raw: string;
@@ -297,4 +311,9 @@ export interface LspDiagnosticTouchResult {
   error?: string;
 }
 
-export type PanelSortBucket = "broken" | "spawning" | "connected" | "idle" | "disabled";
+export type PanelSortBucket =
+  | "broken"
+  | "spawning"
+  | "connected"
+  | "idle"
+  | "disabled";

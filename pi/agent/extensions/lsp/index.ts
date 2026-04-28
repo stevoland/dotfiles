@@ -1,4 +1,4 @@
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { LspPanelComponent } from "./lsp-panel.js";
 import { LspRuntime } from "./runtime.js";
 import { registerLspTool } from "./tool.js";
@@ -86,58 +86,61 @@ export default function lspExtension(pi: ExtensionAPI) {
         return;
       }
 
-      await ctx.ui.custom<void>((tui, _theme, _keybindings, done) => {
-        let closed = false;
+      await ctx.ui.custom<void>(
+        (tui, _theme, _keybindings, done) => {
+          let closed = false;
 
-        const close = () => {
-          if (closed) return;
-          closed = true;
-          done(undefined);
-        };
+          const close = () => {
+            if (closed) return;
+            closed = true;
+            done(undefined);
+          };
 
-        const panel = new LspPanelComponent(tui, snapshot, {
-          onClose: close,
-          onRefresh: async () => {
-            runtime.setCwd(ctx.cwd);
-            return runtime.getLspPanelSnapshot();
-          },
-        });
+          const panel = new LspPanelComponent(tui, snapshot, {
+            onClose: close,
+            onRefresh: async () => {
+              runtime.setCwd(ctx.cwd);
+              return runtime.getLspPanelSnapshot();
+            },
+          });
 
-        const timer = setInterval(() => {
-          if (closed) return;
-          panel.updateSnapshot(runtime.getLspPanelSnapshot());
-          tui.requestRender();
-        }, 1000);
+          const timer = setInterval(() => {
+            if (closed) return;
+            panel.updateSnapshot(runtime.getLspPanelSnapshot());
+            tui.requestRender();
+          }, 1000);
 
-        const unregisterCleanup = registerCleanup(() => {
-          clearInterval(timer);
-          closed = true;
-        });
+          const unregisterCleanup = registerCleanup(() => {
+            clearInterval(timer);
+            closed = true;
+          });
 
-        return {
-          render(width) {
-            return panel.render(width);
-          },
-          handleInput(data) {
-            panel.handleInput?.(data);
-          },
-          invalidate() {
-            panel.invalidate();
-          },
-          dispose() {
-            unregisterCleanup();
-          },
-        };
-      }, {
-        overlay: true,
-        overlayOptions: {
-          anchor: "center",
-          width: 82,
-          maxWidth: "95%",
-          maxHeight: "80%",
-          margin: 1,
+          return {
+            render(width) {
+              return panel.render(width);
+            },
+            handleInput(data) {
+              panel.handleInput?.(data);
+            },
+            invalidate() {
+              panel.invalidate();
+            },
+            dispose() {
+              unregisterCleanup();
+            },
+          };
         },
-      });
+        {
+          overlay: true,
+          overlayOptions: {
+            anchor: "center",
+            width: 82,
+            maxWidth: "95%",
+            maxHeight: "80%",
+            margin: 1,
+          },
+        },
+      );
     },
   });
 }

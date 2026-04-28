@@ -59,6 +59,8 @@ export WALK_EDITOR="less -N"
 export WALK_OPEN_WITH="txt:less -N;go:code;ts:code;tsx:code;js:code;jsx:code;json:code;md:glow -p"
 export WALK_STATUS_BAR='[Mode(), Owner(), Size() | PadLeft(7), ModTime() | PadLeft(12)] | join(" ")'
 
+export GITHUB_TOKEN=$(gh auth token)
+
 # # Open selected path in nvim
 # alias -g P='| pe | fzf | read filename; [ ! -z $filename ] && nvim $filename'
 
@@ -98,9 +100,7 @@ npmig() {
 
 export PATH="$HOME/npmbin/node_modules/.bin:$PATH"
 
-export OPENCODE_EXPERIMENTAL_LSP_TOOL=true
-export OPENCODE_EXPERIMENTAL_MARKDOWN=1
-export OPENCODE_ENABLE_EXA=1
+export OPENCODE_EXPERIMENTAL_CODE_MODE=1
 # export OPENCODE_EXPERIMENTAL_FILEWATCHER=true
 
 # export PATH="$HOME/workspace/github.com/stevoland/opencode/packages/opencode/dist/opencode-darwin-arm64/bin:$PATH"
@@ -121,4 +121,32 @@ w() {
       # 4. Chrome exists here? Just open the URL (usually opens in a new tab).
       open -a "Google Chrome" "$URL"
   fi
+}
+
+
+code() {
+  [ -z "${ZSH_VERSION:-}" ] || emulate -L ksh
+  exe=("command" "zed")
+  "${exe[@]}" "$@"
+}
+
+alias z='zed'
+alias zd='zed .'
+
+alias j='jj'
+alias jc='jj commit'
+alias jd='jj diff'
+alias jf='jj fetch'
+alias jl='jj log'
+alias jn='jj new'
+alias jnm='jj new "trunk()"'
+alias jp='jj push'
+alias js='jj squash'
+alias jr='jj rebase'
+
+rm() {
+  while [[ "$1" == -* ]];
+    do shift;
+  done
+  trash "$@"
 }

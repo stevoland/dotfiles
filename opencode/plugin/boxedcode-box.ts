@@ -6,9 +6,12 @@
 // This plugin enforces path/url restrictions for OpenCode tools excluding bash
 // It reads the config from `box print-config`
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { homedir } from 'node:os';
 import { isAbsolute, join } from 'path';
 
-import type { Plugin, PluginInput } from '@opencode-ai/plugin';
+import type { Plugin } from '@opencode-ai/plugin';
+
+import { type RunCommand, defaultRunCommand } from './boxedcode-shared/run-command.ts';
 
 type FileSystemConfig = {
   denyRead: string[];
@@ -50,7 +53,7 @@ async function resolveFilesystemConfig(
 }
 
 function normalizePath(targetPath: string, projectRoot: string): string {
-  const expandedPath = targetPath.replace(/^~(?=$|\/|\\)/, Bun.env['HOME'] || '~');
+  const expandedPath = targetPath.replace(/^~(?=$|\/|\\)/, homedir());
 
   const absolutePath = isAbsolute(expandedPath) ? expandedPath : join(projectRoot, expandedPath);
 
@@ -243,7 +246,11 @@ function extractPathFromTool(tool: string, args: Record<string, unknown>): PathI
   // File operations - operate on individual files
   if (tool === 'read')
     return args['filePath']
-      ? { path: args['filePath'] as string, isDirectory: false, operation: 'read' }
+      ? {
+          path: args['filePath'] as string,
+          isDirectory: false,
+          operation: 'read',
+        }
       : null;
 
   if (writeToolNames.includes(tool))
@@ -318,16 +325,22 @@ type GetConfigError = {
 
 type GetConfigResult = GetConfigOk | GetConfigError;
 
-const getConfig = async ($: PluginInput['$'], projectRoot: string): Promise<GetConfigResult> => {
-  const { SHELL } = process.env;
-  if (!SHELL || !SHELL.match(/opencode-shell$/)) {
+const getConfig = async (
+  runCommand: RunCommand,
+  projectRoot: string,
+  shellPath: unknown,
+): Promise<GetConfigResult> => {
+  const resolvedShellPath =
+    typeof shellPath === 'string' && shellPath.length > 0 ? shellPath : process.env['SHELL'];
+
+  if (!resolvedShellPath || !resolvedShellPath.match(/opencode-shell$/)) {
     return {
       ok: false,
       error: 'Run `boxedcode` to get filesystem and network sandboxing.',
     };
   }
 
-  const { stderr, stdout } = await $`${SHELL} print-config`.nothrow().quiet();
+  const { stderr, stdout } = await runCommand(resolvedShellPath, ['print-config']);
 
   const error = stderr.toString().trim();
 
@@ -459,6 +472,7 @@ const defaultSandboxBashPermission = {
   'git push *': 'ask',
   'go *': 'allow',
   'grep *': 'allow',
+  'groovy *': 'allow',
   'gsed *': 'allow',
   'gunzip *': 'allow',
   'gzip *': 'allow',
@@ -497,6 +511,7 @@ const defaultSandboxBashPermission = {
   'sdk *': 'allow',
   'sed *': 'allow',
   'sg *': 'allow',
+  'sh *': 'allow',
   'shellcheck *': 'allow',
   'sleep *': 'allow',
   'sort *': 'allow',
@@ -505,6 +520,7 @@ const defaultSandboxBashPermission = {
   'tar *': 'allow',
   'tee *': 'allow',
   'time *': 'allow',
+  'timeout *': 'allow',
   'touch *': 'allow',
   'tr *': 'allow',
   'tree *': 'allow',
@@ -526,24 +542,46 @@ const defaultSandboxBashPermission = {
   'zip *': 'allow',
 } as const;
 
-const checkHasJest = async ($: PluginInput['$']) => {
-  const { exitCode } = await $`rg jest package.json`.nothrow().quiet();
+const checkHasJest = async (runCommand: RunCommand, projectRoot: string) => {
+  const { exitCode } = await runCommand('rg', ['jest', join(projectRoot, 'package.json')], {
+    cwd: projectRoot,
+  });
   return exitCode === 0;
 };
 
-export const BoxPlugin: Plugin = async ({ client, $, directory, worktree }) => {
+let activeRunCommand: RunCommand = defaultRunCommand;
+
+/**
+ * Test-only hooks. Wrapped in a plain object because opencode's plugin loader
+ * iterates every named export from files in `~/.config/opencode/plugin/` and
+ * treats each function-valued export as a Plugin factory.
+ */
+const testHooks = {
+  setRunCommand: (runCommand?: RunCommand): void => {
+    activeRunCommand = runCommand ?? defaultRunCommand;
+  },
+};
+
+export const BoxPlugin: Plugin = async ({ client, directory, worktree }) => {
+  const runCommand = activeRunCommand;
+
   // Prefer worktree (git root) over directory for multi-worktree repos
   const projectRoot = worktree || directory;
 
-  const result = await getConfig($, projectRoot);
-  const hasSandbox = result.ok;
-
+  let result: GetConfigResult = await getConfig(runCommand, projectRoot, undefined);
+  let hasJest = result.ok && (await checkHasJest(runCommand, projectRoot));
   let configToastShown = false;
-
-  const hasJest = result.ok && (await checkHasJest($));
 
   return {
     config: async (config) => {
+      //@ts-expect-error shell missing in types
+      if (typeof config.shell === 'string' && config.shell.length > 0) {
+        //@ts-expect-error shell missing in types
+        result = await getConfig(runCommand, projectRoot, config.shell);
+      }
+      const hasSandbox = result.ok;
+      hasJest = result.ok && (await checkHasJest(runCommand, projectRoot));
+
       const defaultBashPermission = hasSandbox
         ? defaultSandboxBashPermission
         : defaultSafeishBashPermission;
@@ -733,8 +771,12 @@ export const BoxPlugin: Plugin = async ({ client, $, directory, worktree }) => {
   };
 };
 
+(BoxPlugin as typeof BoxPlugin & { __test: typeof testHooks }).__test = testHooks;
+
+export default BoxPlugin;
+
 const handleApplyPatch = (patchText: string, config: FileSystemConfig, projectRoot: string) => {
-  const paths = Patch.parseFilePaths(patchText);
+  const paths = parseFilePaths(patchText);
 
   const restrictedPaths = paths
     .filter((path) => isPathBlocked(config, path, projectRoot, 'write'))
@@ -749,140 +791,142 @@ ${restrictedPaths.join('\n')}`);
 
 // Minimal required patch parsing extracted from:
 // https://github.com/anomalyco/opencode/blob/407f34fed5140c4eb3b378c606a422de7e313d9a/packages/opencode/src/patch/index.ts
-namespace Patch {
-  function parsePatchHeader(
-    lines: string[],
-    startIdx: number,
-  ): { filePath: string; movePath?: string | undefined; nextIdx: number } | null {
-    const line = lines[startIdx];
+function parsePatchHeader(
+  lines: string[],
+  startIdx: number,
+): {
+  filePath: string;
+  movePath?: string | undefined;
+  nextIdx: number;
+} | null {
+  const line = lines[startIdx];
 
-    if (!line) {
-      return null;
-    }
-
-    if (line.startsWith('*** Add File:')) {
-      const filePath = line.split(':', 2)[1]?.trim();
-      return filePath ? { filePath, nextIdx: startIdx + 1 } : null;
-    }
-
-    if (line.startsWith('*** Delete File:')) {
-      const filePath = line.split(':', 2)[1]?.trim();
-      return filePath ? { filePath, nextIdx: startIdx + 1 } : null;
-    }
-
-    if (line.startsWith('*** Update File:')) {
-      const filePath = line.split(':', 2)[1]?.trim();
-      let movePath: string | undefined;
-      let nextIdx = startIdx + 1;
-
-      // Check for move directive
-      if (nextIdx < lines.length && lines[nextIdx]?.startsWith('*** Move to:')) {
-        movePath = lines[nextIdx]?.split(':', 2)[1]?.trim();
-        nextIdx++;
-      }
-
-      return filePath ? { filePath, movePath, nextIdx } : null;
-    }
-
+  if (!line) {
     return null;
   }
 
-  function parseUpdateFileChunks(lines: string[], startIdx: number): { nextIdx: number } {
-    let i = startIdx;
-
-    while (i < lines.length && !lines[i]?.startsWith('***')) {
-      if (lines[i]?.startsWith('@@')) {
-        i++;
-
-        // Parse change lines
-        while (i < lines.length && !lines[i]?.startsWith('@@') && !lines[i]?.startsWith('***')) {
-          const changeLine = lines[i];
-
-          if (changeLine === '*** End of File') {
-            i++;
-            break;
-          }
-
-          i++;
-        }
-      } else {
-        i++;
-      }
-    }
-
-    return { nextIdx: i };
+  if (line.startsWith('*** Add File:')) {
+    const filePath = line.split(':', 2)[1]?.trim();
+    return filePath ? { filePath, nextIdx: startIdx + 1 } : null;
   }
 
-  function parseAddFileContent(lines: string[], startIdx: number): { nextIdx: number } {
-    let content = '';
-    let i = startIdx;
+  if (line.startsWith('*** Delete File:')) {
+    const filePath = line.split(':', 2)[1]?.trim();
+    return filePath ? { filePath, nextIdx: startIdx + 1 } : null;
+  }
 
-    while (i < lines.length && !lines[i]?.startsWith('***')) {
+  if (line.startsWith('*** Update File:')) {
+    const filePath = line.split(':', 2)[1]?.trim();
+    let movePath: string | undefined;
+    let nextIdx = startIdx + 1;
+
+    // Check for move directive
+    if (nextIdx < lines.length && lines[nextIdx]?.startsWith('*** Move to:')) {
+      movePath = lines[nextIdx]?.split(':', 2)[1]?.trim();
+      nextIdx++;
+    }
+
+    return filePath ? { filePath, movePath, nextIdx } : null;
+  }
+
+  return null;
+}
+
+function parseUpdateFileChunks(lines: string[], startIdx: number): { nextIdx: number } {
+  let i = startIdx;
+
+  while (i < lines.length && !lines[i]?.startsWith('***')) {
+    if (lines[i]?.startsWith('@@')) {
+      i++;
+
+      // Parse change lines
+      while (i < lines.length && !lines[i]?.startsWith('@@') && !lines[i]?.startsWith('***')) {
+        const changeLine = lines[i];
+
+        if (changeLine === '*** End of File') {
+          i++;
+          break;
+        }
+
+        i++;
+      }
+    } else {
       i++;
     }
-
-    // Remove trailing newline
-    if (content.endsWith('\n')) {
-      content = content.slice(0, -1);
-    }
-
-    return { nextIdx: i };
   }
 
-  function stripHeredoc(input: string): string {
-    // Match heredoc patterns like: cat <<'EOF'\n...\nEOF or <<EOF\n...\nEOF
-    const heredocMatch = input.match(/^(?:cat\s+)?<<['"]?(\w+)['"]?\s*\n([\s\S]*?)\n\1\s*$/);
-    if (heredocMatch && heredocMatch[2]) {
-      return heredocMatch[2];
-    }
-    return input;
+  return { nextIdx: i };
+}
+
+function parseAddFileContent(lines: string[], startIdx: number): { nextIdx: number } {
+  let content = '';
+  let i = startIdx;
+
+  while (i < lines.length && !lines[i]?.startsWith('***')) {
+    i++;
   }
 
-  export function parseFilePaths(patchText: string): string[] {
-    const cleaned = stripHeredoc(patchText.trim());
-    const lines = cleaned.split('\n');
-    const paths: string[] = [];
-    let i = 0;
+  // Remove trailing newline
+  if (content.endsWith('\n')) {
+    content = content.slice(0, -1);
+  }
 
-    const beginMarker = '*** Begin Patch';
-    const endMarker = '*** End Patch';
+  return { nextIdx: i };
+}
 
-    const beginIdx = lines.findIndex((line) => line.trim() === beginMarker);
-    const endIdx = lines.findIndex((line) => line.trim() === endMarker);
+function stripHeredoc(input: string): string {
+  // Match heredoc patterns like: cat <<'EOF'\n...\nEOF or <<EOF\n...\nEOF
+  const heredocMatch = input.match(/^(?:cat\s+)?<<['"]?(\w+)['"]?\s*\n([\s\S]*?)\n\1\s*$/);
+  if (heredocMatch && heredocMatch[2]) {
+    return heredocMatch[2];
+  }
+  return input;
+}
 
-    if (beginIdx === -1 || endIdx === -1 || beginIdx >= endIdx) {
-      throw new Error('Invalid patch format: missing Begin/End markers');
+function parseFilePaths(patchText: string): string[] {
+  const cleaned = stripHeredoc(patchText.trim());
+  const lines = cleaned.split('\n');
+  const paths: string[] = [];
+  let i = 0;
+
+  const beginMarker = '*** Begin Patch';
+  const endMarker = '*** End Patch';
+
+  const beginIdx = lines.findIndex((line) => line.trim() === beginMarker);
+  const endIdx = lines.findIndex((line) => line.trim() === endMarker);
+
+  if (beginIdx === -1 || endIdx === -1 || beginIdx >= endIdx) {
+    throw new Error('Invalid patch format: missing Begin/End markers');
+  }
+
+  i = beginIdx + 1;
+
+  while (i < endIdx) {
+    const header = parsePatchHeader(lines, i);
+    const line = lines[i];
+    if (!header || !line) {
+      i++;
+      continue;
     }
 
-    i = beginIdx + 1;
-
-    while (i < endIdx) {
-      const header = parsePatchHeader(lines, i);
-      const line = lines[i];
-      if (!header || !line) {
-        i++;
-        continue;
+    if (line.startsWith('*** Add File:')) {
+      const { nextIdx } = parseAddFileContent(lines, header.nextIdx);
+      paths.push(header.filePath);
+      i = nextIdx;
+    } else if (line.startsWith('*** Delete File:')) {
+      paths.push(header.filePath);
+      i = header.nextIdx;
+    } else if (line.startsWith('*** Update File:')) {
+      const { nextIdx } = parseUpdateFileChunks(lines, header.nextIdx);
+      paths.push(header.filePath);
+      if (header.movePath) {
+        paths.push(header.movePath);
       }
-
-      if (line.startsWith('*** Add File:')) {
-        const { nextIdx } = parseAddFileContent(lines, header.nextIdx);
-        paths.push(header.filePath);
-        i = nextIdx;
-      } else if (line.startsWith('*** Delete File:')) {
-        paths.push(header.filePath);
-        i = header.nextIdx;
-      } else if (line.startsWith('*** Update File:')) {
-        const { nextIdx } = parseUpdateFileChunks(lines, header.nextIdx);
-        paths.push(header.filePath);
-        if (header.movePath) {
-          paths.push(header.movePath);
-        }
-        i = nextIdx;
-      } else {
-        i++;
-      }
+      i = nextIdx;
+    } else {
+      i++;
     }
-
-    return paths;
   }
+
+  return paths;
 }

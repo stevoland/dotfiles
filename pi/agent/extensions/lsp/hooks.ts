@@ -1,5 +1,8 @@
-import type { TextContent } from "@mariozechner/pi-ai";
-import type { ExtensionAPI, ToolResultEvent } from "@mariozechner/pi-coding-agent";
+import type { TextContent } from "@earendil-works/pi-ai";
+import type {
+  ExtensionAPI,
+  ToolResultEvent,
+} from "@earendil-works/pi-coding-agent";
 import type { LspRuntime } from "./runtime.js";
 import { normalizeToolPath } from "./tool.js";
 import type { LspDiagnostic, LspHookSummaryOptions } from "./types.js";
@@ -10,11 +13,7 @@ const DEFAULT_SUMMARY_OPTIONS: LspHookSummaryOptions = {
   maxChars: 2_048,
 };
 
-const APPLY_PATCH_TOOL_NAMES = [
-  "apply_patch",
-  "applyPatch",
-  "apply-patch",
-];
+const APPLY_PATCH_TOOL_NAMES = ["apply_patch", "applyPatch", "apply-patch"];
 
 function extractTextContent(event: ToolResultEvent): string {
   return event.content
@@ -56,8 +55,9 @@ function extractChangedPaths(event: ToolResultEvent): string[] {
     return [...paths];
   }
 
-  const isApplyPatchCompatible = APPLY_PATCH_TOOL_NAMES.includes(event.toolName)
-    || event.toolName.includes("patch");
+  const isApplyPatchCompatible =
+    APPLY_PATCH_TOOL_NAMES.includes(event.toolName) ||
+    event.toolName.includes("patch");
 
   if (!isApplyPatchCompatible) {
     return [];
@@ -86,7 +86,9 @@ function extractChangedPaths(event: ToolResultEvent): string[] {
     }
   }
 
-  const details = event.details as { files?: string[]; paths?: string[] } | undefined;
+  const details = event.details as
+    | { files?: string[]; paths?: string[] }
+    | undefined;
   if (details?.files) {
     for (const path of details.files) {
       paths.add(path);
@@ -139,7 +141,8 @@ function severityLabel(severity?: number): string {
 
 function sortDiagnostics(diagnostics: LspDiagnostic[]): LspDiagnostic[] {
   return [...diagnostics].sort((left, right) => {
-    const severityDiff = severityWeight(right.severity) - severityWeight(left.severity);
+    const severityDiff =
+      severityWeight(right.severity) - severityWeight(left.severity);
     if (severityDiff !== 0) return severityDiff;
 
     const leftStart = left.range?.start;
@@ -147,27 +150,40 @@ function sortDiagnostics(diagnostics: LspDiagnostic[]): LspDiagnostic[] {
     const lineDiff = (leftStart?.line ?? 0) - (rightStart?.line ?? 0);
     if (lineDiff !== 0) return lineDiff;
 
-    const characterDiff = (leftStart?.character ?? 0) - (rightStart?.character ?? 0);
+    const characterDiff =
+      (leftStart?.character ?? 0) - (rightStart?.character ?? 0);
     if (characterDiff !== 0) return characterDiff;
 
     return left.message.localeCompare(right.message);
   });
 }
 
-function formatFileDiagnostics(filePath: string, diagnostics: LspDiagnostic[], maxDiagnostics: number): string[] {
+function formatFileDiagnostics(
+  filePath: string,
+  diagnostics: LspDiagnostic[],
+  maxDiagnostics: number,
+): string[] {
   const lines: string[] = [];
 
-  const errorCount = diagnostics.filter((diagnostic) => diagnostic.severity === 1).length;
-  const warningCount = diagnostics.filter((diagnostic) => diagnostic.severity === 2).length;
+  const errorCount = diagnostics.filter(
+    (diagnostic) => diagnostic.severity === 1,
+  ).length;
+  const warningCount = diagnostics.filter(
+    (diagnostic) => diagnostic.severity === 2,
+  ).length;
 
-  lines.push(`${filePath} (${errorCount} errors, ${warningCount} warnings, ${diagnostics.length} total)`);
+  lines.push(
+    `${filePath} (${errorCount} errors, ${warningCount} warnings, ${diagnostics.length} total)`,
+  );
 
   const sorted = sortDiagnostics(diagnostics).slice(0, maxDiagnostics);
   for (const diagnostic of sorted) {
     const line = (diagnostic.range?.start?.line ?? 0) + 1;
     const character = (diagnostic.range?.start?.character ?? 0) + 1;
     const source = diagnostic.source ? `${diagnostic.source}: ` : "";
-    lines.push(`  - [${severityLabel(diagnostic.severity)}] ${line}:${character} ${source}${diagnostic.message}`);
+    lines.push(
+      `  - [${severityLabel(diagnostic.severity)}] ${line}:${character} ${source}${diagnostic.message}`,
+    );
   }
 
   if (diagnostics.length > maxDiagnostics) {
@@ -177,7 +193,10 @@ function formatFileDiagnostics(filePath: string, diagnostics: LspDiagnostic[], m
   return lines;
 }
 
-function appendSummaryToContent(content: ToolResultEvent["content"], summary: string): ToolResultEvent["content"] {
+function appendSummaryToContent(
+  content: ToolResultEvent["content"],
+  summary: string,
+): ToolResultEvent["content"] {
   const nextContent = [...content];
 
   for (let i = nextContent.length - 1; i >= 0; i -= 1) {
@@ -213,14 +232,23 @@ function buildDiagnosticsSummary(args: {
 }): string | undefined {
   const touchedSet = new Set(args.touchedFiles);
 
-  const touchedWithDiagnostics = args.touchedFiles
-    .filter((path) => (args.diagnostics[path]?.length ?? 0) > 0);
+  const touchedWithDiagnostics = args.touchedFiles.filter(
+    (path) => (args.diagnostics[path]?.length ?? 0) > 0,
+  );
 
   const relatedFiles = Object.entries(args.diagnostics)
-    .filter(([path, diagnostics]) => !touchedSet.has(path) && diagnostics.length > 0)
+    .filter(
+      ([path, diagnostics]) => !touchedSet.has(path) && diagnostics.length > 0,
+    )
     .sort((left, right) => {
-      const leftScore = Math.max(...left[1].map((diagnostic) => severityWeight(diagnostic.severity)), 0);
-      const rightScore = Math.max(...right[1].map((diagnostic) => severityWeight(diagnostic.severity)), 0);
+      const leftScore = Math.max(
+        ...left[1].map((diagnostic) => severityWeight(diagnostic.severity)),
+        0,
+      );
+      const rightScore = Math.max(
+        ...right[1].map((diagnostic) => severityWeight(diagnostic.severity)),
+        0,
+      );
       if (rightScore !== leftScore) return rightScore - leftScore;
       return right[1].length - left[1].length;
     })
@@ -239,11 +267,19 @@ function buildDiagnosticsSummary(args: {
   const lines: string[] = ["LSP diagnostics summary:"];
   for (const filePath of selectedFiles) {
     const fileDiagnostics = args.diagnostics[filePath] ?? [];
-    lines.push(...formatFileDiagnostics(filePath, fileDiagnostics, args.options.diagnosticsPerFileLimit));
+    lines.push(
+      ...formatFileDiagnostics(
+        filePath,
+        fileDiagnostics,
+        args.options.diagnosticsPerFileLimit,
+      ),
+    );
   }
 
   if (args.timedOut) {
-    lines.push("Note: diagnostics wait timed out; summary is best effort from cached server state.");
+    lines.push(
+      "Note: diagnostics wait timed out; summary is best effort from cached server state.",
+    );
   }
 
   return truncateSummary(lines.join("\n"), args.options.maxChars);
@@ -277,7 +313,11 @@ export function registerLspHooks(pi: ExtensionAPI, runtime: LspRuntime) {
       return;
     }
 
-    if (event.toolName !== "write" && event.toolName !== "edit" && !event.toolName.includes("patch")) {
+    if (
+      event.toolName !== "write" &&
+      event.toolName !== "edit" &&
+      !event.toolName.includes("patch")
+    ) {
       return;
     }
 

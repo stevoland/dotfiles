@@ -11,7 +11,7 @@ Use this skill when the user asks to upgrade Pi itself.
 
 1. Finds the latest Pi version from npm.
 2. Compares the global CLI version and updates it only if needed.
-3. Syncs `@mariozechner/pi-*` deps in `~/dotfiles/pi/agent/package.json` only if needed.
+3. Syncs `@earendil-works/pi-*` deps in `~/dotfiles/pi/agent/package.json` only if needed.
 4. Runs `bun install` only when `package.json` changed.
 5. Verifies final versions and prints a small summary.
 
@@ -21,7 +21,7 @@ Use this skill when the user asks to upgrade Pi itself.
 set -euo pipefail
 
 # 1) Resolve latest version once
-LATEST="$(npm view @mariozechner/pi-coding-agent version)"
+LATEST="$(npm view @earendil-works/pi-coding-agent version)"
 TARGET_RANGE="^${LATEST}"
 echo "Latest Pi version: ${LATEST}"
 
@@ -32,7 +32,7 @@ const input = fs.readFileSync(0, "utf8");
 let v = "";
 try {
   const j = JSON.parse(input);
-  v = j.dependencies?.["@mariozechner/pi-coding-agent"]?.version || "";
+  v = j.dependencies?.["@earendil-works/pi-coding-agent"]?.version || "";
 } catch {}
 process.stdout.write(v);
 ')"
@@ -40,7 +40,7 @@ process.stdout.write(v);
 GLOBAL_UPDATED=no
 if [ "${GLOBAL_CURRENT}" != "${LATEST}" ]; then
   echo "Updating global pi-coding-agent: ${GLOBAL_CURRENT:-<none>} -> ${LATEST}"
-  npmig "@mariozechner/pi-coding-agent@${LATEST}"
+  npmig "@earendil-works/pi-coding-agent@${LATEST}"
   GLOBAL_UPDATED=yes
 else
   echo "Global pi-coding-agent already at ${LATEST}; skipping npmig"
@@ -56,9 +56,9 @@ const target = process.env.TARGET_RANGE;
 const pkg = JSON.parse(fs.readFileSync(path, "utf8"));
 const deps = pkg.dependencies || {};
 const names = [
-  "@mariozechner/pi-ai",
-  "@mariozechner/pi-coding-agent",
-  "@mariozechner/pi-tui"
+  "@earendil-works/pi-ai",
+  "@earendil-works/pi-coding-agent",
+  "@earendil-works/pi-tui"
 ];
 let changed = false;
 for (const name of names) {
@@ -86,7 +86,7 @@ fi
 
 # 5) Verify + concise summary
 echo "--- Verification ---"
-npm list -g --depth=0 | rg '@mariozechner/pi-coding-agent'
+npm list -g --depth=0 | rg '@earendil-works/pi-coding-agent'
 node -e 'const p=require("./package.json"); console.log(JSON.stringify(p.dependencies, null, 2))'
 
 echo "--- Summary ---"
@@ -97,6 +97,6 @@ echo "bunInstallRan=${BUN_INSTALL_RAN}"
 
 ## Notes
 
-- Keep the three `@mariozechner/pi-*` dependency versions aligned.
+- Keep the three `@earendil-works/pi-*` dependency versions aligned.
 - This skill is idempotent: if already up to date, it should do no-op work and report skips clearly.
 - Always read/write `~/dotfiles/pi/agent/package.json` (dotfiles source of truth), not `~/.pi` directly.

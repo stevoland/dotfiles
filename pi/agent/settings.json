@@ -1,18 +1,25 @@
 {
-  "lastChangelogVersion": "0.67.68",
+  "lastChangelogVersion": "0.78.1",
   "defaultProvider": "github-copilot",
-  "defaultModel": "gpt-5.5",
-  "defaultThinkingLevel": "low",
+  "defaultModel": "gpt-5.6-luna",
+  "defaultThinkingLevel": "high",
   "theme": "ghostty-sync-181e36be",
   "packages": [
-    "~/workspace/github.com/monotykamary/pi-mcp-adapter",
     "npm:pi-librarian",
     "npm:pi-ask-tool-extension",
     "npm:pi-web-access",
     "npm:@ogulcancelik/pi-ghostty-theme-sync",
     "npm:glimpseui",
     "npm:pi-interview",
-    "git:https://github.com/badlogic/pi-diff-review"
+    "npm:pi-mcp-adapter",
+    "git:https://github.com/badlogic/pi-diff-review",
+    "/Users/stephen.collings/workspace/github.com/stevoland/pi-powerline-footer",
+    "npm:@xl0/show-sysprompt",
+    "npm:pi-goal",
+    "git:github.com/kostyay/pi-k-excalidraw",
+    "npm:pi-cmux",
+    "npm:@ahkohd/pi-oyo",
+    "npm:@plannotator/pi-extension"
   ],
   "extensions": [],
   "enabledModels": [
@@ -21,7 +28,38 @@
     "github-copilot/gpt-5-mini",
     "github-copilot/gpt-5.3-codex",
     "github-copilot/gpt-5.4",
-    "github-copilot/gpt-5.5"
+    "github-copilot/gpt-5.5",
+    "github-copilot/gpt-5.6-luna",
+    "github-copilot/gpt-5.6-terra",
+    "github-copilot/gpt-5.6-sol"
   ],
-  "hideThinkingBlock": false
+  "hideThinkingBlock": false,
+  "powerline": {
+    "preset": "custom",
+    "custom": {
+      "separator": "dot",
+      "leftSegments": [
+        "model",
+        "context_pct",
+        "shell_mode",
+        "path",
+        "git"
+      ],
+      "rightSegments": [
+        "custom:ci"
+      ],
+      "secondarySegments": [],
+      "options": {
+        "path": {
+          "mode": "basename"
+        }
+      }
+    },
+    "customItems": [
+      {
+        "id": "ci",
+        "statusKey": "ci-status"
+      }
+    ]
+  }
 }

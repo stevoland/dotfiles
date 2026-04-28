@@ -1,16 +1,21 @@
-import type { Component, TUI } from "@mariozechner/pi-tui";
-import { Key, matchesKey, visibleWidth } from "@mariozechner/pi-tui";
+import type { Component, TUI } from "@earendil-works/pi-tui";
+import { Key, matchesKey, visibleWidth } from "@earendil-works/pi-tui";
 import type { LspPanelRow, LspPanelSnapshot } from "./types.js";
 import { ansiBold, ansiColor, ansiDim } from "../../prelude/ui/ansi.js";
 import { borderLine, contentLine, emptyLine } from "../../prelude/ui/box.js";
-import { padRightVisible, truncateAnsiToWidth } from "../../prelude/ui/layout.js";
+import {
+  padRightVisible,
+  truncateAnsiToWidth,
+} from "../../prelude/ui/layout.js";
 
 interface LspPanelCallbacks {
   onClose: () => void;
   onRefresh: () => Promise<LspPanelSnapshot>;
 }
 
-function rowState(row: LspPanelRow): "disabled" | "broken" | "spawning" | "connected" | "idle" {
+function rowState(
+  row: LspPanelRow,
+): "disabled" | "broken" | "spawning" | "connected" | "idle" {
   if (row.disabled) return "disabled";
   if (row.broken) return "broken";
   if (row.spawningRoots.length > 0) return "spawning";
@@ -54,7 +59,11 @@ export class LspPanelComponent implements Component {
   private cachedWidth?: number;
   private cachedLines?: string[];
 
-  constructor(tui: TUI, snapshot: LspPanelSnapshot, callbacks: LspPanelCallbacks) {
+  constructor(
+    tui: TUI,
+    snapshot: LspPanelSnapshot,
+    callbacks: LspPanelCallbacks,
+  ) {
     this.tui = tui;
     this.snapshot = snapshot;
     this.callbacks = callbacks;
@@ -77,7 +86,9 @@ export class LspPanelComponent implements Component {
         row.source,
         ...row.extensions,
         ...row.connectedRoots,
-      ].join(" ").toLowerCase();
+      ]
+        .join(" ")
+        .toLowerCase();
       return haystack.includes(query);
     });
   }
@@ -88,7 +99,10 @@ export class LspPanelComponent implements Component {
       return;
     }
 
-    this.selectedIndex = Math.max(0, Math.min(this.selectedIndex, rows.length - 1));
+    this.selectedIndex = Math.max(
+      0,
+      Math.min(this.selectedIndex, rows.length - 1),
+    );
   }
 
   private async refresh(): Promise<void> {
@@ -188,7 +202,7 @@ export class LspPanelComponent implements Component {
       return;
     }
 
-    if (data === "?" ) {
+    if (data === "?") {
       this.showHelp = !this.showHelp;
       this.invalidateAndRender();
       return;
@@ -238,7 +252,16 @@ export class LspPanelComponent implements Component {
 
     const title = ansiBold("LSP Status", { fullReset: true });
     const totals = `${this.snapshot.totals.configured} configured · ${this.snapshot.totals.connected} connected · ${this.snapshot.totals.spawning} spawning · ${this.snapshot.totals.broken} broken · ${this.snapshot.totals.disabled} disabled`;
-    add(contentLine(truncateAnsiToWidth(`${title} ${ansiDim(totals, { fullReset: true })}`, contentWidth), boxWidth, border));
+    add(
+      contentLine(
+        truncateAnsiToWidth(
+          `${title} ${ansiDim(totals, { fullReset: true })}`,
+          contentWidth,
+        ),
+        boxWidth,
+        border,
+      ),
+    );
 
     const filterLabel = this.filterMode
       ? ansiColor(`filter: ${this.filterQuery || ""}_`, 36, { fullReset: true })
@@ -251,16 +274,36 @@ export class LspPanelComponent implements Component {
       statusParts.push(ansiColor("refreshing…", 33, { fullReset: true }));
     }
     if (this.error) {
-      statusParts.push(ansiColor(`error: ${this.error}`, 31, { fullReset: true }));
+      statusParts.push(
+        ansiColor(`error: ${this.error}`, 31, { fullReset: true }),
+      );
     }
 
-    add(contentLine(truncateAnsiToWidth(statusParts.join(" · "), contentWidth), boxWidth, border));
+    add(
+      contentLine(
+        truncateAnsiToWidth(statusParts.join(" · "), contentWidth),
+        boxWidth,
+        border,
+      ),
+    );
     add(borderLine(boxWidth, "├", "┤", border));
 
     if (this.snapshot.rows.length === 0) {
-      add(contentLine(ansiDim("no servers configured", { fullReset: true }), boxWidth, border));
+      add(
+        contentLine(
+          ansiDim("no servers configured", { fullReset: true }),
+          boxWidth,
+          border,
+        ),
+      );
     } else if (rows.length === 0) {
-      add(contentLine(ansiDim("no rows match filter", { fullReset: true }), boxWidth, border));
+      add(
+        contentLine(
+          ansiDim("no rows match filter", { fullReset: true }),
+          boxWidth,
+          border,
+        ),
+      );
     } else {
       for (let index = 0; index < rows.length; index += 1) {
         const row = rows[index]!;
@@ -293,7 +336,14 @@ export class LspPanelComponent implements Component {
           ];
 
           for (const expandedLine of expandedLines) {
-            add(contentLine(`   ${truncateAnsiToWidth(ansiDim(expandedLine, { fullReset: true }), contentWidth - 3)}`, boxWidth, border, 1));
+            add(
+              contentLine(
+                `   ${truncateAnsiToWidth(ansiDim(expandedLine, { fullReset: true }), contentWidth - 3)}`,
+                boxWidth,
+                border,
+                1,
+              ),
+            );
           }
         }
       }
@@ -309,17 +359,31 @@ export class LspPanelComponent implements Component {
         "? toggle help",
       ];
       for (const helpLine of helpLines) {
-        add(contentLine(truncateAnsiToWidth(ansiDim(helpLine, { fullReset: true }), contentWidth), boxWidth, border));
+        add(
+          contentLine(
+            truncateAnsiToWidth(
+              ansiDim(helpLine, { fullReset: true }),
+              contentWidth,
+            ),
+            boxWidth,
+            border,
+          ),
+        );
       }
     } else {
-      add(contentLine(
-        truncateAnsiToWidth(
-          ansiDim("↑/↓ j/k move · Enter expand · / filter · r refresh · ? help · q close", { fullReset: true }),
-          contentWidth,
+      add(
+        contentLine(
+          truncateAnsiToWidth(
+            ansiDim(
+              "↑/↓ j/k move · Enter expand · / filter · r refresh · ? help · q close",
+              { fullReset: true },
+            ),
+            contentWidth,
+          ),
+          boxWidth,
+          border,
         ),
-        boxWidth,
-        border,
-      ));
+      );
     }
 
     add(borderLine(boxWidth, "╰", "╯", border));
