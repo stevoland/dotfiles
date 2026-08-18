@@ -1,34 +1,49 @@
 ---
 name: babysit
-description: 'Babysit a GitHub pull request all the way to merge-ready by relentlessly polling status and only acting once all automatic reviewers have finished. NEVER merges without explicit human approval.'
+description: 'Babysit a draft GitHub pull request until it is ready for human review by relentlessly polling status and only acting once copilot review has finished. Never opens or merges the PR.'
 ---
 
-# Shepherd PR
+# Babysit PR
 
-Your job is to shepherd this PR all the way to **merge-ready** - reviewed, addressed, verified, and CI green. **Not merged.** Merging is a human decision.
+Your job is to babysit this PR until it is **ready for human review** - reviewed by Copilot, addressed, verified, and CI green. Keep it as a draft and assign it to the current user. The human decides when to open and merge it.
 
-Create the PR (or pick up the one just created), request a review from copilot if not yet the case (`gh pr edit <pr_url> --add-reviewer "@copilot"`), then relentlessly poll its status in a loop. Do not stop polling until copilot has fully completed their review.
+Create the PR as a draft (or pick up the one just created and ensure it is a draft), then capture its current head commit and request a review from copilot if that head has not already been reviewed (`gh pr edit <pr_url> --add-reviewer "@copilot"`).
 
-2. **Triage their feedback:** Once done, implement their required changes. Fix everything medium severity and beyond. Only fix low severity issue if they're a DRY violation or if there are other issues to fix already. Strictly skip suggestions/low severity issue if they're the only ones remaining, and they qualify under super minor (nit) or rare edge case. In these cases reply explaining why and continue working autonomously.
+## Polling protocol
 
-3. **Commit and push:** After implementing changes, commit and push. Then go back to step 1 - the reviewers will automatically re-review your new push.
+Relentlessly poll until copilot has submitted a review for the current head commit, but keep every tool call bounded:
 
-4. **Loop:** Repeat until a full cycle passes with nothing meaningful left to address from the reviewer.
+1. Run one status lookup per tool call. Never start an unbounded shell loop or background poller.
+2. Fail the command immediately if the `gh` lookup fails; a failed lookup is not a pending review.
+3. Inspect a fresh `gh pr view --json headRefOid,reviewRequests,reviews` response on every lookup. Scan all reviews; response order is not significant. Compare each copilot review's `commit.oid` with `headRefOid`. A review of an earlier head is stale.
+4. If the current head is still pending, use a bounded wait of at most 30 seconds before the next lookup. Each tool call must return after that lookup.
+5. Copilot is complete only when a review authored by `copilot-pull-request-reviewer` has a non-null `submittedAt` and its `commit.oid` equals the current head commit.
+6. Treat user interruptions and GitHub review links as new status evidence, not as reasons to reuse the previous polling result. Query a supplied review URL or ID, then run a fresh PR lookup. If no current-head review appears, wait up to 10 seconds and look up the PR once more before reporting that the review is missing or stale; GitHub may publish the review between polls or expose it with brief eventual consistency.
 
-5. **Double-verify merge-ready:** Before declaring the PR merge-ready, verify twice that (a) all reviewers have re-run on the latest commit, (b) no outstanding required changes remain, and (c) CI is green and the PR is mergeable.
+After completion, fetch unresolved inline threads through `pullRequest.reviewThreads`; the review summary alone is not the feedback.
 
-6. **Stop. Hand off to human.** Report that the PR is merge-ready and wait. **Do not merge.**
+`jj workspace add` workspaces may not contain `.git`, so `gh` cannot infer the repository there. Capture `OWNER/REPO` before creating or entering an amends workspace, and pass `--repo OWNER/REPO` to every repository-dependent `gh` command.
 
-## Hard rule: never merge without explicit approval
+Follow the "review-amends" skill.
 
-- NEVER run `gh pr merge`, the GitHub merge API, or any equivalent action on your own.
-- "All checks green" is NOT permission to merge. It is permission to stop and report.
-- Even if the user originally said "get this PR merged", treat that as "get this PR merge-ready" and ask for explicit confirmation before merging.
-- Only merge if the user replies with an explicit, unambiguous YES to merge after you've reported merge-ready (e.g. "yes merge it", "go ahead and merge"). A thumbs-up or "ok" is not enough - ask again if unclear.
-- If in doubt, do not merge. Ask.
+## Amend commit boundaries
 
-"Pushed a fix" is not done. "All green" is not done either - it's the handoff point.
+Each amend gets exactly one new commit. A Copilot review may require multiple amends and therefore multiple commits. Treat independently actionable fixes as separate amends; threads describing the same root cause may share one amend.
 
-**Do not stop early. Do not merge on your own.**
+Before starting an amend, verify that the amend workspace has an empty working-copy commit whose parent carries the PR bookmark. Make only that amend in the empty commit, describe it, advance the bookmark to it, push it, and reply to its review thread with that commit's link.
 
-Done is when you've looped through a clean review cycle, double-checked it, reported merge-ready, and the human has explicitly approved the merge.
+Immediately after every successful amend push, run `jj new <bookmark>` in the amend workspace. Before starting another amend or polling again, verify that:
+
+- the new working-copy commit is empty and has no bookmark;
+- its parent is the pushed amend commit; and
+- the parent carries the PR bookmark.
+
+Repeat this commit, push, reply, and checkpoint sequence for every amend from the review. The checkpoint is mandatory after the final amend too. It prevents the next amend, whether from the same review or a later review, from rewriting the previous amend commit.
+
+Once every amend from the review is pushed and the final empty child checkpoint exists, capture the new GitHub head commit, request another review from copilot, and repeat the bounded polling protocol. Never let a review of the previous head satisfy the new review cycle.
+
+Repeat until there is no more work to be done.
+
+## Finish state
+
+Assign the PR to the current user with `gh pr edit <pr_url> --add-assignee "@me"`. Verify the final head has a completed Copilot review, CI is green, and `isDraft` is `true`. If the PR is not a draft, return it to draft with `gh pr ready <pr_url> --undo`. Never call `gh pr ready` without `--undo`.

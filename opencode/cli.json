@@ -46,7 +46,7 @@
   "tabs": {
     "enabled": true,
     "layout": "horizontal",
-    "scope": "global",
+    "scope": "cwd",
     "vertical": false
   },
   "theme": {

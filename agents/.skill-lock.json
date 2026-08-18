@@ -290,6 +290,24 @@
       "skillFolderHash": "b1512e24318785e3f9028e19a8f7cbec11343088",
       "installedAt": "2026-08-16T23:05:39.218Z",
       "updatedAt": "2026-08-16T23:05:39.218Z"
+    },
+    "code-review": {
+      "source": "dmmulroy/.dotfiles",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/dmmulroy/.dotfiles.git",
+      "skillPath": "home/.agents/skills/code-review/SKILL.md",
+      "skillFolderHash": "f8c9edaf9371274083be6ba9a42a10f234865a5c",
+      "installedAt": "2026-08-17T18:04:35.101Z",
+      "updatedAt": "2026-08-17T18:04:35.101Z"
+    },
+    "documentation-and-adrs": {
+      "source": "addyosmani/agent-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/addyosmani/agent-skills.git",
+      "skillPath": "skills/documentation-and-adrs/SKILL.md",
+      "skillFolderHash": "85f57bdd7dcddaa589c6f36e8ac87423005c3de0",
+      "installedAt": "2026-08-18T18:38:11.331Z",
+      "updatedAt": "2026-08-18T18:38:11.331Z"
     }
   },
   "dismissed": {

@@ -1,5 +1,5 @@
 ---
-name: review-respond
+name: review-amends
 description: Triage and address PR review comments
 disable-model-invocation: true
 metadata:
@@ -22,8 +22,12 @@ metadata:
 
 3. **Triage the feedback:** Consider everything medium severity and beyond. Only consider low severity issue if they're a DRY violation or if there are other issues to fix already. Strictly skip suggestions/low severity issue if they're the only ones remaining, and they qualify under super minor (nit) or rare edge case.
 
+4. If there are any comments to address, check if in the default jj workspace. If so, create a new jj workspace: `<bookmark_name>-amends` and do the work there.
+
 4. For each comment which should be addressed - make necessary changes to address the comment - use your judgement. This might not be the change suggested. Commit, advance the jj bookmark, push and reply to the comment with what you did and why including a link to the commit.
 
-5. For each comment skipped: reply with a brief explaination of your reasons to skip.
+5. For each comment skipped: reply with a brief explaination of your reasons to skip. Do not resolve the comment.
 
-6. End with outputting a summary of your work with links to your comments.
+6. Assign the PR to me for manual review.
+
+7. Write a summary of your work with links to your comments.

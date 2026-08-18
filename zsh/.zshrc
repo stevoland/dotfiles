@@ -73,9 +73,7 @@ export ZSH_CUSTOM=$HOME/dotfiles/zsh/custom
 plugins=(
   git
   zsh-autosuggestions
-  zsh-syntax-highlighting
   fast-syntax-highlighting
-  poetry
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -116,9 +114,12 @@ export PATH="$PATH:$HOME/.local/bin"
 
 eval "$(starship init zsh)"
 
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
-[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+function sdk() {
+  unfunction sdk
+  [[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"
+  sdk "$@"
+}
 
 # bun completions
 [ -s "$HOME/.bun/_bun" ] && source "/Users/stephen.collings/.bun/_bun"
@@ -128,19 +129,11 @@ export PATH="$PATH:$HOME/.lmstudio/bin"
 # End of LM Studio CLI section
 
 export DELTA_PAGER="less -X"
-# Added by LM Studio CLI (lms)
-export PATH="$PATH:$HOME/.lmstudio/bin"
-# End of LM Studio CLI section
 
 export XDG_CONFIG_HOME="$HOME/.config"
 
-# Added by LM Studio CLI (lms)
-export PATH="$PATH:/Users/stephen.collings/.lmstudio/bin"
-# End of LM Studio CLI section
-
-
 [[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
 
-. "$HOME/.cargo/env" 
+. "$HOME/.cargo/env"
 
 export PATH="/opt/homebrew/opt/zig@0.15/bin:$PATH"

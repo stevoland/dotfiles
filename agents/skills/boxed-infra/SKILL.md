@@ -1,11 +1,11 @@
 ---
 name: boxed-infra
-description: Understand Natwest Boxed infrastructure. Use when user asks about devlopment, staging, production, tools, sandbox, kubernetes, datadog
+description: Understand Natwest Boxed infrastructure. Use when user asks about services, devlopment, staging, production, tools, sandbox, kubernetes, datadog
 ---
 
 ## Kubernetes
 
-Use the `kubernetes` tools if available. Fall back to `kubectl`.
+Use the `kubernetes` code mode tools if available. Fall back to `kubectl`.
 
 Kubernetes clusters are named: `<environment>-<cloud>`
 
