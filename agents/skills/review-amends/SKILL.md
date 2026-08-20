@@ -24,10 +24,19 @@ metadata:
 
 4. If there are any comments to address, check if in the default jj workspace. If so, create a new jj workspace: `<bookmark_name>-amends` and do the work there.
 
-4. For each comment which should be addressed - make necessary changes to address the comment - use your judgement. This might not be the change suggested. Commit, advance the jj bookmark, push and reply to the comment with what you did and why including a link to the commit.
+5. Group comments into amends. Each independently actionable fix is one amend; comments describing the same root cause may share one amend. A review may require multiple amends and therefore multiple commits.
 
-5. For each comment skipped: reply with a brief explaination of your reasons to skip. Do not resolve the comment.
+   For each amend:
 
-6. Assign the PR to me for manual review.
+   1. Verify the working-copy commit is empty and has no bookmark, and its parent carries the PR bookmark. Stop if this boundary is not present.
+   2. Make only that amend, using your judgement rather than blindly applying the suggested change.
+   3. Describe the commit, advance the PR bookmark to it, push it, and reply to every associated thread with what changed, why, and a link to that commit.
+   4. Immediately run `jj new <bookmark>` and verify the new working-copy commit is empty and unbookmarked, its parent is the pushed amend commit, and its parent carries the PR bookmark.
 
-7. Write a summary of your work with links to your comments.
+   Repeat the full sequence for every amend. The final empty-child checkpoint is mandatory too. Never make a later amend by editing a pushed amend commit.
+
+6. For each comment skipped, reply with a brief explanation of why it was skipped. Do not resolve the comment.
+
+7. Assign the PR to me for manual review.
+
+8. Write a summary of your work with links to your comments.

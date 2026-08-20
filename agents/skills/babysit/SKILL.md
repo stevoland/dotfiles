@@ -26,21 +26,7 @@ After completion, fetch unresolved inline threads through `pullRequest.reviewThr
 
 Follow the "review-amends" skill.
 
-## Amend commit boundaries
-
-Each amend gets exactly one new commit. A Copilot review may require multiple amends and therefore multiple commits. Treat independently actionable fixes as separate amends; threads describing the same root cause may share one amend.
-
-Before starting an amend, verify that the amend workspace has an empty working-copy commit whose parent carries the PR bookmark. Make only that amend in the empty commit, describe it, advance the bookmark to it, push it, and reply to its review thread with that commit's link.
-
-Immediately after every successful amend push, run `jj new <bookmark>` in the amend workspace. Before starting another amend or polling again, verify that:
-
-- the new working-copy commit is empty and has no bookmark;
-- its parent is the pushed amend commit; and
-- the parent carries the PR bookmark.
-
-Repeat this commit, push, reply, and checkpoint sequence for every amend from the review. The checkpoint is mandatory after the final amend too. It prevents the next amend, whether from the same review or a later review, from rewriting the previous amend commit.
-
-Once every amend from the review is pushed and the final empty child checkpoint exists, capture the new GitHub head commit, request another review from copilot, and repeat the bounded polling protocol. Never let a review of the previous head satisfy the new review cycle.
+Once "review-amends" completes, capture the new GitHub head commit, request another review from copilot, and repeat the bounded polling protocol. Never let a review of the previous head satisfy the new review cycle.
 
 Repeat until there is no more work to be done.
 
