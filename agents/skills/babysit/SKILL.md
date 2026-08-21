@@ -1,13 +1,24 @@
 ---
 name: babysit
-description: 'Babysit a draft GitHub pull request until it is ready for human review by relentlessly polling status and only acting once copilot review has finished. Never opens or merges the PR.'
+description: 'Use when asked to babysit, monitor, or shepherd a draft GitHub pull request. Request Copilot review first, then poll until the current head has a completed Copilot review, all feedback is addressed, and CI is green. Never opens or merges the PR.'
+metadata:
+  opencode/slash: true
 ---
 
 # Babysit PR
 
 Your job is to babysit this PR until it is **ready for human review** - reviewed by Copilot, addressed, verified, and CI green. Keep it as a draft and assign it to the current user. The human decides when to open and merge it.
 
-Create the PR as a draft (or pick up the one just created and ensure it is a draft), then capture its current head commit and request a review from copilot if that head has not already been reviewed (`gh pr edit <pr_url> --add-reviewer "@copilot"`).
+## Mandatory first action
+
+The first PR mutation is the Copilot review request. Do this before checking CI, reporting status, or waiting:
+
+1. Resolve the PR URL and repository, and capture `headRefOid`.
+2. Ensure the PR is a draft and assigned to the current user.
+3. Inspect `reviewRequests` and `reviews` for that head. If there is no completed Copilot review for the current `headRefOid`, request one immediately with `gh pr edit <pr_url> --add-reviewer "@copilot"`.
+4. Run a fresh PR lookup and verify that Copilot is either requested or has already submitted a review for the captured head.
+
+The invocation is incomplete until this gate has passed. A CI-only status check is not a babysit completion.
 
 ## Polling protocol
 
@@ -26,7 +37,7 @@ After completion, fetch unresolved inline threads through `pullRequest.reviewThr
 
 Follow the "review-amends" skill.
 
-Once "review-amends" completes, capture the new GitHub head commit, request another review from copilot, and repeat the bounded polling protocol. Never let a review of the previous head satisfy the new review cycle.
+Once "review-amends" completes, capture the new GitHub head commit, request another review from copilot as the mandatory first action for the new head, and repeat the bounded polling protocol. Never let a review of the previous head satisfy the new review cycle.
 
 Repeat until there is no more work to be done.
 

@@ -1,7 +1,6 @@
 ---
 name: review-amends
-description: Triage and address PR review comments
-disable-model-invocation: true
+description: Only use when following babysit skill to triage and address PR review comments
 metadata:
   opencode/slash: true
 ---

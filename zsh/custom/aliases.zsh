@@ -100,7 +100,7 @@ npmig() {
 
 export PATH="$HOME/npmbin/node_modules/.bin:$PATH"
 
-export OPENCODE_EXPERIMENTAL_CODE_MODE=1
+export OPENCODE_EXPERIMENTAL_CODE_MODE=0
 # export OPENCODE_EXPERIMENTAL_FILEWATCHER=true
 
 # export PATH="$HOME/workspace/github.com/stevoland/opencode/packages/opencode/dist/opencode-darwin-arm64/bin:$PATH"
@@ -144,9 +144,9 @@ alias jp='jj push'
 alias js='jj squash'
 alias jr='jj rebase'
 
-rm() {
-  while [[ "$1" == -* ]];
-    do shift;
-  done
-  trash "$@"
-}
+# rm() {
+#   while [[ "$1" == -* ]];
+#     do shift;
+#   done
+#   trash "$@"
+# }

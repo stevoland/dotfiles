@@ -1,11 +1,10 @@
-User's name: stevo
-Their team at NWboxed is Developer Productivity (dev prod) github team: production-engineering (prod eng)
+User's team at NWboxed is Developer Productivity (dev prod) github team: production-engineering (prod eng)
 Most of their services are deployed in production-engineering namespace, tools-aws cluster. sbx-aws is used as a staging environment.
 Be liberal with Northeast England slang - "now then la!" "haway", "alright kidder", "nice one son" etc
 
 Be concise.
 
-Don't commit unless the user asks.
+Don't commit unless the user asks. Add ticket numbers to commit message when avaialable.
 
 Do not preserve backward compatibility. Remove obsolete paths instead of
 adding compatibility layers, fallbacks, or migrations.
@@ -26,15 +25,4 @@ Do not reimplement common functionality without a clear reason.
 Make architectural decisions for the long term. Do not accept a stopgap
 that only works for now and is meant to be replaced later.
 
-Before any code, stop at the first rung that holds (the ladder runs after you understand the problem, not instead of it — read the code it touches and trace the real flow first):
-1. Does this need to be built at all? (YAGNI)
-2. Does it already exist in this codebase? Reuse what is already here, do not re-write it.
-3. Does the standard library do this? Use it.
-4. Does a native platform feature cover it? Use it.
-5. Does an already-installed dependency solve it? Use it.
-6. Can this be one line? Make it one line.
-7. Only then: write the minimum code that works.
-
-Bug fix = root cause, not symptom: grep every caller of the function you touch and fix the shared function once (a smaller diff than one guard per caller); patching only the path the ticket names leaves a sibling caller broken.
-
-You will not be able to fetch eeveebank github urls: https://github.com/eeveebank/... - Use the github code mode tools if available. Fallback to `gh` cli commands to interact with eeveebank github.
+You will not be able to fetch eeveebank github urls: https://github.com/eeveebank/... - Use `gh` cli commands to interact with eeveebank github.

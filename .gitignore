@@ -21,3 +21,5 @@ pi/agent/**/
 !pi/agent/prelude/**
 !pi/agent/skills/
 !pi/agent/skills/**
+
+agents/skills/boxed-platform
