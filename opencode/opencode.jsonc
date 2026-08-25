@@ -1,52 +1,71 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "agent": {
-    "general": {
-      "model": "github-copilot/gpt-5.6-luna",
-      "variant": "high",
-    },
-    "explore": {
-      "model": "github-copilot/gpt-5.6-luna",
-      "variant": "high",
-    },
-    "low": {
-      "color": "#ffc799",
-      "model": "github-copilot/gpt-5.6-luna",
-      "variant": "high",
-      "prompt": "{file:./prompts/default.md}"
-    },
-    "high": {
-      "color": "#ff8080",
-      "model": "github-copilot/gpt-5.6-sol",
-      "variant": "medium",
-      "prompt": "{file:./prompts/default.md}"
-    },
-    "build": {
-      "hidden": true
-    },
-    "plan": {
-      "hidden": true
-    },
     "babysitter": {
       "model": "github-copilot/gpt-5.6-sol",
-      "variant": "medium",
       "permission": {
         "skill": {
           "babysit": "allow",
           "review-amends": "allow"
         }
       },
-      "prompt": "Immediately invoke the `babysit` skill and follow the instructions."
+      "prompt": "Immediately invoke the `babysit` skill and follow the instructions.",
+      "variant": "medium"
+    },
+    "build": {
+      "hidden": true
+    },
+    "explore": {
+      "model": "github-copilot/gpt-5.6-luna",
+      "variant": "high"
+    },
+    "general": {
+      "model": "github-copilot/gpt-5.6-luna",
+      "variant": "high"
+    },
+    "high": {
+      "color": "#ff8080",
+      "model": "github-copilot/gpt-5.6-sol",
+      "prompt": "{file:./prompts/default.md}",
+      "variant": "medium"
+    },
+    "low": {
+      "color": "#ffc799",
+      "model": "github-copilot/gpt-5.6-luna",
+      "variant": "high"
+    },
+    "oracle": {
+      "description": "Consult a read-only oracle for deep analysis, code review, debugging, planning, and second opinions. Use oracle sparingly when you want a second opinion, deeper analysis, code review, debugging help, or a higher-reasoning pass. Do not use oracle for routine low-value work; oracle is slower than the main agent. Include enough context for a stand-alone review or analysis.",
+      "mode": "subagent",
+      "model": "github-copilot/gpt-6-astra",
+      "permission": {
+        "edit": "deny"
+      },
+      "prompt": "{file:./prompts/oracle.md}",
+      "variant": "med"
+    },
+    "plan": {
+      "hidden": true
     },
     "reviewer": {
-      "model": "github-copilot/gpt-5.6-sol",
-      "variant": "medium",
       "mode": "all",
-      "prompt": "Immediately invoke the `code-review` skill and follow the instructions."
-    },
+      "model": "github-copilot/gpt-5.6-sol",
+      "prompt": "Immediately invoke the `code-review` skill and follow the instructions.",
+      "variant": "medium"
+    }
   },
   "default_agent": "low",
   "mcp": {
+    "agent-browser": {
+      "command": [
+        "agent-browser",
+        "mcp",
+        "--tools",
+        "all"
+      ],
+      "enabled": true,
+      "type": "local"
+    },
     "atlassian": {
       "enabled": true,
       "type": "remote",
@@ -68,19 +87,19 @@
     },
     "filesystem": {
       "command": [
-        "mcp-server-filesystem",
+        "mcp-server-filesystem"
       ],
       "enabled": true,
       "type": "local"
     },
     "github": {
-      "type": "remote",
-      "url": "https://api.githubcopilot.com/mcp",
       "enabled": false,
-      "oauth": false,
       "headers": {
         "Authorization": "Bearer {env:GITHUB_TOKEN}"
-      }
+      },
+      "oauth": false,
+      "type": "remote",
+      "url": "https://api.githubcopilot.com/mcp"
     },
     "incidentio": {
       "enabled": true,
@@ -89,21 +108,25 @@
     },
     "kubernetes": {
       "command": [
-        "node", "/Users/stephen.collings/workspace/github.com/eeveebank/boxed-mcp-servers/boxed-kubernetes-mcp-server/dist/index.js",
+        "node",
+        "/Users/stephen.collings/workspace/github.com/eeveebank/boxed-mcp-servers/boxed-kubernetes-mcp-server/dist/index.js"
       ],
+      "enabled": true,
       "environment": {
         "KUBECONFIG": "/Users/stephen.collings/.kube/boxed-config.yaml"
       },
-      "enabled": true,
       "type": "local"
-    },
+    }
   },
   "permission": {
     "skill": {
       "*": "deny",
-      "babysit": "allow",
+      "adr": "allow",
+      "agents-md": "allow",
       "boxed-platform": "allow",
       "code-review": "allow",
+      "codebase-design": "allow",
+      "coding-standards": "allow",
       "diagnosing-bugs": "allow",
       "documentation-and-adrs": "allow",
       "domain-modeling": "allow",
@@ -111,10 +134,9 @@
       "implement-code": "allow",
       "opencode": "allow",
       "prototype": "allow",
-      "review-amends": "allow",
-      "terminal-control": "allow",
       "report": "allow",
       "tdd": "allow",
+      "terminal-control": "allow",
       "wayfinder": "allow",
       "write-discoverable-code": "allow",
       "writing-for-agents": "allow"
@@ -122,10 +144,26 @@
     "todowrite": "deny"
   },
   "plugin": [
-    "/Users/stephen.collings/workspace/github.com/eeveebank/nwb/opencode-plugins/v2/dist/boxedcode.js",
-    "/Users/stephen.collings/.boxedcode-pro/0.16.1/boxedcode-pro",
-    "/Users/stephen.collings/dotfiles/opencode-packages/opencode-rift/src/index.ts",
+    "/Users/stephen.collings/dotfiles/opencode-packages/opencode-babysit/src",
+    "/Users/stephen.collings/dotfiles/opencode-packages/opencode-rift/src",
+    "/Users/stephen.collings/dotfiles/opencode-packages/opencode-gemini/src",
+    "/Users/stephen.collings/dotfiles/opencode-packages/opencode-trajectory/src",
+    "/Users/stephen.collings/.boxedcode-pro/0.16.1/boxedcode-pro"
   ],
+  "provider": {
+    "github-copilot": {
+      "models": {
+        "gpt-6-astra": {
+          "limit": {
+            "context": 400000,
+            "input": 272000,
+            "output": 128000
+          },
+          "name": "GPT-6 Astra (Astranomical ha!)"
+        }
+      }
+    }
+  },
   "references": {
     "opencode-v2": {
       "branch": "v2",
@@ -133,6 +171,7 @@
       "repository": "anomalyco/opencode"
     }
   },
+  "shell": "/opt/homebrew/bin/opencode-shell",
   "skills": {
     "paths": [
       "~/.github/skills",

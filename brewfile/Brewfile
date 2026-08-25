@@ -5,6 +5,7 @@ tap homebrew/core
 brew act
 brew ada-url
 brew adr-tools
+brew agent-browser
 brew agg
 brew aha
 brew antigen
@@ -14,6 +15,17 @@ brew aribb24
 brew asciinema
 brew ast-grep
 brew autoconf
+brew aws-c-auth
+brew aws-c-cal
+brew aws-c-common
+brew aws-c-compression
+brew aws-c-event-stream
+brew aws-c-http
+brew aws-c-io
+brew aws-c-mqtt
+brew aws-c-s3
+brew aws-c-sdkutils
+brew aws-checksums
 brew awscli
 brew bash
 brew bash-language-server
@@ -217,6 +229,7 @@ brew ripgrep
 brew rubberband
 brew ruby-build
 brew ruff
+brew s2n
 brew sdl2
 brew showkey
 brew simdjson
@@ -360,6 +373,7 @@ cask gcloud-cli
 cask ghostty
 cask helium-browser
 cask keycastr
+cask kitlangton-hex
 cask meld
 cask mitmproxy
 cask ngrok

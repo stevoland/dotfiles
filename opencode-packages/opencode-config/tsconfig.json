@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "types": ["bun-types", "node"],
+    "declaration": true,
+    "jsx": "preserve",
+    "jsxImportSource": "@opentui/solid",
+    "skipLibCheck": true,
+    "noEmit": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "tui/**/*.ts",
+    "tui/**/*.tsx",
+    "test/**/*.ts"
+  ]
+}

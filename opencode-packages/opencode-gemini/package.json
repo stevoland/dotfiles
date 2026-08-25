@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "opencode-gemini",
+  "version": "0.1.0",
+  "description": "OpenCode tool for asking Gemini through a captured Gemini web request",
+  "type": "module",
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "import": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@opencode-ai/plugin": "beta"
+  },
+  "devDependencies": {
+    "@types/node": "^24.12.2",
+    "bun-types": "^1.3.13",
+    "typescript": "^5.8.2"
+  },
+  "keywords": [
+    "opencode",
+    "plugin",
+    "gemini",
+    "tool"
+  ],
+  "license": "MIT"
+}

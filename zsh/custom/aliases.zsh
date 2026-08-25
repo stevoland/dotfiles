@@ -134,6 +134,7 @@ alias z='zed'
 alias zd='zed .'
 
 alias j='jj'
+alias ja='jj advance'
 alias jc='jj commit'
 alias jd='jj diff'
 alias jf='jj fetch'
@@ -141,8 +142,10 @@ alias jl='jj log'
 alias jn='jj new'
 alias jnm='jj new "trunk()"'
 alias jp='jj push'
-alias js='jj squash'
 alias jr='jj rebase'
+alias js='jj status'
+alias jsq='jj squash'
+alias jt='jj tug'
 
 # rm() {
 #   while [[ "$1" == -* ]];

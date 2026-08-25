@@ -1,0 +1,563 @@
+{
+  "version": 1,
+  "sessions": {
+    "01a045a5-7baf-7eb0-a08c-770d25a71a67": {
+      "sessionId": "01a045a5-7baf-7eb0-a08c-770d25a71a67",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-54-28-143Z_01a045a5-7baf-7eb0-a08c-770d25a71a67.jsonl",
+      "updatedAt": "2026-08-27T23:54:30.935Z"
+    },
+    "01a045a5-97ba-75e7-ad2f-b321a23fae07": {
+      "sessionId": "01a045a5-97ba-75e7-ad2f-b321a23fae07",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-54-35-322Z_01a045a5-97ba-75e7-ad2f-b321a23fae07.jsonl",
+      "updatedAt": "2026-08-27T23:54:40.705Z"
+    },
+    "01a045a5-9939-770f-810a-2e1aa6fa5042": {
+      "sessionId": "01a045a5-9939-770f-810a-2e1aa6fa5042",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-54-35-705Z_01a045a5-9939-770f-810a-2e1aa6fa5042.jsonl",
+      "updatedAt": "2026-08-27T23:54:41.206Z"
+    },
+    "01a045a5-9c1c-7f0f-9244-f0b481c2e7fc": {
+      "sessionId": "01a045a5-9c1c-7f0f-9244-f0b481c2e7fc",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-54-36-444Z_01a045a5-9c1c-7f0f-9244-f0b481c2e7fc.jsonl",
+      "updatedAt": "2026-08-27T23:54:41.678Z"
+    },
+    "01a045a5-a280-7814-96fb-7756ffb9858e": {
+      "sessionId": "01a045a5-a280-7814-96fb-7756ffb9858e",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-54-38-080Z_01a045a5-a280-7814-96fb-7756ffb9858e.jsonl",
+      "updatedAt": "2026-08-27T23:54:43.115Z"
+    },
+    "01a045a5-d57a-70b2-8a7a-d9838d769dcb": {
+      "sessionId": "01a045a5-d57a-70b2-8a7a-d9838d769dcb",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-54-51-130Z_01a045a5-d57a-70b2-8a7a-d9838d769dcb.jsonl",
+      "updatedAt": "2026-08-27T23:54:56.571Z"
+    },
+    "01a045a5-fcd9-7795-b664-a7ce94245b5a": {
+      "sessionId": "01a045a5-fcd9-7795-b664-a7ce94245b5a",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-55-01-209Z_01a045a5-fcd9-7795-b664-a7ce94245b5a.jsonl",
+      "updatedAt": "2026-08-27T23:55:05.835Z"
+    },
+    "01a045a6-105f-742e-8f4a-91679d154c92": {
+      "sessionId": "01a045a6-105f-742e-8f4a-91679d154c92",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-55-06-207Z_01a045a6-105f-742e-8f4a-91679d154c92.jsonl",
+      "updatedAt": "2026-08-27T23:55:11.281Z"
+    },
+    "01a045a6-2e11-7a4c-973e-d2464ec22942": {
+      "sessionId": "01a045a6-2e11-7a4c-973e-d2464ec22942",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-55-13-809Z_01a045a6-2e11-7a4c-973e-d2464ec22942.jsonl",
+      "updatedAt": "2026-08-27T23:55:18.724Z"
+    },
+    "01a045a6-39ee-7bd6-b3b4-c3f885a9f416": {
+      "sessionId": "01a045a6-39ee-7bd6-b3b4-c3f885a9f416",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-55-16-846Z_01a045a6-39ee-7bd6-b3b4-c3f885a9f416.jsonl",
+      "updatedAt": "2026-08-27T23:55:21.696Z"
+    },
+    "01a045a6-3f7a-790b-a744-2994b7dda0b6": {
+      "sessionId": "01a045a6-3f7a-790b-a744-2994b7dda0b6",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-55-18-266Z_01a045a6-3f7a-790b-a744-2994b7dda0b6.jsonl",
+      "updatedAt": "2026-08-27T23:55:22.984Z"
+    },
+    "01a045a6-618e-7285-b861-2931eb01f170": {
+      "sessionId": "01a045a6-618e-7285-b861-2931eb01f170",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-55-26-990Z_01a045a6-618e-7285-b861-2931eb01f170.jsonl",
+      "updatedAt": "2026-08-27T23:55:31.843Z"
+    },
+    "01a045a6-b6fa-7a3a-b6c1-4370d66552c9": {
+      "sessionId": "01a045a6-b6fa-7a3a-b6c1-4370d66552c9",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-55-48-858Z_01a045a6-b6fa-7a3a-b6c1-4370d66552c9.jsonl",
+      "updatedAt": "2026-08-27T23:55:54.933Z"
+    },
+    "01a045a6-c0b7-7d5d-b3e2-156682bafea1": {
+      "sessionId": "01a045a6-c0b7-7d5d-b3e2-156682bafea1",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-55-51-351Z_01a045a6-c0b7-7d5d-b3e2-156682bafea1.jsonl",
+      "updatedAt": "2026-08-27T23:55:57.402Z"
+    },
+    "01a045a6-cad9-7502-8717-0ae527248eae": {
+      "sessionId": "01a045a6-cad9-7502-8717-0ae527248eae",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-55-53-945Z_01a045a6-cad9-7502-8717-0ae527248eae.jsonl",
+      "updatedAt": "2026-08-27T23:55:58.872Z"
+    },
+    "01a045a6-dcc5-75db-a6fb-01414fea099f": {
+      "sessionId": "01a045a6-dcc5-75db-a6fb-01414fea099f",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-55-58-533Z_01a045a6-dcc5-75db-a6fb-01414fea099f.jsonl",
+      "updatedAt": "2026-08-27T23:56:03.299Z"
+    },
+    "01a045a7-061b-7d86-b808-fd863897ea9b": {
+      "sessionId": "01a045a7-061b-7d86-b808-fd863897ea9b",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-56-09-115Z_01a045a7-061b-7d86-b808-fd863897ea9b.jsonl",
+      "updatedAt": "2026-08-27T23:56:14.062Z"
+    },
+    "01a045a7-06d1-76c3-b28f-446b7976a373": {
+      "sessionId": "01a045a7-06d1-76c3-b28f-446b7976a373",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-56-09-297Z_01a045a7-06d1-76c3-b28f-446b7976a373.jsonl",
+      "updatedAt": "2026-08-27T23:56:14.400Z"
+    },
+    "01a045a7-18e6-72b2-b69c-90ad3754bc09": {
+      "sessionId": "01a045a7-18e6-72b2-b69c-90ad3754bc09",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-56-13-926Z_01a045a7-18e6-72b2-b69c-90ad3754bc09.jsonl",
+      "updatedAt": "2026-08-27T23:56:18.715Z"
+    },
+    "01a045a7-2d7b-7c9e-9365-8fabf3534db7": {
+      "sessionId": "01a045a7-2d7b-7c9e-9365-8fabf3534db7",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-56-19-195Z_01a045a7-2d7b-7c9e-9365-8fabf3534db7.jsonl",
+      "updatedAt": "2026-08-27T23:56:23.912Z"
+    },
+    "01a045a7-544f-7629-93fa-84badcc553cd": {
+      "sessionId": "01a045a7-544f-7629-93fa-84badcc553cd",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-56-29-135Z_01a045a7-544f-7629-93fa-84badcc553cd.jsonl",
+      "updatedAt": "2026-08-27T23:56:33.895Z"
+    },
+    "01a045a7-56d9-7dcb-aa7b-128078c0eaff": {
+      "sessionId": "01a045a7-56d9-7dcb-aa7b-128078c0eaff",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-56-29-785Z_01a045a7-56d9-7dcb-aa7b-128078c0eaff.jsonl",
+      "updatedAt": "2026-08-27T23:56:34.697Z"
+    },
+    "01a045a7-7e67-7718-afb3-1029724348e3": {
+      "sessionId": "01a045a7-7e67-7718-afb3-1029724348e3",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-56-39-911Z_01a045a7-7e67-7718-afb3-1029724348e3.jsonl",
+      "updatedAt": "2026-08-27T23:56:44.632Z"
+    },
+    "01a045a7-a03c-7a06-bbd0-5dd1e8eabe6b": {
+      "sessionId": "01a045a7-a03c-7a06-bbd0-5dd1e8eabe6b",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-56-48-572Z_01a045a7-a03c-7a06-bbd0-5dd1e8eabe6b.jsonl",
+      "updatedAt": "2026-08-27T23:56:54.124Z"
+    },
+    "01a045a7-a675-7eee-898a-196a1c05d97c": {
+      "sessionId": "01a045a7-a675-7eee-898a-196a1c05d97c",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-56-50-165Z_01a045a7-a675-7eee-898a-196a1c05d97c.jsonl",
+      "updatedAt": "2026-08-27T23:56:55.781Z"
+    },
+    "01a045a7-a923-75b2-953c-5a9c6d294966": {
+      "sessionId": "01a045a7-a923-75b2-953c-5a9c6d294966",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-56-50-851Z_01a045a7-a923-75b2-953c-5a9c6d294966.jsonl",
+      "updatedAt": "2026-08-27T23:56:56.436Z"
+    },
+    "01a045a7-d2e3-75a0-abf6-eb830b0c4b9d": {
+      "sessionId": "01a045a7-d2e3-75a0-abf6-eb830b0c4b9d",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-57-01-539Z_01a045a7-d2e3-75a0-abf6-eb830b0c4b9d.jsonl",
+      "updatedAt": "2026-08-27T23:57:06.291Z"
+    },
+    "01a045a8-0781-796e-a066-07452aa77c25": {
+      "sessionId": "01a045a8-0781-796e-a066-07452aa77c25",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-57-15-009Z_01a045a8-0781-796e-a066-07452aa77c25.jsonl",
+      "updatedAt": "2026-08-27T23:57:20.155Z"
+    },
+    "01a045a8-1a97-7664-94f7-300c381a0907": {
+      "sessionId": "01a045a8-1a97-7664-94f7-300c381a0907",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-57-19-895Z_01a045a8-1a97-7664-94f7-300c381a0907.jsonl",
+      "updatedAt": "2026-08-27T23:57:25.005Z"
+    },
+    "01a045a8-1d70-7853-a989-00716948f4a9": {
+      "sessionId": "01a045a8-1d70-7853-a989-00716948f4a9",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-57-20-624Z_01a045a8-1d70-7853-a989-00716948f4a9.jsonl",
+      "updatedAt": "2026-08-27T23:57:25.563Z"
+    },
+    "01a045a8-236d-7e86-94bf-fc2f095b0f01": {
+      "sessionId": "01a045a8-236d-7e86-94bf-fc2f095b0f01",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-57-22-157Z_01a045a8-236d-7e86-94bf-fc2f095b0f01.jsonl",
+      "updatedAt": "2026-08-27T23:57:22.973Z"
+    },
+    "01a045a8-60a9-7927-af01-2edc4af3408d": {
+      "sessionId": "01a045a8-60a9-7927-af01-2edc4af3408d",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-57-37-834Z_01a045a8-60a9-7927-af01-2edc4af3408d.jsonl",
+      "updatedAt": "2026-08-27T23:57:43.455Z"
+    },
+    "01a045a8-66f6-722d-a9e0-6a9b8953d0e3": {
+      "sessionId": "01a045a8-66f6-722d-a9e0-6a9b8953d0e3",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-57-39-446Z_01a045a8-66f6-722d-a9e0-6a9b8953d0e3.jsonl",
+      "updatedAt": "2026-08-27T23:57:44.349Z"
+    },
+    "01a045a8-7924-7cea-b11e-b45c54d4bc52": {
+      "sessionId": "01a045a8-7924-7cea-b11e-b45c54d4bc52",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-57-44-100Z_01a045a8-7924-7cea-b11e-b45c54d4bc52.jsonl",
+      "updatedAt": "2026-08-27T23:57:44.854Z"
+    },
+    "01a045a8-a237-7509-8ab2-08b4d4ab538f": {
+      "sessionId": "01a045a8-a237-7509-8ab2-08b4d4ab538f",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-57-54-615Z_01a045a8-a237-7509-8ab2-08b4d4ab538f.jsonl",
+      "updatedAt": "2026-08-27T23:57:59.537Z"
+    },
+    "01a045a8-bd8e-79c1-99fe-24432993dce1": {
+      "sessionId": "01a045a8-bd8e-79c1-99fe-24432993dce1",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-58-01-614Z_01a045a8-bd8e-79c1-99fe-24432993dce1.jsonl",
+      "updatedAt": "2026-08-27T23:58:06.639Z"
+    },
+    "01a045a8-c8a1-7bc6-b2c7-c241c94fdf9d": {
+      "sessionId": "01a045a8-c8a1-7bc6-b2c7-c241c94fdf9d",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-58-04-450Z_01a045a8-c8a1-7bc6-b2c7-c241c94fdf9d.jsonl",
+      "updatedAt": "2026-08-27T23:58:09.342Z"
+    },
+    "01a045a8-c95c-7244-a4d7-ae690f710bdc": {
+      "sessionId": "01a045a8-c95c-7244-a4d7-ae690f710bdc",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-58-04-636Z_01a045a8-c95c-7244-a4d7-ae690f710bdc.jsonl",
+      "updatedAt": "2026-08-27T23:58:09.608Z"
+    },
+    "01a045a9-0e34-7567-bdfb-311350c030cb": {
+      "sessionId": "01a045a9-0e34-7567-bdfb-311350c030cb",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-58-22-260Z_01a045a9-0e34-7567-bdfb-311350c030cb.jsonl",
+      "updatedAt": "2026-08-27T23:58:26.793Z"
+    },
+    "01a045a9-23c5-7f20-9b96-bca5f472f7d3": {
+      "sessionId": "01a045a9-23c5-7f20-9b96-bca5f472f7d3",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-58-27-781Z_01a045a9-23c5-7f20-9b96-bca5f472f7d3.jsonl",
+      "updatedAt": "2026-08-27T23:58:32.883Z"
+    },
+    "01a045a9-287d-7ea8-8415-5b6b99e3954a": {
+      "sessionId": "01a045a9-287d-7ea8-8415-5b6b99e3954a",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-58-28-989Z_01a045a9-287d-7ea8-8415-5b6b99e3954a.jsonl",
+      "updatedAt": "2026-08-27T23:58:33.895Z"
+    },
+    "01a045a9-337b-7585-b2df-1b831bd9b963": {
+      "sessionId": "01a045a9-337b-7585-b2df-1b831bd9b963",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-58-31-803Z_01a045a9-337b-7585-b2df-1b831bd9b963.jsonl",
+      "updatedAt": "2026-08-27T23:58:36.457Z"
+    },
+    "01a045a9-7263-7c99-ab29-bc60ea759988": {
+      "sessionId": "01a045a9-7263-7c99-ab29-bc60ea759988",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-58-47-907Z_01a045a9-7263-7c99-ab29-bc60ea759988.jsonl",
+      "updatedAt": "2026-08-27T23:58:53.143Z"
+    },
+    "01a045a9-9532-784a-a17a-ff166043c2a5": {
+      "sessionId": "01a045a9-9532-784a-a17a-ff166043c2a5",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-58-56-818Z_01a045a9-9532-784a-a17a-ff166043c2a5.jsonl",
+      "updatedAt": "2026-08-27T23:59:01.853Z"
+    },
+    "01a045a9-9aab-71b0-978e-2dc009919d1e": {
+      "sessionId": "01a045a9-9aab-71b0-978e-2dc009919d1e",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-58-58-219Z_01a045a9-9aab-71b0-978e-2dc009919d1e.jsonl",
+      "updatedAt": "2026-08-27T23:59:03.026Z"
+    },
+    "01a045a9-9d87-7631-8eb8-b99c4a22df13": {
+      "sessionId": "01a045a9-9d87-7631-8eb8-b99c4a22df13",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-58-58-951Z_01a045a9-9d87-7631-8eb8-b99c4a22df13.jsonl",
+      "updatedAt": "2026-08-27T23:59:03.837Z"
+    },
+    "01a045a9-b95d-713a-8bc8-5ca15421545e": {
+      "sessionId": "01a045a9-b95d-713a-8bc8-5ca15421545e",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-59-06-077Z_01a045a9-b95d-713a-8bc8-5ca15421545e.jsonl",
+      "updatedAt": "2026-08-27T23:59:10.802Z"
+    },
+    "01a045a9-e768-7f5a-96b1-84416484e48b": {
+      "sessionId": "01a045a9-e768-7f5a-96b1-84416484e48b",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-59-17-864Z_01a045a9-e768-7f5a-96b1-84416484e48b.jsonl",
+      "updatedAt": "2026-08-27T23:59:22.954Z"
+    },
+    "01a045a9-e818-7df9-b75d-e7c0e37ac35e": {
+      "sessionId": "01a045a9-e818-7df9-b75d-e7c0e37ac35e",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-59-18-040Z_01a045a9-e818-7df9-b75d-e7c0e37ac35e.jsonl",
+      "updatedAt": "2026-08-27T23:59:23.391Z"
+    },
+    "01a045a9-ead8-79b8-bbb2-15ac5cad2428": {
+      "sessionId": "01a045a9-ead8-79b8-bbb2-15ac5cad2428",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-59-18-744Z_01a045a9-ead8-79b8-bbb2-15ac5cad2428.jsonl",
+      "updatedAt": "2026-08-27T23:59:23.841Z"
+    },
+    "01a045aa-0668-7e9f-950f-712433a2d2e0": {
+      "sessionId": "01a045aa-0668-7e9f-950f-712433a2d2e0",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-59-25-800Z_01a045aa-0668-7e9f-950f-712433a2d2e0.jsonl",
+      "updatedAt": "2026-08-27T23:59:30.485Z"
+    },
+    "01a045aa-2d3f-7fd5-9835-af0a1404c21f": {
+      "sessionId": "01a045aa-2d3f-7fd5-9835-af0a1404c21f",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-59-35-743Z_01a045aa-2d3f-7fd5-9835-af0a1404c21f.jsonl",
+      "updatedAt": "2026-08-27T23:59:40.534Z"
+    },
+    "01a045aa-38c4-7915-80f3-84c1bd1ebb92": {
+      "sessionId": "01a045aa-38c4-7915-80f3-84c1bd1ebb92",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-59-38-692Z_01a045aa-38c4-7915-80f3-84c1bd1ebb92.jsonl",
+      "updatedAt": "2026-08-27T23:59:43.700Z"
+    },
+    "01a045aa-51cc-71f4-a3a0-0c183590eaad": {
+      "sessionId": "01a045aa-51cc-71f4-a3a0-0c183590eaad",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-59-45-100Z_01a045aa-51cc-71f4-a3a0-0c183590eaad.jsonl",
+      "updatedAt": "2026-08-27T23:59:49.774Z"
+    },
+    "01a045aa-5c53-7e31-91a9-9caf0de7bc86": {
+      "sessionId": "01a045aa-5c53-7e31-91a9-9caf0de7bc86",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-59-47-795Z_01a045aa-5c53-7e31-91a9-9caf0de7bc86.jsonl",
+      "updatedAt": "2026-08-27T23:59:53.115Z"
+    },
+    "01a045aa-86e2-7b25-9350-4ee494019594": {
+      "sessionId": "01a045aa-86e2-7b25-9350-4ee494019594",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-27T23-59-58-690Z_01a045aa-86e2-7b25-9350-4ee494019594.jsonl",
+      "updatedAt": "2026-08-28T00:00:03.932Z"
+    },
+    "01a045aa-8d5c-769d-8290-842e554023b5": {
+      "sessionId": "01a045aa-8d5c-769d-8290-842e554023b5",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-00-00-348Z_01a045aa-8d5c-769d-8290-842e554023b5.jsonl",
+      "updatedAt": "2026-08-28T00:00:05.422Z"
+    },
+    "01a045aa-9f6f-7154-b50e-ba961f46e42d": {
+      "sessionId": "01a045aa-9f6f-7154-b50e-ba961f46e42d",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-00-04-975Z_01a045aa-9f6f-7154-b50e-ba961f46e42d.jsonl",
+      "updatedAt": "2026-08-28T00:00:09.972Z"
+    },
+    "01a045aa-a237-793f-aa1c-b3dd2de8186b": {
+      "sessionId": "01a045aa-a237-793f-aa1c-b3dd2de8186b",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-00-05-687Z_01a045aa-a237-793f-aa1c-b3dd2de8186b.jsonl",
+      "updatedAt": "2026-08-28T00:00:10.545Z"
+    },
+    "01a045aa-d657-776d-beeb-e70708acb5da": {
+      "sessionId": "01a045aa-d657-776d-beeb-e70708acb5da",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-00-19-031Z_01a045aa-d657-776d-beeb-e70708acb5da.jsonl",
+      "updatedAt": "2026-08-28T00:00:25.093Z"
+    },
+    "01a045aa-dc8d-79e4-b647-55a6b45f2590": {
+      "sessionId": "01a045aa-dc8d-79e4-b647-55a6b45f2590",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-00-20-621Z_01a045aa-dc8d-79e4-b647-55a6b45f2590.jsonl",
+      "updatedAt": "2026-08-28T00:00:26.675Z"
+    },
+    "01a045ab-265a-7620-82c7-4579ba2ec9b5": {
+      "sessionId": "01a045ab-265a-7620-82c7-4579ba2ec9b5",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-00-39-514Z_01a045ab-265a-7620-82c7-4579ba2ec9b5.jsonl",
+      "updatedAt": "2026-08-28T00:00:44.143Z"
+    },
+    "01a045ab-2fbd-7c4c-8121-a55ced88a0ed": {
+      "sessionId": "01a045ab-2fbd-7c4c-8121-a55ced88a0ed",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-00-41-917Z_01a045ab-2fbd-7c4c-8121-a55ced88a0ed.jsonl",
+      "updatedAt": "2026-08-28T00:00:46.508Z"
+    },
+    "01a045ab-44f3-7dca-a44f-7ef4076c88bf": {
+      "sessionId": "01a045ab-44f3-7dca-a44f-7ef4076c88bf",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-00-47-347Z_01a045ab-44f3-7dca-a44f-7ef4076c88bf.jsonl",
+      "updatedAt": "2026-08-28T00:00:52.397Z"
+    },
+    "01a045ab-467e-7e28-bacd-9453c685f6ae": {
+      "sessionId": "01a045ab-467e-7e28-bacd-9453c685f6ae",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-00-47-742Z_01a045ab-467e-7e28-bacd-9453c685f6ae.jsonl",
+      "updatedAt": "2026-08-28T00:00:52.989Z"
+    },
+    "01a045ab-8039-7891-b36d-521d7feb1e4b": {
+      "sessionId": "01a045ab-8039-7891-b36d-521d7feb1e4b",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-01-02-521Z_01a045ab-8039-7891-b36d-521d7feb1e4b.jsonl",
+      "updatedAt": "2026-08-28T00:01:07.230Z"
+    },
+    "01a045ab-9ddb-707b-b6a4-1422551208b2": {
+      "sessionId": "01a045ab-9ddb-707b-b6a4-1422551208b2",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-01-10-107Z_01a045ab-9ddb-707b-b6a4-1422551208b2.jsonl",
+      "updatedAt": "2026-08-28T00:01:15.044Z"
+    },
+    "01a045ab-a24f-74f8-8c77-3562ef2370a1": {
+      "sessionId": "01a045ab-a24f-74f8-8c77-3562ef2370a1",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-01-11-247Z_01a045ab-a24f-74f8-8c77-3562ef2370a1.jsonl",
+      "updatedAt": "2026-08-28T00:01:16.142Z"
+    },
+    "01a045ab-afc4-7da8-8e55-a57dd57e539e": {
+      "sessionId": "01a045ab-afc4-7da8-8e55-a57dd57e539e",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-01-14-692Z_01a045ab-afc4-7da8-8e55-a57dd57e539e.jsonl",
+      "updatedAt": "2026-08-28T00:01:19.356Z"
+    },
+    "01a045ab-e5bc-7718-a04d-c0aa8f7024da": {
+      "sessionId": "01a045ab-e5bc-7718-a04d-c0aa8f7024da",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-01-28-508Z_01a045ab-e5bc-7718-a04d-c0aa8f7024da.jsonl",
+      "updatedAt": "2026-08-28T00:01:33.109Z"
+    },
+    "01a045ac-1393-7ced-a87c-d8177c7e3d44": {
+      "sessionId": "01a045ac-1393-7ced-a87c-d8177c7e3d44",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-01-40-243Z_01a045ac-1393-7ced-a87c-d8177c7e3d44.jsonl",
+      "updatedAt": "2026-08-28T00:01:45.369Z"
+    },
+    "01a045ac-14c5-7aa0-879b-68e4b4eb5839": {
+      "sessionId": "01a045ac-14c5-7aa0-879b-68e4b4eb5839",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-01-40-549Z_01a045ac-14c5-7aa0-879b-68e4b4eb5839.jsonl",
+      "updatedAt": "2026-08-28T00:01:46.243Z"
+    },
+    "01a045ac-25f5-79f0-bfdf-03cf54a94899": {
+      "sessionId": "01a045ac-25f5-79f0-bfdf-03cf54a94899",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-01-44-949Z_01a045ac-25f5-79f0-bfdf-03cf54a94899.jsonl",
+      "updatedAt": "2026-08-28T00:01:49.671Z"
+    },
+    "01a045ac-6ca0-7dd6-b28e-f11c3d75ae75": {
+      "sessionId": "01a045ac-6ca0-7dd6-b28e-f11c3d75ae75",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-02-03-040Z_01a045ac-6ca0-7dd6-b28e-f11c3d75ae75.jsonl",
+      "updatedAt": "2026-08-28T00:02:08.301Z"
+    },
+    "01a045ac-7d0f-7c45-a994-c4cec2ef63fb": {
+      "sessionId": "01a045ac-7d0f-7c45-a994-c4cec2ef63fb",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-02-07-247Z_01a045ac-7d0f-7c45-a994-c4cec2ef63fb.jsonl",
+      "updatedAt": "2026-08-28T00:02:12.389Z"
+    },
+    "01a045ac-7fea-7a40-8784-0b7cc7b4e507": {
+      "sessionId": "01a045ac-7fea-7a40-8784-0b7cc7b4e507",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-02-07-978Z_01a045ac-7fea-7a40-8784-0b7cc7b4e507.jsonl",
+      "updatedAt": "2026-08-28T00:02:13.082Z"
+    },
+    "01a045ac-92c3-73e3-8c34-c4e8ad931d40": {
+      "sessionId": "01a045ac-92c3-73e3-8c34-c4e8ad931d40",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-02-12-803Z_01a045ac-92c3-73e3-8c34-c4e8ad931d40.jsonl",
+      "updatedAt": "2026-08-28T00:02:17.694Z"
+    },
+    "01a045ac-c1bf-7b66-960e-786476635d45": {
+      "sessionId": "01a045ac-c1bf-7b66-960e-786476635d45",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-02-24-831Z_01a045ac-c1bf-7b66-960e-786476635d45.jsonl",
+      "updatedAt": "2026-08-28T00:02:29.669Z"
+    },
+    "01a045ac-e9ce-7957-85e1-e3fbb8bce6ac": {
+      "sessionId": "01a045ac-e9ce-7957-85e1-e3fbb8bce6ac",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-02-35-086Z_01a045ac-e9ce-7957-85e1-e3fbb8bce6ac.jsonl",
+      "updatedAt": "2026-08-28T00:02:40.008Z"
+    },
+    "01a045ac-eb2c-7860-83d5-8393851e8b41": {
+      "sessionId": "01a045ac-eb2c-7860-83d5-8393851e8b41",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-02-35-436Z_01a045ac-eb2c-7860-83d5-8393851e8b41.jsonl",
+      "updatedAt": "2026-08-28T00:02:40.480Z"
+    },
+    "01a045ad-10c4-78b1-8b24-27e237f5ce0c": {
+      "sessionId": "01a045ad-10c4-78b1-8b24-27e237f5ce0c",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-02-45-060Z_01a045ad-10c4-78b1-8b24-27e237f5ce0c.jsonl",
+      "updatedAt": "2026-08-28T00:02:49.906Z"
+    },
+    "01a045ad-31a1-7d52-a73d-e8261b16b22a": {
+      "sessionId": "01a045ad-31a1-7d52-a73d-e8261b16b22a",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-02-53-473Z_01a045ad-31a1-7d52-a73d-e8261b16b22a.jsonl",
+      "updatedAt": "2026-08-28T00:02:58.301Z"
+    },
+    "01a045ad-6189-7401-bc75-89be8c501e88": {
+      "sessionId": "01a045ad-6189-7401-bc75-89be8c501e88",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-03-05-737Z_01a045ad-6189-7401-bc75-89be8c501e88.jsonl",
+      "updatedAt": "2026-08-28T00:03:10.628Z"
+    },
+    "01a045ad-6720-73f5-961e-d2ea47a01d64": {
+      "sessionId": "01a045ad-6720-73f5-961e-d2ea47a01d64",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-03-07-168Z_01a045ad-6720-73f5-961e-d2ea47a01d64.jsonl",
+      "updatedAt": "2026-08-28T00:03:12.028Z"
+    },
+    "01a045ad-86d1-77b0-ac81-6e96d4a7d14a": {
+      "sessionId": "01a045ad-86d1-77b0-ac81-6e96d4a7d14a",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-03-15-281Z_01a045ad-86d1-77b0-ac81-6e96d4a7d14a.jsonl",
+      "updatedAt": "2026-08-28T00:03:20.017Z"
+    },
+    "01a045ad-a25f-7b8a-a68e-5cf30af08c94": {
+      "sessionId": "01a045ad-a25f-7b8a-a68e-5cf30af08c94",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-03-22-335Z_01a045ad-a25f-7b8a-a68e-5cf30af08c94.jsonl",
+      "updatedAt": "2026-08-28T00:03:27.093Z"
+    },
+    "01a045ad-c882-7e2c-9bde-ea0b479195cd": {
+      "sessionId": "01a045ad-c882-7e2c-9bde-ea0b479195cd",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-03-32-098Z_01a045ad-c882-7e2c-9bde-ea0b479195cd.jsonl",
+      "updatedAt": "2026-08-28T00:03:36.922Z"
+    },
+    "01a045ad-eaff-718a-9d2a-08e8d1fe40df": {
+      "sessionId": "01a045ad-eaff-718a-9d2a-08e8d1fe40df",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-03-40-927Z_01a045ad-eaff-718a-9d2a-08e8d1fe40df.jsonl",
+      "updatedAt": "2026-08-28T00:03:45.474Z"
+    },
+    "01a045ad-ef79-7a45-87d7-ef8811db0234": {
+      "sessionId": "01a045ad-ef79-7a45-87d7-ef8811db0234",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-03-42-073Z_01a045ad-ef79-7a45-87d7-ef8811db0234.jsonl",
+      "updatedAt": "2026-08-28T00:03:46.806Z"
+    },
+    "01a045ae-097e-7f40-b9e9-ec57418d73bc": {
+      "sessionId": "01a045ae-097e-7f40-b9e9-ec57418d73bc",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-03-48-734Z_01a045ae-097e-7f40-b9e9-ec57418d73bc.jsonl",
+      "updatedAt": "2026-08-28T00:03:54.116Z"
+    },
+    "01a045ae-20ea-70e9-b8b3-73291566e272": {
+      "sessionId": "01a045ae-20ea-70e9-b8b3-73291566e272",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-03-54-730Z_01a045ae-20ea-70e9-b8b3-73291566e272.jsonl",
+      "updatedAt": "2026-08-28T00:03:59.418Z"
+    },
+    "01a045ae-7bbb-72de-a12c-49997aa0e6e1": {
+      "sessionId": "01a045ae-7bbb-72de-a12c-49997aa0e6e1",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring--/2026-08-28T00-04-17-979Z_01a045ae-7bbb-72de-a12c-49997aa0e6e1.jsonl",
+      "updatedAt": "2026-08-28T00:04:18.738Z"
+    },
+    "01a045ae-8d6f-70cd-8aae-ecf1a7460bbb": {
+      "sessionId": "01a045ae-8d6f-70cd-8aae-ecf1a7460bbb",
+      "cwd": "/Users/stephen.collings/workspace/github.com/eeveebank/pring/.backpass/synthesis",
+      "sessionFile": "/Users/stephen.collings/.pi/agent/sessions/--Users-stephen.collings-workspace-github.com-eeveebank-pring-.backpass-synthesis--/2026-08-28T00-04-22-511Z_01a045ae-8d6f-70cd-8aae-ecf1a7460bbb.jsonl",
+      "updatedAt": "2026-08-28T00:04:27.382Z"
+    }
+  }
+}

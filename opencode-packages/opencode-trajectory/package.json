@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "opencode-trajectory",
+  "version": "0.1.0",
+  "description": "Interactive session trajectory viewer for the OpenCode V2 TUI",
+  "type": "module",
+  "files": [
+    "src",
+    "tui",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "import": "./src/index.ts"
+    },
+    "./tui": {
+      "import": "./tui/trajectory-tui.tsx"
+    }
+  },
+  "scripts": {
+    "test": "bun test",
+    "typecheck": "tsc --noEmit",
+    "test:scenario": "opencode-drive start --name trajectory-basic --script test/scenarios/trajectory-basic.ts"
+  },
+  "dependencies": {
+    "@opencode-ai/plugin": "beta"
+  },
+  "devDependencies": {
+    "@opentui/core": "^0.5.10",
+    "@opentui/solid": "^0.5.10",
+    "@types/node": "^24.12.2",
+    "bun-types": "^1.3.13",
+    "effect": "4.0.0-rc.112",
+    "opencode-drive": "^2.1.0",
+    "solid-js": "^1.9.15",
+    "typescript": "^5.8.2"
+  },
+  "peerDependencies": {
+    "@opentui/core": ">=0.5.10",
+    "@opentui/solid": ">=0.5.10",
+    "solid-js": ">=1.9.0"
+  },
+  "keywords": [
+    "opencode",
+    "plugin",
+    "trajectory",
+    "tui"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stevoland/opencode-trajectory.git"
+  }
+}

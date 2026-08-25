@@ -75,6 +75,14 @@ export const baseConfig = {
             output: 128_000,
           },
         },
+        'gpt-6-astra': {
+          name: 'GPT-6 Astra (Astranomical ha!)',
+          limit: {
+            context: 400_000,
+            input: 272_000,
+            output: 128_000,
+          },
+        },
       },
     },
   },

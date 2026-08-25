@@ -55,6 +55,16 @@ const ollamaModelConfigs = new Map([
       options: {},
     },
   ],
+  [
+    'muse-glimmer:30b-mlx',
+    {
+      maxOutputTokens: 2000,
+      temperature: 1.0,
+      topP: 0.95,
+      topK: 64,
+      options: {},
+    },
+  ],
 ] as const);
 
 type OllamaModelID = typeof ollamaModelConfigs extends Map<infer Key, unknown> ? Key : never;

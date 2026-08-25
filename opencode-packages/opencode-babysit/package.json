@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "opencode-babysit",
+  "version": "0.1.0",
+  "description": "OpenCode command and tool for starting a pull request babysitter session",
+  "type": "module",
+  "files": [
+    "src",
+    "tui",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "import": "./src/index.ts"
+    },
+    "./rpc": {
+      "import": "./src/babysit-rpc.ts"
+    },
+    "./tui": {
+      "import": "./tui/tui.ts"
+    }
+  },
+  "scripts": {
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@opencode-ai/plugin": "beta"
+  },
+  "devDependencies": {
+    "@types/node": "^24.12.2",
+    "bun-types": "^1.3.13",
+    "solid-js": "^1.9.10",
+    "typescript": "^5.8.2"
+  },
+  "keywords": [
+    "opencode",
+    "plugin",
+    "github",
+    "pull-request"
+  ],
+  "license": "MIT"
+}

@@ -21,7 +21,7 @@ metadata:
 
 3. **Triage the feedback:** Consider everything medium severity and beyond. Only consider low severity issue if they're a DRY violation or if there are other issues to fix already. Strictly skip suggestions/low severity issue if they're the only ones remaining, and they qualify under super minor (nit) or rare edge case.
 
-4. If there are any comments to address, check if in the default jj workspace. If so, create a new jj workspace: `<bookmark_name>-amends` and do the work there.
+4. If there are any comments to address, create a new rift.
 
 5. Group comments into amends. Each independently actionable fix is one amend; comments describing the same root cause may share one amend. A review may require multiple amends and therefore multiple commits.
 
