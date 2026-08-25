@@ -25,7 +25,7 @@
   },
   "plugins": [
     "/Users/stephen.collings/workspace/github.com/eeveebank/nwb/opencode-plugins/v2/dist/tui.js",
-    "/Users/stephen.collings/workspace/github.com/stevoland/opencode-rift/tui/tui.tsx"
+    "/Users/stephen.collings/dotfiles/opencode-packages/opencode-rift/tui/tui.tsx"
   ],
   "prompt": {
     "paste": "full",
