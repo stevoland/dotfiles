@@ -26,7 +26,10 @@
     "high": {
       "color": "#ff8080",
       "model": "github-copilot/gpt-5.6-sol",
-      "prompt": "{file:./prompts/default.md}",
+      "variant": "medium"
+    },
+    "beast": {
+      "model": "github-copilot/gpt-6-astra",
       "variant": "medium"
     },
     "low": {
@@ -148,6 +151,7 @@
     "/Users/stephen.collings/dotfiles/opencode-packages/opencode-rift/src",
     "/Users/stephen.collings/dotfiles/opencode-packages/opencode-gemini/src",
     "/Users/stephen.collings/dotfiles/opencode-packages/opencode-trajectory/src",
+    "/Users/stephen.collings/dotfiles/opencode-packages/opencode-ultra",
     "/Users/stephen.collings/.boxedcode-pro/0.16.1/boxedcode-pro"
   ],
   "provider": {
