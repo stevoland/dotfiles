@@ -200,6 +200,7 @@ brew opencode
 brew opencore-amr
 brew openexr
 brew openjdk
+brew openjdk@25
 brew openjpeg
 brew openssl@3
 brew opus
@@ -299,6 +300,7 @@ cask cmux
 cask copilot-cli
 cask copyq
 cask coscreen
+cask finicky
 cask font-0xproto-nerd-font
 cask font-3270-nerd-font
 cask font-agave-nerd-font
@@ -410,6 +412,10 @@ cask revu
 
 tap eeveebank/tap
 brew box
+brew boxed-mcp-servers-akhq
+brew boxed-mcp-servers-backstage
+brew boxed-mcp-servers-bigquery
+brew boxed-mcp-servers-kubernetes
 brew code-search
 brew nwb
 
@@ -470,7 +476,7 @@ appstore 1608041266 Jamf Trust (2.23.0)
 appstore 409183694 Keynote (14.2)
 appstore 409203825 Numbers (14.4)
 appstore 409201541 Pages (14.2)
-appstore 497799835 Xcode (26.6)
+appstore 497799835 Xcode (27.0)
 
 # VSCode extensions
 vscode aaron-bond.better-comments

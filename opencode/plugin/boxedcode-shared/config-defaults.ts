@@ -1,5 +1,3 @@
-import type { Config } from "@opencode-ai/sdk/v2"
-
 export const defaultModel = "github-copilot/gpt-5.6-terra";
 export const defaultSmallModel = "github-copilot/gpt-5-mini";
 
@@ -15,32 +13,32 @@ export const baseConfig = {
   provider: {
     'github-copilot': {
       models: {
-        'claude-opus-4.8': {
-          name: 'Claude Opus 4.8 (Expensive)',
-          limit: {
-            context: 200000,
-            input: 168000,
-            output: 32000,
-          },
-        },
         'claude-opus-5': {
           name: 'Claude Opus 5 (Expensive)',
           limit: {
-            context: 200000,
-            input: 168000,
-            output: 32000,
+            context: 400000,
+            input: 336000,
+            output: 64000,
+          },
+        },
+        'claude-opus-5.5': {
+          name: 'Claude Opus 5.5 (Expensive)',
+          limit: {
+            context: 400000,
+            input: 336000,
+            output: 64000,
           },
         },
         'claude-sonnet-5': {
           name: 'Claude Sonnet 5 (Moderately priced)',
           limit: {
-            context: 200000,
-            input: 168000,
-            output: 32000,
+            context: 400000,
+            input: 336000,
+            output: 64000,
           },
         },
-        'gemini-3.5-flash': {
-          name: 'Gemini 3.5 Flash (Moderately priced)',
+        'gemini-3.8-flash': {
+          name: 'Gemini 3.8 Flash (Cheap)',
         },
         'gpt-5-mini': {
           name: 'GPT-5 Mini (Cheap)',
@@ -75,8 +73,16 @@ export const baseConfig = {
             output: 128_000,
           },
         },
-        'gpt-6-astra': {
-          name: 'GPT-6 Astra (Astranomical ha!)',
+        'gpt-6-luna': {
+          name: 'GPT-6 Luna (Cheap)',
+          limit: {
+            context: 400_000,
+            input: 272_000,
+            output: 128_000,
+          },
+        },
+        'gpt-6-sol': {
+          name: 'GPT-6 Sol (Moderately priced)',
           limit: {
             context: 400_000,
             input: 272_000,
@@ -108,19 +114,43 @@ export const baseConfig = {
     // Default remove tools that call a model
     'incidentio_ask*': 'deny',
     'incidentio_investigation_*': 'deny',
-    // Default approval for mutations
+    // Require approval for incident.io tools that can mutate state.
+    incidentio_action_create: 'ask',
+    incidentio_action_delete: 'ask',
+    incidentio_action_update: 'ask',
+    incidentio_alert_attach: 'ask',
+    incidentio_alert_create_incident: 'ask',
+    incidentio_alert_detach: 'ask',
+    incidentio_alert_resolve: 'ask',
+    incidentio_alert_tag_apply: 'ask',
+    incidentio_cover_request_create: 'ask',
+    incidentio_cover_request_manage: 'ask',
+    incidentio_cover_request_respond: 'ask',
+    incidentio_escalation_create: 'ask',
     incidentio_escalation_respond: 'ask',
+    incidentio_extension_plugin_create: 'ask',
+    incidentio_extension_plugin_sync: 'ask',
+    incidentio_extension_plugin_update: 'ask',
+    incidentio_extension_skill_feedback_update: 'ask',
     incidentio_feedback: 'ask',
     incidentio_follow_up_create: 'ask',
     incidentio_follow_up_update: 'ask',
     incidentio_incident_create: 'ask',
+    incidentio_incident_merge: 'ask',
+    incidentio_incident_message: 'ask',
+    incidentio_incident_unmerge: 'ask',
     incidentio_incident_update: 'ask',
+    incidentio_maintenance_window_create: 'ask',
+    incidentio_maintenance_window_delete: 'ask',
+    incidentio_maintenance_window_update: 'ask',
+    incidentio_schedule_override_create: 'ask',
+    incidentio_schedule_override_delete: 'ask',
+    incidentio_status_page_update: 'ask',
   },
   experimental: {
     batch_tool: true,
-    // @ts-expect-error
     quotaToast: {
       enableToast: false,
     },
   },
-} satisfies Config;
+};

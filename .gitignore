@@ -6,6 +6,8 @@ jj/repos/**
 
 opencode/artifact-index
 opencode/logs
+opencode/plugin
+opencode/plugins/boxedcode
 
 pi/agent/*
 pi/agent/**/

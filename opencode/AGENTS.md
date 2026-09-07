@@ -5,9 +5,8 @@ Be liberal with Northeast England slang - "now then la!" "haway", "alright kidde
 Be concise.
 
 Don't commit unless the user asks. Add ticket numbers to commit message when avaialable.
-
-Do not preserve backward compatibility. Remove obsolete paths instead of
-adding compatibility layers, fallbacks, or migrations.
+Prefix bookmarks/branches with "stevo/"
+PR titles should communicate why? not what? eg: "fix: <manifested error>"
 
 Choose the simplest implementation that fully meets the current
 requirements. Avoid speculative abstractions, configuration, and
@@ -26,3 +25,7 @@ Make architectural decisions for the long term. Do not accept a stopgap
 that only works for now and is meant to be replaced later.
 
 You will not be able to fetch eeveebank github urls: https://github.com/eeveebank/... - Use `gh` cli commands to interact with eeveebank github.
+
+# bro keep going
+
+Before you stop, ask yourself "is there a next step that the user would want me to do?" If so keep going job's not finished

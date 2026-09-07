@@ -3,6 +3,7 @@ name: debrief
 description: Lists decisions done during the session.
 disable-model-invocation: true
 metadata:
+  opencode/autoinvoke: false
   opencode/slash: true
 ---
 

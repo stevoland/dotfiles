@@ -773,7 +773,12 @@ export const BoxPlugin: Plugin = async ({ client, directory, worktree }) => {
 
 (BoxPlugin as typeof BoxPlugin & { __test: typeof testHooks }).__test = testHooks;
 
-export default BoxPlugin;
+export default {
+  server: BoxPlugin,
+  // noop values to stop v2 erroring
+  id: 'boxedcode.box',
+  setup: async () => { }
+}
 
 const handleApplyPatch = (patchText: string, config: FileSystemConfig, projectRoot: string) => {
   const paths = parseFilePaths(patchText);

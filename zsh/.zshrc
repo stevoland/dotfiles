@@ -86,6 +86,7 @@ source $ZSH/oh-my-zsh.sh
 # export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
+export VISUAL='zed'
 # if [[ -n $SSH_CONNECTION ]]; then
 #   export EDITOR='vim'
 # else
@@ -113,6 +114,7 @@ export PATH="$PATH:$HOME/.local/bin"
 [[ $PATH =~ zsh/scripts/chrome.fzf ]] || PATH="$HOME/dotfiles/zsh/scripts:$PATH"
 
 eval "$(starship init zsh)"
+eval "$(lane shellenv)"
 
 export SDKMAN_DIR="$HOME/.sdkman"
 function sdk() {

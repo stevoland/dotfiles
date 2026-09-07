@@ -11,6 +11,7 @@ email = "stephen@mettle.co.uk"
 
 [ui]
 pager = ["hunk", "pager"]
+editor = "nvim"
 diff-formatter = ":git"
 default-command = ["log", "--limit", "14"]
 

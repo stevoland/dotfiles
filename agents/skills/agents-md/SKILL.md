@@ -1,6 +1,8 @@
 ---
 name: agents-md
 description: How to write, audit and edit AGENTS.md files.
+metadata:
+  opencode/autoinvoke: false
 ---
 
 # AGENTS.md Authoring

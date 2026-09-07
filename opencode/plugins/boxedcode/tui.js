@@ -105,10 +105,22 @@ async function readMonthlySpentCents() {
   }
 }
 function SidebarQuota(props) {
-  const [open, setOpen] = createSignal(true);
+  const [preferences, updatePreferences] = props.context.storage.store("sidebar-quota", {
+    initial: {
+      open: true
+    }
+  });
+  const [open, setOpen] = createSignal(preferences.open);
   const [spend, setSpend] = createSignal();
   let timer;
   let disposed = false;
+  const toggleOpen = async () => {
+    const nextOpen = !open();
+    setOpen(nextOpen);
+    await updatePreferences((draft) => {
+      draft.open = nextOpen;
+    });
+  };
   const refresh = async () => {
     const value = await readMonthlySpentCents();
     if (disposed)
@@ -134,7 +146,7 @@ function SidebarQuota(props) {
     _$insertNode(_el$2, _el$4);
     _$setProp(_el$2, "flexDirection", "row");
     _$setProp(_el$2, "gap", 1);
-    _$setProp(_el$2, "onMouseDown", () => setOpen((value) => !value));
+    _$setProp(_el$2, "onMouseDown", () => void toggleOpen());
     _$insert(_el$3, () => open() ? "\u25BC" : "\u25B6");
     _$insertNode(_el$4, _el$5);
     _$insertNode(_el$5, _$createTextNode(`Monthly Copilot Spend`));
@@ -145,12 +157,12 @@ function SidebarQuota(props) {
       get children() {
         var _el$7 = _$createElement("text");
         _$insert(_el$7, line);
-        _$effect((_$p) => _$setProp(_el$7, "fg", props.context.theme.text.subdued, _$p));
+        _$effect((_$p) => _$setProp(_el$7, "fg", props.context.theme.text.muted, _$p));
         return _el$7;
       }
     }), null);
     _$effect((_p$) => {
-      var _v$ = props.context.theme.text.default, _v$2 = props.context.theme.text.default;
+      var _v$ = props.context.theme.text.base, _v$2 = props.context.theme.text.base;
       _v$ !== _p$.e && (_p$.e = _$setProp(_el$3, "fg", _v$, _p$.e));
       _v$2 !== _p$.t && (_p$.t = _$setProp(_el$4, "fg", _v$2, _p$.t));
       return _p$;
@@ -190,10 +202,10 @@ function SandboxControls(props) {
         return () => _c$() ? "\u2026" : props.state()[behaviour] ? "" : "Disabled";
       })());
       _$effect2((_p$) => {
-        var _v$4 = props.state()[behaviour] ? theme().text.default : theme().text.feedback.error.default, _v$5 = {
-          fg: props.state()[behaviour] ? theme().text.feedback.success.default : theme().text.feedback.error.default
+        var _v$4 = props.state()[behaviour] ? theme().text.base : theme().text.feedback.error.base, _v$5 = {
+          fg: props.state()[behaviour] ? theme().text.feedback.success.base : theme().text.feedback.error.base
         }, _v$6 = {
-          fg: theme().text.subdued
+          fg: theme().text.muted
         };
         _v$4 !== _p$.e && (_p$.e = _$setProp2(_el$7, "fg", _v$4, _p$.e));
         _v$5 !== _p$.t && (_p$.t = _$setProp2(_el$8, "style", _v$5, _p$.t));
@@ -209,7 +221,7 @@ function SandboxControls(props) {
       var _el$11 = _$createElement2("text");
       _$insertNode2(_el$11, _$createTextNode2(`\u2699 edit box.json`));
       _$effect2((_p$) => {
-        var _v$7 = theme().text.subdued, _v$8 = props.openSettings;
+        var _v$7 = theme().text.muted, _v$8 = props.openSettings;
         _v$7 !== _p$.e && (_p$.e = _$setProp2(_el$11, "fg", _v$7, _p$.e));
         _v$8 !== _p$.t && (_p$.t = _$setProp2(_el$11, "onMouseDown", _v$8, _p$.t));
         return _p$;
@@ -220,7 +232,7 @@ function SandboxControls(props) {
       return _el$11;
     })())], null);
     _$effect2((_p$) => {
-      var _v$ = props.toggleOpen, _v$2 = theme().text.default, _v$3 = theme().text.default;
+      var _v$ = props.toggleOpen, _v$2 = theme().text.base, _v$3 = theme().text.base;
       _v$ !== _p$.e && (_p$.e = _$setProp2(_el$2, "onMouseDown", _v$, _p$.e));
       _v$2 !== _p$.t && (_p$.t = _$setProp2(_el$3, "fg", _v$2, _p$.t));
       _v$3 !== _p$.a && (_p$.a = _$setProp2(_el$4, "fg", _v$3, _p$.a));
@@ -444,7 +456,7 @@ function setupReport(context) {
         return (() => {
           var _el$ = _$createElement3("text");
           _$insertNode3(_el$, _$createTextNode3(`Open /report from a session route.`));
-          _$effect3((_$p) => _$setProp3(_el$, "fg", context.theme.text.feedback.error.default, _$p));
+          _$effect3((_$p) => _$setProp3(_el$, "fg", context.theme.text.feedback.error.base, _$p));
           return _el$;
         })();
       return _$createComponent3(Report, {
@@ -704,7 +716,7 @@ function Report(props) {
             _$setProp3(_el$13, "onMouseDown", () => navigateToSession(sessionID));
             _$insertNode3(_el$14, _$createTextNode3(`view`));
             _$effect3((_p$) => {
-              var _v$5 = theme().text.action.primary.default, _v$6 = theme().text.feedback.info.default;
+              var _v$5 = theme().text.action.primary.base, _v$6 = theme().text.feedback.info.base;
               _v$5 !== _p$.e && (_p$.e = _$setProp3(_el$12, "fg", _v$5, _p$.e));
               _v$6 !== _p$.t && (_p$.t = _$setProp3(_el$13, "fg", _v$6, _p$.t));
               return _p$;
@@ -728,7 +740,7 @@ function Report(props) {
           get children() {
             var _el$16 = _$createElement3("text");
             _$insertNode3(_el$16, _$createTextNode3(`Not available`));
-            _$effect3((_$p) => _$setProp3(_el$16, "fg", theme().text.subdued, _$p));
+            _$effect3((_$p) => _$setProp3(_el$16, "fg", theme().text.muted, _$p));
             return _el$16;
           }
         });
@@ -740,7 +752,7 @@ function Report(props) {
       })
     }), null);
     _$effect3((_p$) => {
-      var _v$ = theme().background.default, _v$2 = theme().background.surface.offset, _v$3 = theme().text.action.primary.default, _v$4 = theme().text.subdued;
+      var _v$ = theme().background.base, _v$2 = theme().background.raised.base, _v$3 = theme().text.action.primary.base, _v$4 = theme().text.muted;
       _v$ !== _p$.e && (_p$.e = _$setProp3(_el$3, "backgroundColor", _v$, _p$.e));
       _v$2 !== _p$.t && (_p$.t = _$setProp3(_el$4, "backgroundColor", _v$2, _p$.t));
       _v$3 !== _p$.a && (_p$.a = _$setProp3(_el$5, "fg", _v$3, _p$.a));
@@ -766,7 +778,7 @@ function ReportSection(props) {
     _$insert3(_el$20, () => props.title);
     _$insert3(_el$18, () => props.children, null);
     _$effect3((_p$) => {
-      var _v$7 = props.theme().background.surface.offset, _v$8 = props.theme().text.feedback.info.default;
+      var _v$7 = props.theme().background.raised.base, _v$8 = props.theme().text.feedback.info.base;
       _v$7 !== _p$.e && (_p$.e = _$setProp3(_el$18, "backgroundColor", _v$7, _p$.e));
       _v$8 !== _p$.t && (_p$.t = _$setProp3(_el$19, "fg", _v$8, _p$.t));
       return _p$;
@@ -787,7 +799,7 @@ function ReportLine(props) {
     _$insert3(_el$22, () => props.label, _el$23);
     _$insert3(_el$24, () => props.value);
     _$effect3((_p$) => {
-      var _v$9 = props.theme().text.subdued, _v$0 = props.theme().text.default;
+      var _v$9 = props.theme().text.muted, _v$0 = props.theme().text.base;
       _v$9 !== _p$.e && (_p$.e = _$setProp3(_el$22, "fg", _v$9, _p$.e));
       _v$0 !== _p$.t && (_p$.t = _$setProp3(_el$24, "fg", _v$0, _p$.t));
       return _p$;
@@ -815,7 +827,7 @@ function SystemDetails(props) {
           return (() => {
             var _el$25 = _$createElement3("text");
             _$insertNode3(_el$25, _$createTextNode3(`-`));
-            _$effect3((_$p) => _$setProp3(_el$25, "fg", props.theme().text.subdued, _$p));
+            _$effect3((_$p) => _$setProp3(_el$25, "fg", props.theme().text.muted, _$p));
             return _el$25;
           })();
         },
@@ -849,7 +861,7 @@ function SystemDetails(props) {
           return (() => {
             var _el$27 = _$createElement3("text");
             _$insertNode3(_el$27, _$createTextNode3(`-`));
-            _$effect3((_$p) => _$setProp3(_el$27, "fg", props.theme().text.subdued, _$p));
+            _$effect3((_$p) => _$setProp3(_el$27, "fg", props.theme().text.muted, _$p));
             return _el$27;
           })();
         },
@@ -859,7 +871,7 @@ function SystemDetails(props) {
             children: (item) => (() => {
               var _el$29 = _$createElement3("text");
               _$insert3(_el$29, item);
-              _$effect3((_$p) => _$setProp3(_el$29, "fg", props.theme().text.subdued, _$p));
+              _$effect3((_$p) => _$setProp3(_el$29, "fg", props.theme().text.muted, _$p));
               return _el$29;
             })()
           });
@@ -884,11 +896,11 @@ function Tool(props) {
         var _el$32 = _$createElement3("text");
         _$insert3(_el$32, () => JSON.stringify(props.tool, null, 2)?.replaceAll("\\n", `
 `));
-        _$effect3((_$p) => _$setProp3(_el$32, "fg", props.theme().text.subdued, _$p));
+        _$effect3((_$p) => _$setProp3(_el$32, "fg", props.theme().text.muted, _$p));
         return _el$32;
       }
     }), null);
-    _$effect3((_$p) => _$setProp3(_el$31, "fg", props.theme().text.default, _$p));
+    _$effect3((_$p) => _$setProp3(_el$31, "fg", props.theme().text.base, _$p));
     return _el$30;
   })();
 }

@@ -48,4 +48,9 @@ export const BoxedCodeTaskPlugin: Plugin = async () => ({
   },
 });
 
-export default BoxedCodeTaskPlugin;
+export default {
+  server: BoxedCodeTaskPlugin,
+  // noop values to stop v2 erroring
+  id: 'boxedcode.task',
+  setup: async () => { }
+}

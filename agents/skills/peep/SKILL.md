@@ -3,6 +3,7 @@ name: peep
 description: Plain English Expository Prose, with few words.
 disable-model-invocation: true
 metadata:
+  opencode/autoinvoke: false
   opencode/slash: true
 ---
 

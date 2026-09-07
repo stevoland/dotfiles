@@ -999,4 +999,9 @@ export const BoxedCodeLocalPlugin: Plugin = async ({ client }) => {
   }
 ).__test = testHooks;
 
-export default BoxedCodeLocalPlugin;
+export default {
+  server: BoxedCodeLocalPlugin,
+  // noop values to stop v2 erroring
+  id: 'boxedcode.local',
+  setup: async () => { }
+}

@@ -117,9 +117,9 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/iFurySt/open-codex-computer-use.git",
       "skillPath": "skills/open-computer-use/SKILL.md",
-      "skillFolderHash": "cbff9f099a1b32b645f583039d630029b7a25982",
+      "skillFolderHash": "2b508615191994833495feaad54d7b1f94c39e59",
       "installedAt": "2026-07-14T21:46:55.948Z",
-      "updatedAt": "2026-07-14T21:46:55.948Z"
+      "updatedAt": "2026-09-12T15:17:18.682Z"
     },
     "tdd": {
       "source": "mattpocock/skills",
@@ -328,6 +328,15 @@
       "pluginName": "mattpocock-skills",
       "installedAt": "2026-08-29T22:39:37.384Z",
       "updatedAt": "2026-08-29T22:39:37.384Z"
+    },
+    "open-code-review-delegate": {
+      "source": "alibaba/open-code-review",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/alibaba/open-code-review.git",
+      "skillPath": "skills/open-code-review-delegate/SKILL.md",
+      "skillFolderHash": "763660a601ea4b9b75d2fdb679aa81fd205df461",
+      "installedAt": "2026-09-12T14:02:10.025Z",
+      "updatedAt": "2026-09-12T14:05:16.463Z"
     }
   },
   "dismissed": {

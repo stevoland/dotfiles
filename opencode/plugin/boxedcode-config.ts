@@ -48,7 +48,12 @@ export const BoxedCodeConfigPlugin: Plugin = async () => ({
   },
 });
 
-export default BoxedCodeConfigPlugin;
+export default {
+  server: BoxedCodeConfigPlugin,
+  // noop values to stop v2 erroring
+  id: 'boxedcode.config',
+  setup: async () => { }
+}
 
 type ConfigPrimitive = boolean | number | string | null;
 type ConfigValue = ConfigPrimitive | ConfigObject | ConfigValue[];

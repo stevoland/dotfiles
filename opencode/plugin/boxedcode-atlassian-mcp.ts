@@ -62,4 +62,9 @@ export const BoxedCodeAtlassianMcpPlugin: Plugin = async () => {
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 
-export default BoxedCodeAtlassianMcpPlugin;
+export default {
+  server: BoxedCodeAtlassianMcpPlugin,
+  // noop values to stop v2 erroring
+  id: 'boxedcode.atlassian',
+  setup: async () => { }
+}

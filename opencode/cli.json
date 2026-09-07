@@ -2,7 +2,9 @@
   "animations": true,
   "attention": {
     "enabled": true,
-    "volume": 0.30000000000000004
+    "volume": 0.30000000000000004,
+    "notifications": true,
+    "sound": true
   },
   "debug": {
     "devtools": false,
@@ -10,7 +12,7 @@
     "turn_tokens": true
   },
   "diffs": {
-    "view": "split",
+    "view": "unified",
     "wrap": "word"
   },
   "hints": {
@@ -25,8 +27,8 @@
     "thinking": "show"
   },
   "plugins": [
-    "/Users/stephen.collings/dotfiles/opencode-packages/opencode-trajectory",
-    "/Users/stephen.collings/dotfiles/opencode-packages/opencode-babysit"
+    "/Users/stephen.collings/workspace/github.com/eeveebank/tender",
+    "/Users/stephen.collings/workspace/github.com/eeveebank/opencode-skills-insight"
   ],
   "prompt": {
     "editor": true,

@@ -1,63 +1,28 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "agent": {
-    "babysitter": {
-      "model": "github-copilot/gpt-5.6-sol",
-      "permission": {
-        "skill": {
-          "babysit": "allow",
-          "review-amends": "allow"
-        }
-      },
-      "prompt": "Immediately invoke the `babysit` skill and follow the instructions.",
-      "variant": "medium"
-    },
-    "build": {
-      "hidden": true
-    },
-    "explore": {
-      "model": "github-copilot/gpt-5.6-luna",
-      "variant": "high"
-    },
-    "general": {
-      "model": "github-copilot/gpt-5.6-luna",
-      "variant": "high"
-    },
     "high": {
-      "color": "#ff8080",
-      "model": "github-copilot/gpt-5.6-sol",
-      "variant": "medium"
-    },
-    "beast": {
-      "model": "github-copilot/gpt-6-astra",
+      "model": "github-copilot/claude-opus-5.5",
       "variant": "medium"
     },
     "low": {
-      "color": "#ffc799",
-      "model": "github-copilot/gpt-5.6-luna",
+      "model": "github-copilot/gpt-6-luna",
       "variant": "high"
     },
-    "oracle": {
-      "description": "Consult a read-only oracle for deep analysis, code review, debugging, planning, and second opinions. Use oracle sparingly when you want a second opinion, deeper analysis, code review, debugging help, or a higher-reasoning pass. Do not use oracle for routine low-value work; oracle is slower than the main agent. Include enough context for a stand-alone review or analysis.",
-      "mode": "subagent",
-      "model": "github-copilot/gpt-6-astra",
-      "permission": {
-        "edit": "deny"
-      },
-      "prompt": "{file:./prompts/oracle.md}",
-      "variant": "med"
-    },
-    "plan": {
-      "hidden": true
-    },
-    "reviewer": {
-      "mode": "all",
-      "model": "github-copilot/gpt-5.6-sol",
-      "prompt": "Immediately invoke the `code-review` skill and follow the instructions.",
+    "mid": {
+      "model": "github-copilot/gpt-6-sol",
       "variant": "medium"
+    },
+    "pure": {
+      "model": "github-copilot/gpt-6-luna",
+      "permission": {
+        "skill": {
+          "*": "deny"
+        }
+      },
+      "variant": "high"
     }
   },
-  "default_agent": "low",
   "mcp": {
     "agent-browser": {
       "command": [
@@ -66,13 +31,36 @@
         "--tools",
         "all"
       ],
-      "enabled": true,
+      "enabled": false,
+      "type": "local"
+    },
+    "akhq": {
+      "command": [
+        "/opt/homebrew/bin/boxed-akhq-mcp-server"
+      ],
+      "enabled": false,
       "type": "local"
     },
     "atlassian": {
       "enabled": true,
       "type": "remote",
       "url": "https://mcp.atlassian.com/v1/mcp"
+    },
+    "backstage": {
+      "command": [
+        "/opt/homebrew/bin/nwb",
+        "backstage",
+        "mcp"
+      ],
+      "enabled": false,
+      "type": "local"
+    },
+    "bigquery": {
+      "command": [
+        "/opt/homebrew/bin/boxed-bigquery-mcp-server"
+      ],
+      "enabled": false,
+      "type": "local"
     },
     "codesearch": {
       "command": [
@@ -83,16 +71,29 @@
       "enabled": true,
       "type": "local"
     },
+    "computer-use": {
+      "command": [
+        "open-computer-use",
+        "mcp"
+      ],
+      "enabled": false,
+      "type": "local"
+    },
     "datadog": {
       "enabled": true,
       "type": "remote",
-      "url": "https://mcp.datadoghq.eu/api/unstable/mcp-server/mcp?toolsets=all"
+      "url": "https://mcp.datadoghq.eu/v1/mcp?toolsets=all"
+    },
+    "fiend": {
+      "enabled": false,
+      "type": "remote",
+      "url": "https://anoma.ly/labs/fiend/mcp"
     },
     "filesystem": {
       "command": [
         "mcp-server-filesystem"
       ],
-      "enabled": true,
+      "enabled": false,
       "type": "local"
     },
     "github": {
@@ -105,69 +106,34 @@
       "url": "https://api.githubcopilot.com/mcp"
     },
     "incidentio": {
-      "enabled": true,
+      "enabled": false,
       "type": "remote",
       "url": "https://mcp.incident.io/mcp"
     },
     "kubernetes": {
       "command": [
-        "node",
-        "/Users/stephen.collings/workspace/github.com/eeveebank/boxed-mcp-servers/boxed-kubernetes-mcp-server/dist/index.js"
+        "/opt/homebrew/bin/boxed-kubernetes-mcp-server"
       ],
-      "enabled": true,
-      "environment": {
-        "KUBECONFIG": "/Users/stephen.collings/.kube/boxed-config.yaml"
-      },
+      "enabled": false,
       "type": "local"
     }
   },
-  "permission": {
-    "skill": {
-      "*": "deny",
-      "adr": "allow",
-      "agents-md": "allow",
-      "boxed-platform": "allow",
-      "code-review": "allow",
-      "codebase-design": "allow",
-      "coding-standards": "allow",
-      "diagnosing-bugs": "allow",
-      "documentation-and-adrs": "allow",
-      "domain-modeling": "allow",
-      "grilling": "allow",
-      "implement-code": "allow",
-      "opencode": "allow",
-      "prototype": "allow",
-      "report": "allow",
-      "tdd": "allow",
-      "terminal-control": "allow",
-      "wayfinder": "allow",
-      "write-discoverable-code": "allow",
-      "writing-for-agents": "allow"
-    },
-    "todowrite": "deny"
-  },
   "plugin": [
-    "/Users/stephen.collings/dotfiles/opencode-packages/opencode-babysit/src",
-    "/Users/stephen.collings/dotfiles/opencode-packages/opencode-rift/src",
-    "/Users/stephen.collings/dotfiles/opencode-packages/opencode-gemini/src",
-    "/Users/stephen.collings/dotfiles/opencode-packages/opencode-trajectory/src",
-    "/Users/stephen.collings/dotfiles/opencode-packages/opencode-ultra",
     "/Users/stephen.collings/.boxedcode-pro/0.16.1/boxedcode-pro"
   ],
-  "provider": {
-    "github-copilot": {
-      "models": {
-        "gpt-6-astra": {
-          "limit": {
-            "context": 400000,
-            "input": 272000,
-            "output": 128000
-          },
-          "name": "GPT-6 Astra (Astranomical ha!)"
+  "plugins": [
+    "-opencode.browser",
+    {
+      "options": {
+        "copilot_review": {
+          "auto_request": true
         }
-      }
-    }
-  },
+      },
+      "package": "/Users/stephen.collings/workspace/github.com/eeveebank/tender/src"
+    },
+    "/Users/stephen.collings/workspace/github.com/eeveebank/opencode-skills-insight/src",
+    "/Users/stephen.collings/workspace/github.com/eeveebank/opencode-oracle/src"
+  ],
   "references": {
     "opencode-v2": {
       "branch": "v2",

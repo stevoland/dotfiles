@@ -473,7 +473,7 @@ var BoxPlugin = {
   setup: async (context) => {
     const runCommand = activeRunCommand;
     const readState = activeReadSandboxState;
-    const projectRoot = (await context.agent.list()).location.project.directory;
+    const projectRoot = (await context.agent.list()).location.directory;
     const result = await getConfig(runCommand, projectRoot);
     const hasJest = result.ok && await checkHasJest(runCommand, projectRoot);
     const registrations = [];
@@ -512,9 +512,14 @@ var BoxPlugin = {
       for await (const event of context.event.subscribe({ signal: agentUpdateController.signal })) {
         if (event.type !== "agent.updated")
           continue;
-        agentUpdateController.abort();
+        const agents = (await context.agent.list()).data;
+        const hasUnconfiguredAgent = agents.some((agent) => {
+          const agentId = String(agent.id);
+          return agentId !== "summary" && agentId !== "title" && !configuredAgentIds.has(agentId);
+        });
+        if (!hasUnconfiguredAgent)
+          continue;
         registrations.push(await configureAgents(true));
-        return;
       }
     })();
     registrations.push(await context.session.hook("context", (event) => {
@@ -522,7 +527,10 @@ var BoxPlugin = {
         const prompt = event.system[i];
         if (!prompt)
           continue;
-        event.system[i] = { ...prompt, text: prompt.text.replace(/You are OpenCode/g, "You are BoxedCode") };
+        event.system[i] = {
+          ...prompt,
+          text: prompt.text.replace(/You are OpenCode/g, "You are BoxedCode")
+        };
       }
       if (result.ok === false)
         return;
@@ -768,18 +776,21 @@ function parseFilePaths(patchText) {
   return paths;
 }
 
-// node_modules/@opencode-ai/schema/dist/model.js
+// node_modules/@opencode/schema/dist/model.js
 var exports_model = {};
 __export(exports_model, {
   VariantID: () => VariantID,
   Variant: () => Variant,
+  Settings: () => Settings2,
   Ref: () => Ref4,
   ReasoningField: () => ReasoningField,
+  Overlays: () => Overlays2,
   Model: () => exports_model,
   MaxTokensField: () => MaxTokensField,
   Info: () => Info6,
   ID: () => ID6,
   Family: () => Family,
+  Event: () => Event5,
   Cost: () => Cost,
   Compatibility: () => Compatibility,
   Capabilities: () => Capabilities
@@ -2149,6 +2160,16 @@ function Array_(item) {
     return true;
   });
 }
+function Struct(fields) {
+  const keys = Reflect.ownKeys(fields);
+  return make3((self, that) => {
+    for (const key of keys) {
+      if (!fields[key](self[key], that[key]))
+        return false;
+    }
+    return true;
+  });
+}
 
 // node_modules/effect/dist/internal/doNotation.js
 var let_ = (map) => dual(3, (self, name, f) => map(self, (a) => ({
@@ -2313,6 +2334,18 @@ var Number2 = /* @__PURE__ */ make4((self, that) => {
 var BigInt2 = /* @__PURE__ */ make4((self, that) => self < that ? -1 : 1);
 var mapInput = /* @__PURE__ */ dual(2, (self, f) => make4((b1, b2) => self(f(b1), f(b2))));
 var Date2 = /* @__PURE__ */ mapInput(Number2, (date) => date.getTime());
+function Struct2(fields) {
+  const keys = Object.keys(fields);
+  return make4((self, that) => {
+    for (const key of keys) {
+      const o = fields[key](self[key], that[key]);
+      if (o !== 0) {
+        return o;
+      }
+    }
+    return 0;
+  });
+}
 var isLessThan = (O) => dual(2, (self, that) => O(self, that) === -1);
 var isGreaterThan = (O) => dual(2, (self, that) => O(self, that) === 1);
 var isLessThanOrEqualTo = (O) => dual(2, (self, that) => O(self, that) !== 1);
@@ -8854,7 +8887,7 @@ __export(exports_Schema, {
   TaggedClass: () => TaggedClass,
   Symbol: () => Symbol3,
   StructWithRest: () => StructWithRest,
-  Struct: () => Struct,
+  Struct: () => Struct3,
   StringFromUriComponent: () => StringFromUriComponent,
   StringFromHex: () => StringFromHex,
   StringFromBase64Url: () => StringFromBase64Url,
@@ -8869,7 +8902,7 @@ __export(exports_Schema, {
   RedactedReviver: () => RedactedReviver,
   RedactedFromValue: () => RedactedFromValue,
   Redacted: () => Redacted,
-  Record: () => Record,
+  Record: () => Record2,
   ReadonlySetReviver: () => ReadonlySetReviver,
   ReadonlySet: () => ReadonlySet,
   ReadonlyMapReviver: () => ReadonlyMapReviver,
@@ -13643,11 +13676,34 @@ var Boolean3 = globalThis.Boolean;
 var ReducerOr = /* @__PURE__ */ make2((a, b) => a || b, false);
 
 // node_modules/effect/dist/Struct.js
-var pick = /* @__PURE__ */ dual(2, (self, keys3) => {
-  return buildStruct(self, (k, v) => keys3.includes(k) ? [k, v] : undefined);
+var exports_Struct = {};
+__export(exports_Struct, {
+  renameKeys: () => renameKeys,
+  pick: () => pick,
+  omit: () => omit2,
+  mapPick: () => mapPick,
+  mapOmit: () => mapOmit,
+  map: () => map10,
+  makeReducer: () => makeReducer2,
+  makeOrder: () => makeOrder2,
+  makeEquivalence: () => makeEquivalence4,
+  makeCombiner: () => makeCombiner,
+  lambda: () => lambda,
+  keys: () => keys3,
+  get: () => get3,
+  evolveKeys: () => evolveKeys,
+  evolveEntries: () => evolveEntries,
+  evolve: () => evolve,
+  assign: () => assign,
+  Record: () => Record
 });
-var omit2 = /* @__PURE__ */ dual(2, (self, keys3) => {
-  return buildStruct(self, (k, v) => !keys3.includes(k) ? [k, v] : undefined);
+var get3 = /* @__PURE__ */ dual(2, (self, key) => self[key]);
+var keys3 = (self) => Object.keys(self);
+var pick = /* @__PURE__ */ dual(2, (self, keys4) => {
+  return buildStruct(self, (k, v) => keys4.includes(k) ? [k, v] : undefined);
+});
+var omit2 = /* @__PURE__ */ dual(2, (self, keys4) => {
+  return buildStruct(self, (k, v) => !keys4.includes(k) ? [k, v] : undefined);
 });
 var assign = /* @__PURE__ */ dual(2, (self, that) => {
   return {
@@ -13655,10 +13711,30 @@ var assign = /* @__PURE__ */ dual(2, (self, that) => {
     ...that
   };
 });
+var evolve = /* @__PURE__ */ dual(2, (self, e) => {
+  return buildStruct(self, (k, v) => [k, Object.hasOwn(e, k) ? e[k](v) : v]);
+});
+var evolveKeys = /* @__PURE__ */ dual(2, (self, e) => {
+  return buildStruct(self, (k, v) => [Object.hasOwn(e, k) ? e[k](k) : k, v]);
+});
+var evolveEntries = /* @__PURE__ */ dual(2, (self, e) => {
+  return buildStruct(self, (k, v) => Object.hasOwn(e, k) ? e[k](k, v) : [k, v]);
+});
 var renameKeys = /* @__PURE__ */ dual(2, (self, mapping) => {
   return buildStruct(self, (k, v) => [Object.hasOwn(mapping, k) ? mapping[k] : k, v]);
 });
+var makeEquivalence4 = Struct;
+var makeOrder2 = Struct2;
 var lambda = (f) => f;
+var map10 = /* @__PURE__ */ dual(2, (self, lambda2) => {
+  return buildStruct(self, (k, v) => [k, lambda2(v)]);
+});
+var mapPick = /* @__PURE__ */ dual(3, (self, keys4, lambda2) => {
+  return buildStruct(self, (k, v) => [k, keys4.includes(k) ? lambda2(v) : v]);
+});
+var mapOmit = /* @__PURE__ */ dual(3, (self, keys4, lambda2) => {
+  return buildStruct(self, (k, v) => [k, !keys4.includes(k) ? lambda2(v) : v]);
+});
 function buildStruct(source, f) {
   const out = {};
   for (const k of Reflect.ownKeys(source)) {
@@ -13675,9 +13751,9 @@ function buildStruct(source, f) {
 function makeCombiner(combiners, options) {
   const omitKeyWhen = options?.omitKeyWhen ?? (() => false);
   return make((self, that) => {
-    const keys3 = Reflect.ownKeys(combiners);
+    const keys4 = Reflect.ownKeys(combiners);
     const out = {};
-    for (const key of keys3) {
+    for (const key of keys4) {
       const merge2 = combiners[key].combine(self[key], that[key]);
       if (omitKeyWhen(merge2))
         continue;
@@ -13686,9 +13762,27 @@ function makeCombiner(combiners, options) {
     return out;
   });
 }
+function makeReducer2(reducers, options) {
+  const combine2 = makeCombiner(reducers, options).combine;
+  const initialValue = {};
+  for (const key of Reflect.ownKeys(reducers)) {
+    const iv = reducers[key].initialValue;
+    if (options?.omitKeyWhen?.(iv))
+      continue;
+    assignProperty(initialValue, key, iv);
+  }
+  return make2(combine2, initialValue);
+}
+function Record(keys4, value) {
+  const out = {};
+  for (const key of keys4) {
+    assignProperty(out, key, value);
+  }
+  return out;
+}
 
 // node_modules/effect/dist/UndefinedOr.js
-function makeReducer2(combiner) {
+function makeReducer3(combiner) {
   return make2((self, that) => {
     if (self === undefined)
       return that;
@@ -13757,10 +13851,10 @@ function appendObjectEntries(out, entries3) {
     ...o
   })));
 }
-var max5 = /* @__PURE__ */ makeReducer2(ReducerMax);
-var min5 = /* @__PURE__ */ makeReducer2(ReducerMin);
-var or = /* @__PURE__ */ makeReducer2(ReducerOr);
-var concat = /* @__PURE__ */ makeReducer2(/* @__PURE__ */ makeReducerConcat());
+var max5 = /* @__PURE__ */ makeReducer3(ReducerMax);
+var min5 = /* @__PURE__ */ makeReducer3(ReducerMin);
+var or = /* @__PURE__ */ makeReducer3(ReducerOr);
+var concat = /* @__PURE__ */ makeReducer3(/* @__PURE__ */ makeReducerConcat());
 var combiner = /* @__PURE__ */ makeCombiner({
   integer: or,
   maxLength: min5,
@@ -14341,7 +14435,7 @@ function base(ast, path) {
       const memo = arbitraryMemoMap.get(ast);
       if (memo)
         return memo;
-      const get3 = memoizeThunk(() => recur(ast.thunk(), path));
+      const get4 = memoizeThunk(() => recur(ast.thunk(), path));
       const out = makeLazy((fc, ctx, recursionStack) => {
         const recursion = getSuspendRecursion(fc, ast);
         const nextCtx = {
@@ -14349,17 +14443,17 @@ function base(ast, path) {
           recursion
         };
         const nextStack = recursionStack.includes(ast) ? recursionStack : [...recursionStack, ast];
-        const terminal = get3().terminal(fc, nextCtx, nextStack);
+        const terminal = get4().terminal(fc, nextCtx, nextStack);
         if (terminal === undefined) {
           throw errorWithPath("Unable to derive an arbitrary for a recursive schema without a finite generation path", path);
         }
-        return fc.oneof(recursion, terminal, fc.constant(null).chain(() => get3()(fc, nextCtx, nextStack)));
+        return fc.oneof(recursion, terminal, fc.constant(null).chain(() => get4()(fc, nextCtx, nextStack)));
       }, (fc, ctx, recursionStack) => {
         if (recursionStack.includes(ast)) {
           return;
         }
         const recursion = getSuspendRecursion(fc, ast);
-        return get3().terminal(fc, {
+        return get4().terminal(fc, {
           ...ctx,
           recursion
         }, [...recursionStack, ast]);
@@ -14488,8 +14582,8 @@ function recur2(ast, path) {
       });
     }
     case "Suspend": {
-      const get3 = memoizeThunk(() => recur2(ast.thunk(), path));
-      return make3((a, b) => get3()(a, b));
+      const get4 = memoizeThunk(() => recur2(ast.thunk(), path));
+      return make3((a, b) => get4()(a, b));
     }
   }
 }
@@ -14856,8 +14950,8 @@ function convertDependencies(source, out, context3, targetDialect) {
   if (dependentRequired === undefined && dependentSchemas === undefined)
     return;
   const dependencies = {};
-  const keys3 = new Set([...Object.keys(dependentRequired ?? {}), ...Object.keys(dependentSchemas ?? {})]);
-  for (const key of keys3) {
+  const keys4 = new Set([...Object.keys(dependentRequired ?? {}), ...Object.keys(dependentSchemas ?? {})]);
+  for (const key of keys4) {
     const required2 = dependentRequired?.[key];
     const dependency = dependentSchemas?.[key];
     const omitRequired = targetDialect === "draft-04" && Array.isArray(required2) && required2.length === 0;
@@ -15430,8 +15524,8 @@ function compactEnums(schemas) {
   let sharedType = undefined;
   const values2 = [];
   for (const schema of schemas) {
-    const keys3 = Object.keys(schema);
-    if (keys3.length !== 2 || schema.type === undefined || !Array.isArray(schema.enum) || schema.enum.length === 0) {
+    const keys4 = Object.keys(schema);
+    if (keys4.length !== 2 || schema.type === undefined || !Array.isArray(schema.enum) || schema.enum.length === 0) {
       return;
     }
     if (sharedType === undefined)
@@ -15809,7 +15903,7 @@ function toRepresentations(asts, options) {
 }
 
 // node_modules/effect/dist/JsonPatch.js
-function get3(oldValue, newValue) {
+function get4(oldValue, newValue) {
   const patches = [];
   getLoop(oldValue, newValue, "", patches);
   return patches;
@@ -16002,17 +16096,17 @@ function rebuildFromStack(stack, newParent) {
 }
 
 // node_modules/effect/dist/Optic.js
-function makeIso(get4, set2) {
-  return make17(primitiveNode("Iso", get4, set2));
+function makeIso(get5, set2) {
+  return make17(primitiveNode("Iso", get5, set2));
 }
-function makeLens(get4, replace) {
-  return make17(primitiveNode("Lens", get4, replace));
+function makeLens(get5, replace) {
+  return make17(primitiveNode("Lens", get5, replace));
 }
-function primitiveNode(kind, get4, set2) {
+function primitiveNode(kind, get5, set2) {
   return [{
     _tag: "PrimitiveNode",
     kind,
-    get: get4,
+    get: get5,
     set: set2
   }];
 }
@@ -16146,14 +16240,14 @@ class OptionalImpl {
       }
     })));
   }
-  pick(keys3) {
-    return this.compose(makeLens(pick(keys3), (p, a) => ({
+  pick(keys4) {
+    return this.compose(makeLens(pick(keys4), (p, a) => ({
       ...a,
       ...p
     })));
   }
-  omit(keys3) {
-    return this.compose(makeLens(omit2(keys3), (o, a) => ({
+  omit(keys4) {
+    return this.compose(makeLens(omit2(keys4), (o, a) => ({
       ...a,
       ...o
     })));
@@ -16204,9 +16298,9 @@ class OptionalImpl {
 class IsoImpl extends OptionalImpl {
   get;
   set;
-  constructor(node, get4, set2) {
-    super(node, (s) => succeed2(get4(s)), (a) => succeed2(set2(a)));
-    this.get = get4;
+  constructor(node, get5, set2) {
+    super(node, (s) => succeed2(get5(s)), (a) => succeed2(set2(a)));
+    this.get = get5;
     this.set = set2;
   }
   replace(a, _) {
@@ -16219,9 +16313,9 @@ class IsoImpl extends OptionalImpl {
 
 class LensImpl extends OptionalImpl {
   get;
-  constructor(node, get4, replace) {
-    super(node, (s) => succeed2(get4(s)), (a, s) => succeed2(replace(a, s)));
-    this.get = get4;
+  constructor(node, get5, replace) {
+    super(node, (s) => succeed2(get5(s)), (a, s) => succeed2(replace(a, s)));
+    this.get = get5;
     this.replace = replace;
   }
   modify(f) {
@@ -16395,7 +16489,7 @@ var Proto4 = {
   }
 };
 var value2 = value;
-var makeEquivalence4 = (isEquivalent) => make3((x, y) => isEquivalent(value2(x), value2(y)));
+var makeEquivalence5 = (isEquivalent) => make3((x, y) => isEquivalent(value2(x), value2(y)));
 
 // node_modules/effect/dist/Schema.js
 var TypeId22 = TypeId20;
@@ -16756,7 +16850,7 @@ function makeStruct(ast, fields) {
     }
   });
 }
-function Struct(fields) {
+function Struct3(fields) {
   return makeStruct(struct(fields, undefined), fields);
 }
 function fieldsAssign(fields) {
@@ -16784,7 +16878,7 @@ function encodeKeys(mapping) {
         reverseMapping[encodedKey] = k;
       }
     }
-    return Struct(fields).pipe(decodeTo2(self, transform2({
+    return Struct3(fields).pipe(decodeTo2(self, transform2({
       decode: renameKeys(reverseMapping),
       encode: renameKeys(appliedMapping)
     })));
@@ -16793,7 +16887,7 @@ function encodeKeys(mapping) {
 function extendTo(fields, derive) {
   return (self) => {
     const f = map3(self.fields, toType2);
-    const to = Struct({
+    const to = Struct3({
       ...f,
       ...fields
     });
@@ -16823,7 +16917,7 @@ function extendTo(fields, derive) {
     })));
   };
 }
-function Record(key, value3) {
+function Record2(key, value3) {
   return make19(record(key.ast, value3.ast), {
     key,
     value: value3
@@ -17016,7 +17110,7 @@ function tagDefaultOmit(literal) {
   }));
 }
 function TaggedStruct(value3, fields) {
-  return Struct({
+  return Struct3({
     _tag: tag(value3),
     ...fields
   });
@@ -17027,7 +17121,7 @@ function toTaggedUnion(tag2) {
     const discriminants = [];
     const discriminantKeys = new Set;
     const guards = {};
-    const isAnyOf = (keys3) => (value3) => keys3.includes(value3[tag2]);
+    const isAnyOf = (keys4) => (value3) => keys4.includes(value3[tag2]);
     walk(self);
     return Object.assign(self, {
       cases,
@@ -17175,7 +17269,7 @@ function isPattern2(regExp, annotations) {
     ...annotations
   });
 }
-var IsPatternPayload = /* @__PURE__ */ Struct({
+var IsPatternPayload = /* @__PURE__ */ Struct3({
   source: String5,
   flags: String5
 }).check(/* @__PURE__ */ makeFilter2((payload) => {
@@ -17249,7 +17343,7 @@ function isUUID(version, annotations) {
     ...annotations
   });
 }
-var isUUIDReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isUUID", /* @__PURE__ */ Struct({
+var isUUIDReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isUUID", /* @__PURE__ */ Struct3({
   version: /* @__PURE__ */ Union2([/* @__PURE__ */ Literals([1, 2, 3, 4, 5, 6, 7, 8]), Null2])
 }), ({
   annotations,
@@ -17359,7 +17453,7 @@ function isStartsWith(startsWith, annotations) {
     ...annotations
   });
 }
-var isStartsWithReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isStartsWith", /* @__PURE__ */ Struct({
+var isStartsWithReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isStartsWith", /* @__PURE__ */ Struct3({
   startsWith: String5
 }), ({
   annotations,
@@ -17390,7 +17484,7 @@ function isEndsWith(endsWith, annotations) {
     ...annotations
   });
 }
-var isEndsWithReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isEndsWith", /* @__PURE__ */ Struct({
+var isEndsWithReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isEndsWith", /* @__PURE__ */ Struct3({
   endsWith: String5
 }), ({
   annotations,
@@ -17421,7 +17515,7 @@ function isIncludes(includes, annotations) {
     ...annotations
   });
 }
-var isIncludesReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isIncludes", /* @__PURE__ */ Struct({
+var isIncludesReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isIncludes", /* @__PURE__ */ Struct3({
   includes: String5
 }), ({
   annotations,
@@ -17678,7 +17772,7 @@ var isGreaterThan5 = /* @__PURE__ */ makeIsGreaterThan({
     })
   })
 });
-var isGreaterThanReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isGreaterThan", /* @__PURE__ */ Struct({
+var isGreaterThanReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isGreaterThan", /* @__PURE__ */ Struct3({
   exclusiveMinimum: Finite
 }), ({
   annotations,
@@ -17701,7 +17795,7 @@ var isGreaterThanOrEqualTo4 = /* @__PURE__ */ makeIsGreaterThanOrEqualTo({
     })
   })
 });
-var isGreaterThanOrEqualToReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isGreaterThanOrEqualTo", /* @__PURE__ */ Struct({
+var isGreaterThanOrEqualToReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isGreaterThanOrEqualTo", /* @__PURE__ */ Struct3({
   minimum: Finite
 }), ({
   annotations,
@@ -17724,7 +17818,7 @@ var isLessThan5 = /* @__PURE__ */ makeIsLessThan({
     })
   })
 });
-var isLessThanReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isLessThan", /* @__PURE__ */ Struct({
+var isLessThanReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isLessThan", /* @__PURE__ */ Struct3({
   exclusiveMaximum: Finite
 }), ({
   annotations,
@@ -17747,7 +17841,7 @@ var isLessThanOrEqualTo5 = /* @__PURE__ */ makeIsLessThanOrEqualTo({
     })
   })
 });
-var isLessThanOrEqualToReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isLessThanOrEqualTo", /* @__PURE__ */ Struct({
+var isLessThanOrEqualToReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isLessThanOrEqualTo", /* @__PURE__ */ Struct3({
   maximum: Finite
 }), ({
   annotations,
@@ -17783,7 +17877,7 @@ var isBetween2 = /* @__PURE__ */ makeIsBetween({
     };
   }
 });
-var isBetweenReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isBetween", /* @__PURE__ */ Struct({
+var isBetweenReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isBetween", /* @__PURE__ */ Struct3({
   minimum: Finite,
   maximum: Finite,
   exclusiveMinimum: /* @__PURE__ */ optional2(/* @__PURE__ */ Literal2(true)),
@@ -17811,7 +17905,7 @@ var isMultipleOf = /* @__PURE__ */ makeIsMultipleOf({
     })
   })
 });
-var isMultipleOfReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isMultipleOf", /* @__PURE__ */ Struct({
+var isMultipleOfReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isMultipleOf", /* @__PURE__ */ Struct3({
   divisor: Finite
 }), ({
   annotations,
@@ -18117,7 +18211,7 @@ function isMinLength(minLength, annotations) {
     ...annotations
   });
 }
-var isMinLengthReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isMinLength", /* @__PURE__ */ Struct({
+var isMinLengthReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isMinLength", /* @__PURE__ */ Struct3({
   minLength: Natural
 }), ({
   annotations,
@@ -18155,7 +18249,7 @@ function isMaxLength(maxLength, annotations) {
     ...annotations
   });
 }
-var isMaxLengthReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isMaxLength", /* @__PURE__ */ Struct({
+var isMaxLengthReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isMaxLength", /* @__PURE__ */ Struct3({
   maxLength: Natural
 }), ({
   annotations,
@@ -18201,7 +18295,7 @@ function isLengthBetween(minimum, maximum, annotations) {
     ...annotations
   });
 }
-var isLengthBetweenReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isLengthBetween", /* @__PURE__ */ Struct({
+var isLengthBetweenReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isLengthBetween", /* @__PURE__ */ Struct3({
   minimum: Natural,
   maximum: Natural
 }), ({
@@ -18231,7 +18325,7 @@ function isMinSize(minSize, annotations) {
     ...annotations
   });
 }
-var isMinSizeReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isMinSize", /* @__PURE__ */ Struct({
+var isMinSizeReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isMinSize", /* @__PURE__ */ Struct3({
   minSize: Natural
 }), ({
   annotations,
@@ -18260,7 +18354,7 @@ function isMaxSize(maxSize, annotations) {
     ...annotations
   });
 }
-var isMaxSizeReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isMaxSize", /* @__PURE__ */ Struct({
+var isMaxSizeReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isMaxSize", /* @__PURE__ */ Struct3({
   maxSize: Natural
 }), ({
   annotations,
@@ -18292,7 +18386,7 @@ function isSizeBetween(minimum, maximum, annotations) {
     ...annotations
   });
 }
-var isSizeBetweenReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isSizeBetween", /* @__PURE__ */ Struct({
+var isSizeBetweenReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isSizeBetween", /* @__PURE__ */ Struct3({
   minimum: Natural,
   maximum: Natural
 }), ({
@@ -18324,7 +18418,7 @@ function isMinProperties(minProperties, annotations) {
     ...annotations
   });
 }
-var isMinPropertiesReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isMinProperties", /* @__PURE__ */ Struct({
+var isMinPropertiesReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isMinProperties", /* @__PURE__ */ Struct3({
   minProperties: Natural
 }), ({
   annotations,
@@ -18355,7 +18449,7 @@ function isMaxProperties(maxProperties, annotations) {
     ...annotations
   });
 }
-var isMaxPropertiesReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isMaxProperties", /* @__PURE__ */ Struct({
+var isMaxPropertiesReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isMaxProperties", /* @__PURE__ */ Struct3({
   maxProperties: Natural
 }), ({
   annotations,
@@ -18390,7 +18484,7 @@ function isPropertiesLengthBetween(minimum, maximum, annotations) {
     ...annotations
   });
 }
-var isPropertiesLengthBetweenReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isPropertiesLengthBetween", /* @__PURE__ */ Struct({
+var isPropertiesLengthBetweenReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isPropertiesLengthBetween", /* @__PURE__ */ Struct3({
   minimum: Natural,
   maximum: Natural
 }), ({
@@ -18401,9 +18495,9 @@ function isPropertyNames(keySchema, annotations) {
   const propertyNames = toEncoded2(keySchema);
   const parser = _issue(propertyNames.ast);
   return makeFilter2((input, ast, options) => {
-    const keys3 = Reflect.ownKeys(input);
+    const keys4 = Reflect.ownKeys(input);
     const issues = [];
-    for (const key of keys3) {
+    for (const key of keys4) {
       const issue = parser(key, options);
       if (issue !== undefined) {
         issues.push(new Pointer([key], issue));
@@ -18491,10 +18585,10 @@ function Option(value3) {
       importDeclarations: [`import * as Option from "effect/Option"`]
     }),
     expected: "Option",
-    toCodec: ([value4]) => link()(Union2([Struct({
+    toCodec: ([value4]) => link()(Union2([Struct3({
       _tag: Literal2("Some"),
       value: value4
-    }), Struct({
+    }), Struct3({
       _tag: Literal2("None")
     })]), transform2({
       decode: (e) => e._tag === "None" ? none2() : some2(e.value),
@@ -18580,10 +18674,10 @@ function Result(success, failure) {
       importDeclarations: [`import * as Result from "effect/Result"`]
     }),
     expected: "Result",
-    toCodec: ([success2, failure2]) => link()(Union2([Struct({
+    toCodec: ([success2, failure2]) => link()(Union2([Struct3({
       _tag: Literal2("Success"),
       success: success2
-    }), Struct({
+    }), Struct3({
       _tag: Literal2("Failure"),
       failure: failure2
     })]), transform2({
@@ -18623,8 +18717,8 @@ var RedactedOptionsPayload = /* @__PURE__ */ declare((input) => {
   if (!isObject(input)) {
     return false;
   }
-  const keys3 = globalThis.Object.keys(input);
-  return keys3.length > 0 && keys3.every((key) => {
+  const keys4 = globalThis.Object.keys(input);
+  return keys4.length > 0 && keys4.every((key) => {
     switch (key) {
       case "label":
         return typeof input[key] === "string";
@@ -18687,7 +18781,7 @@ function Redacted(value3, options) {
       }))
     }),
     toFormatter: () => globalThis.String,
-    toEquivalence: ([value4]) => makeEquivalence4(value4)
+    toEquivalence: ([value4]) => makeEquivalence5(value4)
   });
   return make19(schema.ast, {
     value: value3
@@ -18744,13 +18838,13 @@ function CauseReason(error, defect) {
       importDeclarations: [`import * as Cause from "effect/Cause"`]
     }),
     expected: "Cause.Failure",
-    toCodec: ([error2, defect2]) => link()(Union2([Struct({
+    toCodec: ([error2, defect2]) => link()(Union2([Struct3({
       _tag: Literal2("Fail"),
       error: error2
-    }), Struct({
+    }), Struct3({
       _tag: Literal2("Die"),
       defect: defect2
-    }), Struct({
+    }), Struct3({
       _tag: Literal2("Interrupt"),
       fiberId: UndefinedOr(Finite)
     })]), transform2({
@@ -18884,8 +18978,8 @@ var ErrorOptionsPayload = /* @__PURE__ */ declare((input) => {
   if (!isObject(input)) {
     return false;
   }
-  const keys3 = globalThis.Object.keys(input);
-  return keys3.length > 0 && keys3.every((key) => (key === "includeStack" || key === "excludeCause") && input[key] === true);
+  const keys4 = globalThis.Object.keys(input);
+  return keys4.length > 0 && keys4.every((key) => (key === "includeStack" || key === "excludeCause") && input[key] === true);
 });
 var ErrorRepresentationPayload = /* @__PURE__ */ Union2([Null2, ErrorOptionsPayload]);
 var getErrorOptionsKey = (options) => (options?.includeStack === true ? 1 : 0) | (options?.excludeCause === true ? 2 : 0);
@@ -18983,10 +19077,10 @@ function Exit(value3, error, defect) {
       importDeclarations: [`import * as Exit from "effect/Exit"`]
     }),
     expected: "Exit",
-    toCodec: ([value4, error2, defect2]) => link()(Union2([Struct({
+    toCodec: ([value4, error2, defect2]) => link()(Union2([Struct3({
       _tag: Literal2("Success"),
       value: value4
-    }), Struct({
+    }), Struct3({
       _tag: Literal2("Failure"),
       cause: Cause(error2, defect2)
     })]), transform2({
@@ -19111,7 +19205,7 @@ function ReadonlyMap(key, value3) {
     expected: "ReadonlyMap",
     toCodec: ([key2, value4]) => link()(ArraySchema(Tuple([key2, value4])), transform2({
       decode: (e) => new globalThis.Map(e),
-      encode: (map10) => [...map10.entries()]
+      encode: (map11) => [...map11.entries()]
     })),
     toArbitrary: ([key2, value4]) => (fc, ctx) => entriesArbitrary(fc, ctx, key2, value4, (as4) => new globalThis.Map(as4)),
     toEquivalence: ([key2, value4]) => makeCompareMap(key2, value4),
@@ -19137,13 +19231,13 @@ var ReadonlyMapReviver = /* @__PURE__ */ makeDeclarationReviver("effect/schema/R
   return annotations === undefined ? schema : schema.annotate(annotations);
 });
 function graphEncodedSchema(type, node, edge) {
-  return Struct({
+  return Struct3({
     type: Literal2(type),
-    nodes: ArraySchema(Struct({
+    nodes: ArraySchema(Struct3({
       index: Natural,
       data: node
     })),
-    edges: ArraySchema(Struct({
+    edges: ArraySchema(Struct3({
       index: Natural,
       source: Natural,
       target: Natural,
@@ -19503,7 +19597,7 @@ var RegExp3 = /* @__PURE__ */ instanceOf(globalThis.RegExp, {
     Type: `globalThis.RegExp`
   }),
   expected: "RegExp",
-  toCodecJson: () => link()(Struct({
+  toCodecJson: () => link()(Struct3({
     source: String5,
     flags: String5
   }), transformOrFail2({
@@ -19596,14 +19690,14 @@ var Duration = /* @__PURE__ */ declare(isDuration, {
     importDeclarations: [`import * as Duration from "effect/Duration"`]
   }),
   expected: "Duration",
-  toCodecJson: () => link()(Union2([Struct({
+  toCodecJson: () => link()(Union2([Struct3({
     _tag: Literal2("Infinity")
-  }), Struct({
+  }), Struct3({
     _tag: Literal2("NegativeInfinity")
-  }), Struct({
+  }), Struct3({
     _tag: Literal2("Nanos"),
     value: BigInt5
-  }), Struct({
+  }), Struct3({
     _tag: Literal2("Millis"),
     value: Int
   })]), transform2({
@@ -19754,7 +19848,7 @@ var File = /* @__PURE__ */ instanceOf(globalThis.File, {
     Type: `globalThis.File`
   }),
   expected: "File",
-  toCodecJson: () => link()(Struct({
+  toCodecJson: () => link()(Struct3({
     data: String5.check(isBase64()),
     type: String5,
     name: String5,
@@ -19799,10 +19893,10 @@ var FormData2 = /* @__PURE__ */ instanceOf(globalThis.FormData, {
     Type: `globalThis.FormData`
   }),
   expected: "FormData",
-  toCodecJson: () => link()(ArraySchema(Tuple([String5, Union2([Struct({
+  toCodecJson: () => link()(ArraySchema(Tuple([String5, Union2([Struct3({
     _tag: tag("String"),
     value: String5
-  }), Struct({
+  }), Struct3({
     _tag: tag("File"),
     value: File
   })])])), transformOrFail2({
@@ -19879,10 +19973,10 @@ var StringFromUriComponent = /* @__PURE__ */ String5.annotate({
   expected: "a URI component encoded string that will be decoded as a UTF-8 string"
 }).pipe(/* @__PURE__ */ decodeTo2(String5, stringFromUriComponent));
 var PropertyKey = /* @__PURE__ */ Union2([Finite, Symbol3, String5]);
-var StandardSchemaV1FailureResult = /* @__PURE__ */ Struct({
-  issues: /* @__PURE__ */ ArraySchema(/* @__PURE__ */ Struct({
+var StandardSchemaV1FailureResult = /* @__PURE__ */ Struct3({
+  issues: /* @__PURE__ */ ArraySchema(/* @__PURE__ */ Struct3({
     message: String5,
-    path: /* @__PURE__ */ optional2(/* @__PURE__ */ ArraySchema(/* @__PURE__ */ Union2([PropertyKey, /* @__PURE__ */ Struct({
+    path: /* @__PURE__ */ optional2(/* @__PURE__ */ ArraySchema(/* @__PURE__ */ Union2([PropertyKey, /* @__PURE__ */ Struct3({
       key: PropertyKey
     })])))
   }))
@@ -20100,7 +20194,7 @@ function makeClass(Inherited, identifier2, struct2, annotations, proto) {
     }
     static extend(identifier3) {
       return (schema, annotations2) => {
-        const extension = isStruct(schema) ? schema : Struct(schema);
+        const extension = isStruct(schema) ? schema : Struct3(schema);
         const fields = {
           ...struct2.fields,
           ...extension.fields
@@ -20164,7 +20258,7 @@ function isStruct(schema) {
   return isSchema(schema);
 }
 var Class3 = (identifier2) => (schema, annotations) => {
-  const struct2 = isStruct(schema) ? schema : Struct(schema);
+  const struct2 = isStruct(schema) ? schema : Struct3(schema);
   return makeClass(Class2, identifier2, struct2, annotations, (identifier3) => ({
     toString() {
       return `${identifier3}(${format({
@@ -20185,7 +20279,7 @@ var TaggedClass = (identifier2) => {
   };
 };
 var Error3 = (identifier2) => (schema, annotations) => {
-  const struct2 = isStruct(schema) ? schema : Struct(schema);
+  const struct2 = isStruct(schema) ? schema : Struct3(schema);
   const self = makeClass(Error2, identifier2, struct2, annotations, (identifier3) => ({
     name: identifier3
   }));
@@ -20282,8 +20376,8 @@ function toFormatter(schema, options) {
             out.push(`${formatPropertyKey(name)}: ${propertySignatures[i](t[name])}`);
           }
           for (let i = 0;i < indexSignatures.length; i++) {
-            const keys3 = getIndexSignatureKeys(t, ast.indexSignatures[i].parameter);
-            for (const key of keys3) {
+            const keys4 = getIndexSignatureKeys(t, ast.indexSignatures[i].parameter);
+            for (const key of keys4) {
               if (visited.has(key)) {
                 continue;
               }
@@ -20310,8 +20404,8 @@ function toFormatter(schema, options) {
         };
       }
       case "Suspend": {
-        const get4 = memoizeThunk(() => recur3(ast.thunk()));
-        return (t) => get4()(t);
+        const get5 = memoizeThunk(() => recur3(ast.thunk()));
+        return (t) => get5()(t);
       }
     }
   }
@@ -20510,15 +20604,15 @@ function stringTreeToXml(value3, options) {
           return;
         }
         const obj = node;
-        const keys3 = Object.keys(obj);
+        const keys4 = Object.keys(obj);
         if (sortKeys)
-          keys3.sort();
-        if (keys3.length === 0) {
+          keys4.sort();
+        if (keys4.length === 0) {
           push(depth, `<${safe}${attrs}/>`);
           return;
         }
         push(depth, `<${safe}${attrs}>`);
-        for (const k of keys3) {
+        for (const k of keys4) {
           recur3(xml.parseTagName(k).safe, obj[k], depth + 1, k);
         }
         push(depth, `</${safe}>`);
@@ -20653,31 +20747,31 @@ var toCodecArrayFromSingleAST = /* @__PURE__ */ applyToSelfOrLastLinkEncodingIde
 function toCodecArrayFromSingleASTStep(ast) {
   return ast._tag === "Declaration" || ast._tag === "Arrays" || ast._tag === "Objects" || ast._tag === "Union" || ast._tag === "Suspend" ? ast.recur(toCodecArrayFromSingleAST) : ast;
 }
-var isGreaterThanDateReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isGreaterThanDate", /* @__PURE__ */ Struct({
+var isGreaterThanDateReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isGreaterThanDate", /* @__PURE__ */ Struct3({
   exclusiveMinimum: Date4
 }), ({
   annotations,
   payload
 }) => isGreaterThanDate(payload.exclusiveMinimum, annotations));
-var isGreaterThanOrEqualToDateReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isGreaterThanOrEqualToDate", /* @__PURE__ */ Struct({
+var isGreaterThanOrEqualToDateReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isGreaterThanOrEqualToDate", /* @__PURE__ */ Struct3({
   minimum: Date4
 }), ({
   annotations,
   payload
 }) => isGreaterThanOrEqualToDate(payload.minimum, annotations));
-var isLessThanDateReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isLessThanDate", /* @__PURE__ */ Struct({
+var isLessThanDateReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isLessThanDate", /* @__PURE__ */ Struct3({
   exclusiveMaximum: Date4
 }), ({
   annotations,
   payload
 }) => isLessThanDate(payload.exclusiveMaximum, annotations));
-var isLessThanOrEqualToDateReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isLessThanOrEqualToDate", /* @__PURE__ */ Struct({
+var isLessThanOrEqualToDateReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isLessThanOrEqualToDate", /* @__PURE__ */ Struct3({
   maximum: Date4
 }), ({
   annotations,
   payload
 }) => isLessThanOrEqualToDate(payload.maximum, annotations));
-var isBetweenDateReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isBetweenDate", /* @__PURE__ */ Struct({
+var isBetweenDateReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isBetweenDate", /* @__PURE__ */ Struct3({
   minimum: Date4,
   maximum: Date4,
   exclusiveMinimum: /* @__PURE__ */ optional2(/* @__PURE__ */ Literal2(true)),
@@ -20686,31 +20780,31 @@ var isBetweenDateReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isBe
   annotations,
   payload
 }) => isBetweenDate(payload, annotations));
-var isGreaterThanBigIntReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isGreaterThanBigInt", /* @__PURE__ */ Struct({
+var isGreaterThanBigIntReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isGreaterThanBigInt", /* @__PURE__ */ Struct3({
   exclusiveMinimum: BigInt5
 }), ({
   annotations,
   payload
 }) => isGreaterThanBigInt(payload.exclusiveMinimum, annotations));
-var isGreaterThanOrEqualToBigIntReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isGreaterThanOrEqualToBigInt", /* @__PURE__ */ Struct({
+var isGreaterThanOrEqualToBigIntReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isGreaterThanOrEqualToBigInt", /* @__PURE__ */ Struct3({
   minimum: BigInt5
 }), ({
   annotations,
   payload
 }) => isGreaterThanOrEqualToBigInt(payload.minimum, annotations));
-var isLessThanBigIntReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isLessThanBigInt", /* @__PURE__ */ Struct({
+var isLessThanBigIntReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isLessThanBigInt", /* @__PURE__ */ Struct3({
   exclusiveMaximum: BigInt5
 }), ({
   annotations,
   payload
 }) => isLessThanBigInt(payload.exclusiveMaximum, annotations));
-var isLessThanOrEqualToBigIntReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isLessThanOrEqualToBigInt", /* @__PURE__ */ Struct({
+var isLessThanOrEqualToBigIntReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isLessThanOrEqualToBigInt", /* @__PURE__ */ Struct3({
   maximum: BigInt5
 }), ({
   annotations,
   payload
 }) => isLessThanOrEqualToBigInt(payload.maximum, annotations));
-var isBetweenBigIntReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isBetweenBigInt", /* @__PURE__ */ Struct({
+var isBetweenBigIntReviver = /* @__PURE__ */ makeFilterReviver("effect/schema/isBetweenBigInt", /* @__PURE__ */ Struct3({
   minimum: BigInt5,
   maximum: BigInt5,
   exclusiveMinimum: /* @__PURE__ */ optional2(/* @__PURE__ */ Literal2(true)),
@@ -20740,14 +20834,14 @@ function overrideToCodecIso(to, transformation) {
 }
 function toDifferJsonPatch(schema) {
   const serializer = toCodecJson(schema);
-  const get4 = encodeSync(serializer);
+  const get5 = encodeSync(serializer);
   const set2 = decodeSync(serializer);
   return {
     empty: [],
-    diff: (oldValue, newValue) => get3(get4(oldValue), get4(newValue)),
+    diff: (oldValue, newValue) => get4(get5(oldValue), get5(newValue)),
     combine: (first, second) => [...first, ...second],
     patch: (oldValue, patch) => {
-      const value3 = get4(oldValue);
+      const value3 = get5(oldValue);
       const patched = apply(patch, value3);
       return Object.is(patched, value3) ? oldValue : set2(patched);
     }
@@ -20755,7 +20849,7 @@ function toDifferJsonPatch(schema) {
 }
 function Tree(node) {
   const Tree$ref = suspend3(() => Tree2);
-  const Tree2 = Union2([node, ArraySchema(Tree$ref), Record(String5, Tree$ref)]);
+  const Tree2 = Union2([node, ArraySchema(Tree$ref), Record2(String5, Tree$ref)]);
   return Tree2;
 }
 var Json2 = /* @__PURE__ */ make19(/* @__PURE__ */ annotate(Json, {
@@ -20764,9 +20858,9 @@ var Json2 = /* @__PURE__ */ make19(/* @__PURE__ */ annotate(Json, {
     Type: "Schema.Json"
   })
 }));
-var JsonObject = /* @__PURE__ */ Record(String5, Json2);
+var JsonObject = /* @__PURE__ */ Record2(String5, Json2);
 var JsonReviver = /* @__PURE__ */ makeFixedDeclarationReviver("effect/schema/Json", Json2);
-var JsonError = /* @__PURE__ */ Struct({
+var JsonError = /* @__PURE__ */ Struct3({
   message: String5,
   name: /* @__PURE__ */ optionalKey2(String5),
   stack: /* @__PURE__ */ optionalKey2(String5),
@@ -20785,7 +20879,7 @@ function resolveAnnotations(schema) {
 function resolveAnnotationsKey(schema) {
   return schema.ast.context?.annotations;
 }
-// node_modules/@opencode-ai/schema/dist/schema.js
+// node_modules/@opencode/schema/dist/schema.js
 var PositiveInt = exports_Schema.Int.check(exports_Schema.isGreaterThan(0));
 var NonNegativeInt = exports_Schema.Int.check(exports_Schema.isGreaterThanOrEqualTo(0));
 var RelativePath = exports_Schema.String.pipe(exports_Schema.brand("RelativePath"));
@@ -20800,9 +20894,10 @@ var DateTimeUtcFromMillis2 = exports_Schema.Finite.pipe(exports_Schema.decodeTo(
   encode: exports_SchemaGetter.transform((value3) => exports_DateTime.toEpochMillis(value3))
 }));
 
-// node_modules/@opencode-ai/schema/dist/provider.js
+// node_modules/@opencode/schema/dist/provider.js
 var exports_provider = {};
 __export(exports_provider, {
+  Transport: () => Transport,
   Settings: () => Settings,
   Request: () => Request2,
   Provider: () => exports_provider,
@@ -20810,10 +20905,12 @@ __export(exports_provider, {
   Overlays: () => Overlays,
   Info: () => Info5,
   ID: () => ID5,
+  Event: () => Event4,
+  Compaction: () => Compaction,
   Activation: () => Activation
 });
 
-// node_modules/@opencode-ai/schema/dist/integration.js
+// node_modules/@opencode/schema/dist/integration.js
 var exports_integration = {};
 __export(exports_integration, {
   Ref: () => Ref3,
@@ -20833,7 +20930,7 @@ __export(exports_integration, {
   AttemptID: () => AttemptID,
   Attempt: () => Attempt
 });
-// node_modules/@opencode-ai/schema/dist/identifier.js
+// node_modules/@opencode/schema/dist/identifier.js
 var length = 26;
 var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 var lastTimestamp = 0;
@@ -20854,19 +20951,21 @@ function create(descending, timestamp = Date.now()) {
   return time + Array.from(bytes, (byte) => chars[byte % 62]).join("");
 }
 
-// node_modules/@opencode-ai/schema/dist/location.js
+// node_modules/@opencode/schema/dist/location.js
 var exports_location = {};
 __export(exports_location, {
   response: () => response,
   Ref: () => Ref2,
+  PublicRef: () => PublicRef,
+  PublicInfo: () => PublicInfo,
   Location: () => exports_location,
   Info: () => Info
 });
 
-// node_modules/@opencode-ai/schema/dist/project-id.js
+// node_modules/@opencode/schema/dist/project-id.js
 var ProjectID = exports_Schema.String.pipe(exports_Schema.brand("Project.ID"), statics((schema) => ({ global: schema.make("global") })));
 
-// node_modules/@opencode-ai/schema/dist/workspace-id.js
+// node_modules/@opencode/schema/dist/workspace-id.js
 var WorkspaceID = exports_Schema.String.check(exports_Schema.isStartsWith("wrk")).pipe(exports_Schema.brand("Workspace.ID"), statics((schema) => {
   const create2 = () => schema.make("wrk_" + ascending());
   return {
@@ -20881,11 +20980,14 @@ var WorkspaceID = exports_Schema.String.check(exports_Schema.isStartsWith("wrk")
   };
 }));
 
-// node_modules/@opencode-ai/schema/dist/location.js
+// node_modules/@opencode/schema/dist/location.js
 var Ref2 = exports_Schema.Struct({
   directory: AbsolutePath,
   workspaceID: optional3(WorkspaceID)
 }).annotate({ identifier: "Location.Ref" });
+var PublicRef = exports_Schema.Struct(exports_Struct.omit(Ref2.fields, ["workspaceID"])).annotate({
+  identifier: "Location.PublicRef"
+});
 
 class Info extends exports_Schema.Class("Location.Info")({
   directory: AbsolutePath,
@@ -20897,11 +20999,14 @@ class Info extends exports_Schema.Class("Location.Info")({
   })
 }) {
 }
+var PublicInfo = exports_Schema.Struct(exports_Struct.omit(Info.fields, ["workspaceID"])).annotate({
+  identifier: "Location.PublicInfo"
+});
 function response(data) {
-  return exports_Schema.Struct({ location: Info, data });
+  return exports_Schema.Struct({ location: PublicRef, data });
 }
 
-// node_modules/@opencode-ai/schema/dist/event.js
+// node_modules/@opencode/schema/dist/event.js
 var ID = exports_Schema.String.check(exports_Schema.isStartsWith("evt_")).pipe(exports_Schema.brand("Event.ID"), statics((schema) => ({ create: () => schema.make("evt_" + ascending()) })));
 var Seq = exports_Schema.Int.check(exports_Schema.isGreaterThanOrEqualTo(0)).pipe(exports_Schema.brand("Event.Seq"));
 var Version = exports_Schema.Int.check(exports_Schema.isGreaterThanOrEqualTo(1)).pipe(exports_Schema.brand("Event.Version"));
@@ -20926,7 +21031,7 @@ function inventory(...definitions) {
   return Object.freeze(definitions);
 }
 
-// node_modules/@opencode-ai/schema/dist/connection.js
+// node_modules/@opencode/schema/dist/connection.js
 var exports_connection = {};
 __export(exports_connection, {
   Info: () => Info3,
@@ -20935,7 +21040,7 @@ __export(exports_connection, {
   Connection: () => exports_connection
 });
 
-// node_modules/@opencode-ai/schema/dist/credential.js
+// node_modules/@opencode/schema/dist/credential.js
 var exports_credential = {};
 __export(exports_credential, {
   Value: () => Value2,
@@ -20946,11 +21051,11 @@ __export(exports_credential, {
   Credential: () => exports_credential
 });
 
-// node_modules/@opencode-ai/schema/dist/integration-id.js
+// node_modules/@opencode/schema/dist/integration-id.js
 var IntegrationID = exports_Schema.String.pipe(exports_Schema.brand("Integration.ID"));
 var IntegrationMethodID = exports_Schema.String.pipe(exports_Schema.brand("Integration.MethodID"));
 
-// node_modules/@opencode-ai/schema/dist/form.js
+// node_modules/@opencode/schema/dist/form.js
 var exports_form = {};
 __export(exports_form, {
   When: () => When,
@@ -20970,6 +21075,7 @@ __export(exports_form, {
   Field: () => Field,
   ExternalField: () => ExternalField,
   Event: () => Event,
+  Detail: () => Detail,
   BooleanField: () => BooleanField,
   Answer: () => Answer
 });
@@ -20991,6 +21097,9 @@ var FieldBase = {
   title: exports_Schema.String.pipe(optional3),
   description: exports_Schema.String.pipe(optional3),
   required: exports_Schema.Boolean.pipe(optional3),
+  hidden: exports_Schema.Boolean.pipe(optional3).annotate({
+    description: "Skip the interactive authentication prompt and use the default unless an answer is supplied"
+  }),
   when: exports_Schema.Array(When).pipe(optional3)
 };
 var StringField = exports_Schema.Struct({
@@ -21068,6 +21177,10 @@ var State = exports_Schema.Union([
   exports_Schema.Struct({ status: exports_Schema.Literal("answered"), answer: Answer }),
   exports_Schema.Struct({ status: exports_Schema.Literal("cancelled") })
 ]).pipe(exports_Schema.toTaggedUnion("status")).annotate({ identifier: "Form.State" });
+var Detail = exports_Schema.Struct({
+  ...Info2.fields,
+  state: State
+}).annotate({ identifier: "Form.Detail" });
 var Reply = exports_Schema.Struct({
   answer: Answer
 }).annotate({ identifier: "Form.Reply" });
@@ -21076,7 +21189,7 @@ var Replied = ephemeral({ type: "form.replied", schema: { id: ID2, sessionID: ex
 var Cancelled = ephemeral({ type: "form.cancelled", schema: { id: ID2, sessionID: exports_Schema.String } });
 var Event = { Created, Replied, Cancelled, Definitions: inventory(Created, Replied, Cancelled) };
 
-// node_modules/@opencode-ai/schema/dist/credential.js
+// node_modules/@opencode/schema/dist/credential.js
 var ID3 = exports_Schema.String.pipe(exports_Schema.brand("Credential.ID"), statics((schema) => ({ create: () => schema.make("cred_" + ascending()) })));
 var Updated = ephemeral({
   type: "credential.updated",
@@ -21107,7 +21220,7 @@ var Key = exports_Schema.Struct({
 }).annotate({ identifier: "Credential.Key" });
 var Value2 = exports_Schema.Union([OAuth, Key]).pipe(exports_Schema.toTaggedUnion("type")).annotate({ identifier: "Credential.Value" });
 
-// node_modules/@opencode-ai/schema/dist/connection.js
+// node_modules/@opencode/schema/dist/connection.js
 var CredentialInfo = exports_Schema.Struct({
   type: exports_Schema.Literal("credential"),
   id: exports_credential.ID,
@@ -21119,7 +21232,7 @@ var EnvInfo = exports_Schema.Struct({
 }).annotate({ identifier: "Connection.EnvInfo" });
 var Info3 = exports_Schema.Union([CredentialInfo, EnvInfo]).pipe(exports_Schema.toTaggedUnion("type")).annotate({ identifier: "Connection.Info" });
 
-// node_modules/@opencode-ai/schema/dist/integration.js
+// node_modules/@opencode/schema/dist/integration.js
 var ID4 = IntegrationID;
 var MethodID = IntegrationMethodID;
 var OAuthMethod = exports_Schema.Struct({
@@ -21192,7 +21305,7 @@ var CommandAttemptStatus = exports_Schema.Union([
   exports_Schema.Struct({ status: exports_Schema.Literal("expired"), time: AttemptTime })
 ]).pipe(exports_Schema.toTaggedUnion("status")).annotate({ identifier: "Integration.CommandAttemptStatus" });
 
-// node_modules/@opencode-ai/schema/dist/provider.js
+// node_modules/@opencode/schema/dist/provider.js
 var ID5 = exports_Schema.String.pipe(exports_Schema.brand("Provider.ID"), statics((schema) => ({
   opencode: schema.make("opencode"),
   anthropic: schema.make("anthropic"),
@@ -21206,14 +21319,26 @@ var ID5 = exports_Schema.String.pipe(exports_Schema.brand("Provider.ID"), static
   mistral: schema.make("mistral"),
   gitlab: schema.make("gitlab")
 })));
+var Updated3 = ephemeral({ type: "provider.updated", schema: {} });
+var Event4 = { Updated: Updated3, Definitions: inventory(Updated3) };
 var Package = exports_Schema.String;
 var Activation = exports_Schema.Literals(["auto", "enabled", "disabled"]);
+var Compaction = exports_Schema.Union([
+  exports_Schema.Struct({ type: exports_Schema.Literal("summary") }),
+  exports_Schema.Struct({ type: exports_Schema.Literal("native") })
+]).pipe(exports_Schema.toTaggedUnion("type")).annotate({ identifier: "Provider.Compaction" });
+var Transport = exports_Schema.Literals(["http", "websocket"]).annotate({ identifier: "Provider.Transport" });
+var Settings = exports_Schema.StructWithRest(exports_Schema.Struct({
+  timeout: exports_Schema.Union([exports_Schema.Finite, exports_Schema.Literal(false)]).pipe(optional3),
+  chunkTimeout: exports_Schema.Finite.pipe(optional3),
+  compaction: Compaction.pipe(optional3),
+  transport: Transport.pipe(optional3)
+}), [exports_Schema.Record(exports_Schema.String, exports_Schema.Any)]).annotate({ identifier: "Provider.Settings" });
 var Overlays = {
-  settings: exports_Schema.Record(exports_Schema.String, exports_Schema.Any).pipe(optional3),
+  settings: Settings.pipe(optional3),
   headers: exports_Schema.Record(exports_Schema.String, exports_Schema.String).pipe(optional3),
   body: exports_Schema.Record(exports_Schema.String, exports_Schema.Any).pipe(optional3)
 };
-var Settings = exports_Schema.Record(exports_Schema.String, exports_Schema.Any).annotate({ identifier: "Provider.Settings" });
 var Request2 = exports_Schema.Struct({
   settings: Settings.pipe(exports_Schema.withConstructorDefault(exports_Effect.succeed({}))),
   headers: exports_Schema.Record(exports_Schema.String, exports_Schema.String),
@@ -21231,7 +21356,7 @@ var Info5 = exports_Schema.Struct({
   empty: (id2) => ({ id: id2, name: id2, activation: "auto", package: "" })
 })));
 
-// node_modules/@opencode-ai/schema/dist/money.js
+// node_modules/@opencode/schema/dist/money.js
 var exports_money = {};
 __export(exports_money, {
   USDPerMillionTokens: () => USDPerMillionTokens,
@@ -21241,8 +21366,10 @@ __export(exports_money, {
 var USD = exports_Schema.Finite.pipe(exports_Schema.brand("Money.USD"), exports_Schema.annotate({ identifier: "Money.USD" }), statics((schema) => ({ zero: schema.make(0) })));
 var USDPerMillionTokens = exports_Schema.Finite.pipe(exports_Schema.brand("Money.USDPerMillionTokens"), exports_Schema.annotate({ identifier: "Money.USDPerMillionTokens" }), statics((schema) => ({ zero: schema.make(0) })));
 
-// node_modules/@opencode-ai/schema/dist/model.js
+// node_modules/@opencode/schema/dist/model.js
 var ID6 = exports_Schema.String.pipe(exports_Schema.brand("Model.ID"));
+var Updated4 = ephemeral({ type: "model.updated", schema: {} });
+var Event5 = { Updated: Updated4, Definitions: inventory(Updated4) };
 var VariantID = exports_Schema.String.pipe(exports_Schema.brand("Model.VariantID"));
 var Ref4 = exports_Schema.Struct({
   id: ID6,
@@ -21274,18 +21401,26 @@ var ReasoningField = exports_Schema.Union([
 var MaxTokensField = exports_Schema.Literals(["max_completion_tokens", "max_tokens"]).annotate({
   identifier: "Model.MaxTokensField"
 });
+var Settings2 = exports_Schema.StructWithRest(exports_Schema.Struct({
+  compaction: exports_provider.Compaction.pipe(optional3)
+}), [exports_Schema.Record(exports_Schema.String, exports_Schema.Any)]).annotate({ identifier: "Model.Settings" });
+var Overlays2 = {
+  settings: Settings2.pipe(optional3),
+  headers: exports_Schema.Record(exports_Schema.String, exports_Schema.String).pipe(optional3),
+  body: exports_Schema.Record(exports_Schema.String, exports_Schema.Any).pipe(optional3)
+};
 var Compatibility = exports_Schema.Struct({
   reasoningField: ReasoningField.pipe(optional3),
   requireReasoning: exports_Schema.Boolean.pipe(optional3),
   maxTokensField: MaxTokensField.pipe(optional3),
   requireFinishReason: exports_Schema.Boolean.pipe(optional3),
-  requireAssistantAfterTool: exports_Schema.Boolean.pipe(optional3)
+  requireAssistantAfterTool: exports_Schema.Boolean.pipe(optional3),
+  supportsPromptCacheKey: exports_Schema.Boolean.pipe(optional3)
 }).annotate({ identifier: "Model.Compatibility" });
 var Capabilities = exports_Schema.Struct({
   tools: exports_Schema.Boolean,
   input: exports_Schema.Array(exports_Schema.String),
-  output: exports_Schema.Array(exports_Schema.String),
-  responsesWebsockets: exports_Schema.Boolean.pipe(optional3)
+  output: exports_Schema.Array(exports_Schema.String)
 }).annotate({ identifier: "Model.Capabilities" }).pipe(statics(() => ({
   default: () => ({ tools: true, input: ["text", "image"], output: ["text"] })
 })));
@@ -21303,7 +21438,7 @@ var Cost = exports_Schema.Struct({
 }).annotate({ identifier: "Model.Cost" });
 var Variant = exports_Schema.Struct({
   id: VariantID,
-  ...exports_provider.Overlays
+  ...Overlays2
 }).annotate({ identifier: "Model.Variant" });
 var Info6 = exports_Schema.Struct({
   id: ID6,
@@ -21314,7 +21449,7 @@ var Info6 = exports_Schema.Struct({
   name: exports_Schema.String,
   compatibility: Compatibility.pipe(optional3),
   package: exports_provider.Package.pipe(optional3),
-  ...exports_provider.Overlays,
+  ...Overlays2,
   capabilities: Capabilities,
   variants: exports_Schema.Array(Variant),
   time: exports_Schema.Struct({
@@ -21358,32 +21493,32 @@ var baseConfig = {
   provider: {
     "github-copilot": {
       models: {
-        "claude-opus-4.8": {
-          name: "Claude Opus 4.8 (Expensive)",
-          limit: {
-            context: 200000,
-            input: 168000,
-            output: 32000
-          }
-        },
         "claude-opus-5": {
           name: "Claude Opus 5 (Expensive)",
           limit: {
-            context: 200000,
-            input: 168000,
-            output: 32000
+            context: 400000,
+            input: 336000,
+            output: 64000
+          }
+        },
+        "claude-opus-5.5": {
+          name: "Claude Opus 5.5 (Expensive)",
+          limit: {
+            context: 400000,
+            input: 336000,
+            output: 64000
           }
         },
         "claude-sonnet-5": {
           name: "Claude Sonnet 5 (Moderately priced)",
           limit: {
-            context: 200000,
-            input: 168000,
-            output: 32000
+            context: 400000,
+            input: 336000,
+            output: 64000
           }
         },
-        "gemini-3.5-flash": {
-          name: "Gemini 3.5 Flash (Moderately priced)"
+        "gemini-3.8-flash": {
+          name: "Gemini 3.8 Flash (Cheap)"
         },
         "gpt-5-mini": {
           name: "GPT-5 Mini (Cheap)"
@@ -21418,14 +21553,22 @@ var baseConfig = {
             output: 128000
           }
         },
-        'gpt-6-astra': {
-          name: 'GPT-6 Astra (Astranomical ha!)',
+        "gpt-6-luna": {
+          name: "GPT-6 Luna (Cheap)",
           limit: {
-            context: 400_000,
-            input: 272_000,
-            output: 128_000,
-          },
+            context: 400000,
+            input: 272000,
+            output: 128000
+          }
         },
+        "gpt-6-sol": {
+          name: "GPT-6 Sol (Moderately priced)",
+          limit: {
+            context: 400000,
+            input: 272000,
+            output: 128000
+          }
+        }
       }
     }
   },
@@ -21450,12 +21593,37 @@ var baseConfig = {
     websearch: "deny",
     "incidentio_ask*": "deny",
     "incidentio_investigation_*": "deny",
+    incidentio_action_create: "ask",
+    incidentio_action_delete: "ask",
+    incidentio_action_update: "ask",
+    incidentio_alert_attach: "ask",
+    incidentio_alert_create_incident: "ask",
+    incidentio_alert_detach: "ask",
+    incidentio_alert_resolve: "ask",
+    incidentio_alert_tag_apply: "ask",
+    incidentio_cover_request_create: "ask",
+    incidentio_cover_request_manage: "ask",
+    incidentio_cover_request_respond: "ask",
+    incidentio_escalation_create: "ask",
     incidentio_escalation_respond: "ask",
+    incidentio_extension_plugin_create: "ask",
+    incidentio_extension_plugin_sync: "ask",
+    incidentio_extension_plugin_update: "ask",
+    incidentio_extension_skill_feedback_update: "ask",
     incidentio_feedback: "ask",
     incidentio_follow_up_create: "ask",
     incidentio_follow_up_update: "ask",
     incidentio_incident_create: "ask",
-    incidentio_incident_update: "ask"
+    incidentio_incident_merge: "ask",
+    incidentio_incident_message: "ask",
+    incidentio_incident_unmerge: "ask",
+    incidentio_incident_update: "ask",
+    incidentio_maintenance_window_create: "ask",
+    incidentio_maintenance_window_delete: "ask",
+    incidentio_maintenance_window_update: "ask",
+    incidentio_schedule_override_create: "ask",
+    incidentio_schedule_override_delete: "ask",
+    incidentio_status_page_update: "ask"
   },
   experimental: {
     batch_tool: true,
@@ -21466,32 +21634,60 @@ var baseConfig = {
 };
 
 // src/config.ts
+var defaultAgentPermissions = Object.entries(baseConfig.permission).map(([action, effect2]) => ({
+  action,
+  resource: "*",
+  effect: effect2
+}));
+var defaultAgents = {
+  low: {
+    color: "#5ff5d6",
+    model: "github-copilot/gpt-5.6-luna",
+    variant: "high"
+  },
+  mid: {
+    color: "#ffc799",
+    model: "github-copilot/gpt-5.6-terra",
+    variant: "medium"
+  },
+  high: {
+    color: "#ff8080",
+    model: "github-copilot/gpt-5.6-sol",
+    variant: "medium"
+  }
+};
+var cloneAgent = (agent) => ({
+  ...agent,
+  ...agent.model ? { model: { ...agent.model } } : {},
+  permissions: agent.permissions.map((permission) => ({ ...permission }))
+});
 var BoxedCodeConfigPluginV2 = {
   id: "boxedcode-config",
   setup: async (context3) => {
     const registrations = [];
-    registrations.push(await context3.catalog.transform((catalog) => {
-      const defaultRef = exports_model.Ref.parse(defaultModel);
-      catalog.model.default.set(defaultRef.providerID, defaultRef.id);
-      const copilotProvider = catalog.provider.get("github-copilot");
-      for (const record2 of catalog.provider.list()) {
+    registrations.push(await context3.provider.transform((providers) => {
+      for (const record2 of providers.list()) {
         const id2 = String(record2.provider.id);
-        if (!isEnabledProvider(id2)) {
-          catalog.provider.remove(String(record2.provider.id));
-        }
+        if (!isEnabledProvider(id2))
+          providers.remove(id2);
       }
+    }));
+    registrations.push(await context3.model.transform((models) => {
+      const defaultRef = exports_model.Ref.parse(defaultModel);
+      models.default.set(defaultRef.providerID, defaultRef.id);
+      const copilotProvider = models.provider.get("github-copilot");
       const configuredModels = baseConfig.provider["github-copilot"].models;
       if (!copilotProvider?.models)
         return;
       for (const [modelID, model] of copilotProvider.models) {
         if (!Object.hasOwn(configuredModels, String(model.id))) {
-          catalog.model.update("github-copilot", modelID, (model2) => {
+          models.update("github-copilot", modelID, (model2) => {
             model2.enabled = false;
           });
         }
       }
       for (const [modelID, config] of Object.entries(configuredModels)) {
-        catalog.model.update("github-copilot", modelID, (model) => {
+        models.update("github-copilot", modelID, (model) => {
           model.name = config.name;
           if (hasModelCost(config)) {
             model.cost = [
@@ -21525,17 +21721,54 @@ var BoxedCodeConfigPluginV2 = {
           integrations.remove(id2);
       }
     }));
-    registrations.push(await context3.agent.transform((agents) => {
+    const configuredAgentIds = new Set;
+    const configureAgents = (onlyNew = false) => context3.agent.transform((agents) => {
+      if (!onlyNew)
+        configuredAgentIds.clear();
+      if (!onlyNew) {
+        const builtInAgents = ["build", "plan"].map((agentId) => {
+          const agent = agents.get(agentId);
+          if (!agent)
+            return;
+          return { id: agentId, agent: cloneAgent(agent) };
+        });
+        for (const entry of builtInAgents) {
+          if (entry)
+            agents.remove(entry.id);
+        }
+        for (const [agentId, agentConfig] of Object.entries(defaultAgents)) {
+          agents.update(agentId, (draft) => {
+            draft.color = agentConfig.color;
+            draft.model = exports_model.Ref.parse(agentConfig.model);
+            draft.model.variant = exports_model.VariantID.make(agentConfig.variant);
+            draft.mode = "primary";
+          });
+        }
+        for (const entry of builtInAgents) {
+          if (!entry)
+            continue;
+          agents.update(entry.id, (draft) => Object.assign(draft, entry.agent));
+        }
+      }
       for (const agent of agents.list()) {
-        agents.update(String(agent.id), (draft) => {
+        const agentId = String(agent.id);
+        if (onlyNew && configuredAgentIds.has(agentId))
+          continue;
+        configuredAgentIds.add(agentId);
+        agents.update(agentId, (draft) => {
+          if (agentId === "build" || agentId === "plan")
+            draft.hidden = true;
+          const openCodeDefaultIndex = draft.permissions.findIndex((permission) => permission.action === "*" && permission.resource === "*" && permission.effect === "allow");
+          const defaultPermissionIndex = openCodeDefaultIndex + 1;
           draft.permissions = [
-            ...draft.permissions.filter((permission) => permission.action !== "websearch"),
-            { action: "websearch", resource: "*", effect: "deny" }
+            ...draft.permissions.slice(0, defaultPermissionIndex),
+            ...defaultAgentPermissions,
+            ...draft.permissions.slice(defaultPermissionIndex)
           ];
           const agents2 = baseConfig.agent;
           if (String(draft.id) in agents2) {
-            const agentId = String(draft.id);
-            const agentConfig = agents2[agentId];
+            const agentId2 = String(draft.id);
+            const agentConfig = agents2[agentId2];
             const model = exports_model.Ref.parse(String(agentConfig.model));
             draft.model = model;
             if ("variant" in agentConfig) {
@@ -21544,24 +21777,17 @@ var BoxedCodeConfigPluginV2 = {
           }
         });
       }
-    }));
+    });
+    registrations.push(await configureAgents());
     const agentUpdateController = new AbortController;
     const configureConfigAgents = (async () => {
       for await (const event of context3.event.subscribe({ signal: agentUpdateController.signal })) {
         if (event.type !== "agent.updated")
           continue;
-        agentUpdateController.abort();
-        registrations.push(await context3.agent.transform((agents) => {
-          for (const agent of agents.list()) {
-            agents.update(String(agent.id), (draft) => {
-              draft.permissions = [
-                ...draft.permissions.filter((permission) => permission.action !== "websearch"),
-                { action: "websearch", resource: "*", effect: "deny" }
-              ];
-            });
-          }
-        }));
-        return;
+        const agents = (await context3.agent.list()).data;
+        if (agents.every((agent) => configuredAgentIds.has(String(agent.id))))
+          continue;
+        registrations.push(await configureAgents(true));
       }
     })();
     registrations.push(await context3.session.hook("context", (event) => {
@@ -21787,6 +22013,31 @@ var unload = async (runtime, modelIDs) => {
   if (failed.length)
     notify("Failed to unload Ollama model", `Could not unload ${failed.join(", ")}.`);
 };
+var isMalformedEventDataError = (error) => error instanceof Error && error.message.includes('at ["data"]');
+var isRecord4 = (value3) => value3 !== null && typeof value3 === "object" && !Array.isArray(value3);
+var watchSessionDeletions = async (subscribe, signal, onDeleted) => {
+  let retryDelay = 50;
+  while (!signal.aborted) {
+    try {
+      for await (const event of subscribe({ signal })) {
+        retryDelay = 50;
+        if (event.type !== "session.deleted" || !isRecord4(event.data))
+          continue;
+        if (typeof event.data["sessionID"] !== "string")
+          continue;
+        await onDeleted(event.data["sessionID"]);
+      }
+      return;
+    } catch (error) {
+      if (signal.aborted)
+        return;
+      if (!isMalformedEventDataError(error))
+        throw error;
+      await sleep3(retryDelay);
+      retryDelay = Math.min(retryDelay * 2, 1000);
+    }
+  }
+};
 var ensureReady = async (runtime, sessionID, modelID) => {
   const lease = await retain(runtime, sessionID, modelID);
   await unload(runtime, lease.unload);
@@ -21805,17 +22056,22 @@ var createBoxedCodeLocalPlugin = (runtime = defaultRuntime) => ({
   id: "boxedcode-local",
   setup: async (context3) => {
     const registrations = [];
-    registrations.push(await context3.catalog.transform((catalog) => {
-      catalog.provider.update("ollama", (provider) => {
+    registrations.push(await context3.provider.transform((providers) => {
+      providers.update("ollama", (provider) => {
         provider.name = "Ollama (local)";
         provider.package = "aisdk:@ai-sdk/openai-compatible";
         provider.settings = { ...provider.settings, baseURL: `${runtime.baseURL}/v1` };
       });
       for (const [modelID, config] of models)
-        catalog.model.update("ollama", modelID, (model) => {
+        providers.models.update("ollama", modelID, (model) => {
           model.name = `${modelID} (Free)`;
           model.limit.output = config.maxTokens;
-          model.settings = { ...model.settings, temperature: config.temperature, topP: config.topP, topK: config.topK };
+          model.settings = {
+            ...model.settings,
+            temperature: config.temperature,
+            topP: config.topP,
+            topK: config.topK
+          };
         });
     }));
     registrations.push(await context3.session.hook("context", async (event) => {
@@ -21835,10 +22091,7 @@ var createBoxedCodeLocalPlugin = (runtime = defaultRuntime) => ({
     const controller = new AbortController;
     (async () => {
       try {
-        for await (const event of context3.event.subscribe({ signal: controller.signal })) {
-          if (event.type === "session.deleted")
-            await unload(runtime, await release(runtime, event.data.sessionID));
-        }
+        await watchSessionDeletions((options) => context3.event.subscribe(options), controller.signal, async (sessionID) => unload(runtime, await release(runtime, sessionID)));
       } catch (error) {
         if (!controller.signal.aborted)
           notify("Ollama integration stopped", error instanceof Error ? error.message : String(error));
@@ -21863,11 +22116,11 @@ import { join as join6 } from "path";
 import { homedir as homedir4 } from "os";
 import { join as join5 } from "path";
 var quotaPath = join5(homedir4(), ".boxedcode-pro", "quota.json");
-var isRecord4 = (value3) => typeof value3 === "object" && value3 !== null;
+var isRecord5 = (value3) => typeof value3 === "object" && value3 !== null;
 var numberAt = (source, ...path) => {
   let value3 = source;
   for (const key of path) {
-    if (!isRecord4(value3))
+    if (!isRecord5(value3))
       return;
     value3 = value3[key];
   }
@@ -21933,48 +22186,48 @@ import { homedir as homedir6 } from "os";
 import { join as join7 } from "path";
 var shareDirectory = join7(homedir6(), ".boxedcode-pro", "share");
 async function persistSystemData(sessionID, system, tools) {
-  const prompt = system.flatMap((part) => isRecord5(part) && part["type"] === "text" && typeof part["text"] === "string" ? [part["text"]] : []);
+  const prompt = system.flatMap((part) => isRecord6(part) && part["type"] === "text" && typeof part["text"] === "string" ? [part["text"]] : []);
   const definitions = Object.entries(tools).map(([name, tool]) => ({ name, ...tool }));
   await mkdir4(shareDirectory, { recursive: true, mode: 448 });
   await writeFile4(join7(shareDirectory, `${sessionID}.json`), JSON.stringify({ prompt, tools: definitions }, null, 2), { flag: "wx" }).catch((error) => {
-    if (!isRecord5(error) || error["code"] !== "EEXIST")
+    if (!isRecord6(error) || error["code"] !== "EEXIST")
       throw error;
   });
 }
-async function setupSystemData(context3) {
+async function setupSystemData(context3, persist = persistSystemData) {
   const controller = new AbortController;
   let registration;
-  (async () => {
+  const registerAfterEachPluginActivation = (async () => {
     for await (const event of context3.event.subscribe({ signal: controller.signal })) {
       if (event.type !== "plugin.updated")
         continue;
-      registration = await context3.session.hook("context", (contextEvent) => persistSystemData(String(contextEvent.sessionID), contextEvent.system, contextEvent.tools));
-      controller.abort();
-      return;
+      await registration?.dispose();
+      registration = await context3.session.hook("context", (contextEvent) => persist(String(contextEvent.sessionID), contextEvent.system, contextEvent.tools));
     }
   })();
   return async () => {
     controller.abort();
+    await registerAfterEachPluginActivation;
     await registration?.dispose();
   };
 }
-var isRecord5 = (value3) => value3 !== null && typeof value3 === "object" && !Array.isArray(value3);
+var isRecord6 = (value3) => value3 !== null && typeof value3 === "object" && !Array.isArray(value3);
 
 // src/index.ts
 var BoxedCodePlugin = {
   id: "boxedcode",
   setup: async (context3) => {
-    const disposeSystemData = await setupSystemData(context3);
     const disposeQuota = setupQuota(context3);
     const disposeLocal = await local_default.setup(context3);
     const disposeConfig = await config_default.setup(context3);
     const disposeBox = await box_default.setup(context3);
+    const disposeSystemData = await setupSystemData(context3);
     return async () => {
+      await disposeSystemData();
       await disposeBox?.();
       await disposeConfig?.();
       await disposeLocal?.();
       disposeQuota();
-      await disposeSystemData();
     };
   }
 };
