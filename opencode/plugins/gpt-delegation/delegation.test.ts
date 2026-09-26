@@ -102,4 +102,15 @@ describe("GPT delegation policy", () => {
     expect(isGptDelegationReminder(proactiveGptDelegationReminder)).toBe(true)
     expect(isGptDelegationReminder(`<conversation-checkpoint>${proactiveGptDelegationReminder}</conversation-checkpoint>`)).toBe(false)
   })
+
+  test("exempts the oracle from the explicit delegation restriction", () => {
+    expect(explicitGptDelegationReminder).toContain("does not apply to the oracle subagent")
+  })
+
+  test("recognizes the explicit reminder persisted by earlier versions", () => {
+    const legacy = `<system-reminder>
+Any earlier instruction enabling proactive multi-agent delegation no longer applies. Do not spawn subagents unless the user or applicable AGENTS.md/skill instructions explicitly ask for subagents, delegation, or parallel agent work.
+</system-reminder>`
+    expect(isGptDelegationReminder(legacy)).toBe(true)
+  })
 })

@@ -1,0 +1,15 @@
+# Loon
+
+A CLI-only OpenCode V2 plugin that shows an increasingly deranged message of up to three sentences above the session prompt, drawn from completed assistant reasoning summaries and, when those are insufficient, completed assistant replies. No model requests or external services are involved.
+
+The message is seeded by the newest completed part used for its content. Fewer than three reasoning sentences in the latest assistant message are filled with completed assistant text, starting with the latest reply. It advances when new reasoning completes or, in fallback mode, when an assistant reply completes; streaming text never changes it. An empty corpus leaves the slot blank. The CLI's cached message list starts with the most recent 20 messages, so this is deliberately a recent-window corpus, not the entire session history.
+
+Corruption uses the context meter: the latest assistant's token total since compaction (input, output, reasoning, and cache) maps from level 0 to 10, reaching 10 at `model.limit.context - model.limit.output - 20,000`. Following `reloaded`, higher levels add letter doubling, transpositions, spacing, slipped word boundaries, semicolons, and shouting. From level 3, adjacent `ꙮ` and `⸸` clusters are inserted between sentence punctuation and the next sentence, growing at each level. From level 4, Zalgo starts affecting one later occurrence of a repeated capitalized word with a single-pass minimum setting and affects more eligible repeated occurrences at each level; from level 4, a sentence from the reviewed fragment bank is mixed in; from level 7, two are. At least one sentence always comes from the current session, with no more than three overall. Kaomoji, hashtags, symbols, and Zalgo remain seeded additions. The Zalgo implementation comes from [`zalgo-generator`](https://github.com/Im-Rises/zalgo-generator).
+
+Only fallback assistant replies are filtered for a standalone `I` or `I'll`, with earlier words stripped from each eligible sentence. Reasoning summaries and authored fragments have no pronoun requirement and keep their opening words. Exclamatory reasoning sentences ending in `!` are preferred. All sources use the same normalization: Loon turns `I'll` into `i`, lowercases standalone `I`, removes `the` and commas, and replaces existing `and` with `&&`; it never invents an `&&`. Whole-word `should` and `probably` become `shud` and `prolly`, regardless of case, before corruption.
+
+Run `bun test plugins/loon` to check generation, completion behavior, and context usage.
+
+The 30 authored fragments in `unhinged-postscript-fragments.ts` treat software concepts as physical objects, pets, and household intruders. Each ends in `!` and fits the 90-character sentence limit. They are mixed into Loon once context use reaches level 4.
+
+The optional session-fragment extractor remains available at `plugins/loon/scripts/extract_unhinged_fragments.py`. Run it with `--sessions 100 --count 30` to print candidates from completed reasoning summaries. Review its output before replacing the authored bank. Run its offline tests with `python3 -m unittest discover -s plugins/loon/scripts -p '*_test.py'`.

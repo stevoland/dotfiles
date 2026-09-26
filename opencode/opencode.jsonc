@@ -1,16 +1,8 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "agent": {
-    "high": {
-      "model": "github-copilot/claude-opus-5.5",
-      "variant": "medium"
-    },
-    "low": {
-      "model": "github-copilot/gpt-6-luna",
-      "variant": "high"
-    },
-    "mid": {
-      "model": "github-copilot/gpt-6-sol",
+    "medium": {
+      "model": "github-copilot/gpt-6.1-sol",
       "variant": "medium"
     },
     "pure": {
@@ -31,7 +23,7 @@
         "--tools",
         "all"
       ],
-      "enabled": false,
+      "enabled": true,
       "type": "local"
     },
     "akhq": {
@@ -44,7 +36,7 @@
     "atlassian": {
       "enabled": true,
       "type": "remote",
-      "url": "https://mcp.atlassian.com/v1/mcp"
+      "url": "https://mcp.atlassian.com/v2/mcp"
     },
     "backstage": {
       "command": [
@@ -84,11 +76,6 @@
       "type": "remote",
       "url": "https://mcp.datadoghq.eu/v1/mcp?toolsets=all"
     },
-    "fiend": {
-      "enabled": false,
-      "type": "remote",
-      "url": "https://anoma.ly/labs/fiend/mcp"
-    },
     "filesystem": {
       "command": [
         "mcp-server-filesystem"
@@ -122,17 +109,18 @@
     "/Users/stephen.collings/.boxedcode-pro/0.16.1/boxedcode-pro"
   ],
   "plugins": [
-    "-opencode.browser",
     {
       "options": {
         "copilot_review": {
-          "auto_request": true
+          "auto_request": true,
+          "improve_instructions": true
         }
       },
       "package": "/Users/stephen.collings/workspace/github.com/eeveebank/tender/src"
     },
     "/Users/stephen.collings/workspace/github.com/eeveebank/opencode-skills-insight/src",
-    "/Users/stephen.collings/workspace/github.com/eeveebank/opencode-oracle/src"
+    "/Users/stephen.collings/workspace/github.com/eeveebank/opencode-oracle/src",
+    "-stevo.moar-context"
   ],
   "references": {
     "opencode-v2": {

@@ -1,0 +1,177 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "agent": {
+    "medium": {
+      "model": "github-copilot/gpt-6.1-sol",
+      "variant": "medium"
+    },
+    "pure": {
+      "model": "github-copilot/gpt-6-luna",
+      "permission": {
+        "skill": {
+          "*": "deny"
+        }
+      },
+      "variant": "high"
+    }
+  },
+  "mcp": {
+    "agent-browser": {
+      "command": [
+        "agent-browser",
+        "mcp",
+        "--tools",
+        "all"
+      ],
+      "enabled": false,
+      "type": "local"
+    },
+    "akhq": {
+      "command": [
+        "/opt/homebrew/bin/boxed-akhq-mcp-server"
+      ],
+      "enabled": false,
+      "type": "local"
+    },
+    "atlassian": {
+      "enabled": true,
+      "type": "remote",
+      "url": "https://mcp.atlassian.com/v2/mcp"
+    },
+    "backstage": {
+      "command": [
+        "/opt/homebrew/bin/nwb",
+        "backstage",
+        "mcp"
+      ],
+      "enabled": false,
+      "type": "local"
+    },
+    "bigquery": {
+      "command": [
+        "/opt/homebrew/bin/boxed-bigquery-mcp-server"
+      ],
+      "enabled": false,
+      "type": "local"
+    },
+    "codesearch": {
+      "command": [
+        "/opt/homebrew/bin/codesearch",
+        "mcp"
+      ],
+      "cwd": "/opt/homebrew/bin",
+      "enabled": true,
+      "type": "local"
+    },
+    "computer-use": {
+      "command": [
+        "open-computer-use",
+        "mcp"
+      ],
+      "enabled": false,
+      "type": "local"
+    },
+    "datadog": {
+      "enabled": true,
+      "type": "remote",
+      "url": "https://mcp.datadoghq.eu/v1/mcp?toolsets=all"
+    },
+    "fiend": {
+      "enabled": false,
+      "type": "remote",
+      "url": "https://anoma.ly/labs/fiend/mcp"
+    },
+    "filesystem": {
+      "command": [
+        "mcp-server-filesystem"
+      ],
+      "enabled": false,
+      "type": "local"
+    },
+    "github": {
+      "enabled": false,
+      "headers": {
+        "Authorization": "Bearer {env:GITHUB_TOKEN}"
+      },
+      "oauth": false,
+      "type": "remote",
+      "url": "https://api.githubcopilot.com/mcp"
+    },
+    "incidentio": {
+      "enabled": false,
+      "type": "remote",
+      "url": "https://mcp.incident.io/mcp"
+    },
+    "kubernetes": {
+      "command": [
+        "/opt/homebrew/bin/boxed-kubernetes-mcp-server"
+      ],
+      "enabled": false,
+      "type": "local"
+    }
+  },
+  "plugin": [
+    "/Users/stephen.collings/.boxedcode-pro/0.16.1/boxedcode-pro"
+  ],
+  "plugins": [
+    {
+      "options": {
+        "copilot_review": {
+          "auto_request": true,
+          "improve_instructions": true
+        }
+      },
+      "package": "/Users/stephen.collings/workspace/github.com/eeveebank/tender/src"
+    },
+    "/Users/stephen.collings/workspace/github.com/eeveebank/opencode-skills-insight/src",
+    "/Users/stephen.collings/workspace/github.com/eeveebank/opencode-oracle/src",
+    {
+      "options": {
+        "models": {
+          "architect-runners": [
+            "github-copilot/gpt-6.1-sol#high",
+            "github-copilot/claude-sonnet-5.5#high"
+          ],
+          "arena-cross-judge": "github-copilot/claude-sonnet-5.5#high",
+          "arena-runners": [
+            "github-copilot/gpt-6.1-sol#high",
+            "github-copilot/claude-sonnet-5.5#high"
+          ],
+          "bug-fix": "github-copilot/gpt-6.1-sol#medium",
+          "feature": "github-copilot/gpt-6.1-sol#medium",
+          "hardest": "github-copilot/claude-opus-5.5#high",
+          "hillclimb": "github-copilot/gpt-6.1-sol#medium",
+          "how-explainer": "github-copilot/claude-sonnet-5.5#high",
+          "how-explorer": "github-copilot/gemini-3.8-flash#medium",
+          "interrogate-reviewers": [
+            "github-copilot/gpt-6.1-sol#high",
+            "github-copilot/claude-sonnet-5.5#high"
+          ],
+          "judgment": "github-copilot/claude-sonnet-5.5#high",
+          "perf-issue": "github-copilot/gpt-6.1-sol#medium",
+          "refactoring": "github-copilot/gpt-6.1-sol#medium",
+          "reflect-judgment": "github-copilot/claude-sonnet-5.5#high",
+          "reflect-tooling": "github-copilot/claude-sonnet-5.5#high",
+          "swarm-workers": "github-copilot/gpt-6.1-sol#medium",
+          "why-investigators": "github-copilot/gemini-3.8-flash#medium",
+          "why-synthesizer": "github-copilot/claude-sonnet-5.5#high"
+        }
+      },
+      "package": "/Users/stephen.collings/workspace/github.com/eeveebank/opencode-pstack"
+    }
+  ],
+  "references": {
+    "opencode-v2": {
+      "branch": "v2",
+      "description": "Use for opencode v2 source",
+      "repository": "anomalyco/opencode"
+    }
+  },
+  "shell": "/opt/homebrew/bin/opencode-shell",
+  "skills": {
+    "paths": [
+      "~/.github/skills",
+      ".github/skills"
+    ]
+  }
+}

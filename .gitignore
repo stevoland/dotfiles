@@ -8,6 +8,8 @@ opencode/artifact-index
 opencode/logs
 opencode/plugin
 opencode/plugins/boxedcode
+opencode/service.json
+opencode/service-local.json
 
 pi/agent/*
 pi/agent/**/

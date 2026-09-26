@@ -5,8 +5,13 @@ const OPEN_CODE_HARNESS_SIGNATURE = "OpenCode, a coding agent harness."
 const DELEGATION_SECTION = /^# Delegation\b[^\n]*(?:\r?\n|$)/m
 const MARKDOWN_HEADING = /^#{1,6}\s+/m
 
-/** Durable reminder for regular GPT modes, which require an explicit delegation request. */
+/** Durable reminder for regular GPT modes, which require an explicit delegation request except for the oracle. */
 export const explicitGptDelegationReminder = `<system-reminder>
+Any earlier instruction enabling proactive multi-agent delegation no longer applies. Do not spawn subagents unless the user or applicable AGENTS.md/skill instructions explicitly ask for subagents, delegation, or parallel agent work. This restriction does not apply to the oracle subagent: consult it proactively as its reminder describes.
+</system-reminder>`
+
+/** Explicit reminder text persisted by earlier plug-in versions, recognised so it is not left as a stray user message. */
+const legacyExplicitGptDelegationReminder = `<system-reminder>
 Any earlier instruction enabling proactive multi-agent delegation no longer applies. Do not spawn subagents unless the user or applicable AGENTS.md/skill instructions explicitly ask for subagents, delegation, or parallel agent work.
 </system-reminder>`
 
@@ -24,6 +29,7 @@ The previous delegation-mode instructions no longer apply.
 
 const GPT_DELEGATION_REMINDERS = new Set([
   explicitGptDelegationReminder,
+  legacyExplicitGptDelegationReminder,
   proactiveGptDelegationReminder,
   removedGptDelegationReminder,
 ])

@@ -13,6 +13,9 @@ export const baseConfig = {
   provider: {
     'github-copilot': {
       models: {
+        'claude-haiku-5.5': {
+          name: 'Claude Haiku 5.5 (Very cheap)',
+        },
         'claude-opus-5': {
           name: 'Claude Opus 5 (Expensive)',
           limit: {
@@ -35,6 +38,14 @@ export const baseConfig = {
             context: 400000,
             input: 336000,
             output: 64000,
+          },
+        },
+        'claude-sonnet-5.5': {
+          name: 'Claude Sonnet 5.5 (Moderately priced)',
+          limit: {
+            context: 464000,
+            input: 336000,
+            output: 128000,
           },
         },
         'gemini-3.8-flash': {
@@ -89,6 +100,14 @@ export const baseConfig = {
             output: 128_000,
           },
         },
+        'gpt-6.1-sol': {
+          name: 'GPT-6.1 Sol (Moderately priced)',
+          limit: {
+            context: 400_000,
+            input: 272_000,
+            output: 128_000,
+          },
+        },
       },
     },
   },
@@ -98,10 +117,12 @@ export const baseConfig = {
       variant: 'low',
     },
     general: {
-      model: 'github-copilot/gpt-5.6-luna',
+      model: 'github-copilot/gpt-6-luna',
+      variant: 'medium',
     },
     explore: {
-      model: 'github-copilot/gpt-5.6-luna',
+      model: 'github-copilot/gpt-6-luna',
+      variant: 'medium',
     },
     plan: {
       model: defaultModel,

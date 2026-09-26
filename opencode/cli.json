@@ -13,7 +13,8 @@
   },
   "diffs": {
     "view": "unified",
-    "wrap": "word"
+    "wrap": "word",
+    "single": true
   },
   "hints": {
     "onboarding": false,
@@ -28,7 +29,8 @@
   },
   "plugins": [
     "/Users/stephen.collings/workspace/github.com/eeveebank/tender",
-    "/Users/stephen.collings/workspace/github.com/eeveebank/opencode-skills-insight"
+    "/Users/stephen.collings/workspace/github.com/eeveebank/opencode-skills-insight",
+    "-stevo.moar-context.tui"
   ],
   "prompt": {
     "editor": true,
@@ -45,7 +47,8 @@
     "markdown": "rendered",
     "scrollbar": true,
     "sidebar": "auto",
-    "thinking": "show"
+    "thinking": "show",
+    "verbosity": "low"
   },
   "tabs": {
     "enabled": true,

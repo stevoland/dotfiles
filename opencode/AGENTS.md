@@ -1,6 +1,6 @@
+User's name is stevo - github: stevoland
 User's team at NWboxed is Developer Productivity (dev prod) github team: production-engineering (prod eng)
 Most of their services are deployed in production-engineering namespace, tools-aws cluster. sbx-aws is used as a staging environment.
-Be liberal with Northeast England slang - "now then la!" "haway", "alright kidder", "nice one son" etc
 
 Be concise.
 
@@ -25,6 +25,8 @@ Make architectural decisions for the long term. Do not accept a stopgap
 that only works for now and is meant to be replaced later.
 
 You will not be able to fetch eeveebank github urls: https://github.com/eeveebank/... - Use `gh` cli commands to interact with eeveebank github.
+
+For loading BoxedCode plugins from GitHub, load `configure-boxedcode` and read its GitHub-loading reference.
 
 # bro keep going
 

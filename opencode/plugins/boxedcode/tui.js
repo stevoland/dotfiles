@@ -921,11 +921,342 @@ function readSystemData(sessionID) {
   }
 }
 
+// ../boxedcode-shared/run-command.ts
+import { spawn as spawn2 } from "child_process";
+var defaultRunCommand = (command, args, options) => new Promise((resolve) => {
+  const child = spawn2(command, args, {
+    cwd: options?.cwd,
+    stdio: ["ignore", "pipe", "pipe"]
+  });
+  const stdoutChunks = [];
+  const stderrChunks = [];
+  child.stdout.on("data", (chunk) => stdoutChunks.push(chunk));
+  child.stderr.on("data", (chunk) => stderrChunks.push(chunk));
+  child.on("error", (err) => {
+    resolve({
+      stdout: Buffer.concat(stdoutChunks),
+      stderr: Buffer.from(err instanceof Error ? err.message : String(err)),
+      exitCode: 1
+    });
+  });
+  child.on("close", (code, signal) => {
+    resolve({
+      stdout: Buffer.concat(stdoutChunks),
+      stderr: Buffer.concat(stderrChunks),
+      exitCode: code ?? (signal ? 1 : 0)
+    });
+  });
+});
+
+// src/nwb-update.ts
+import { link, mkdir as mkdir2, readFile as readFile3, rename as rename2, rm as rm2, stat, writeFile as writeFile2 } from "fs/promises";
+import { homedir as homedir5 } from "os";
+import { join as join5 } from "path";
+var nwbUpdateStateDir = join5(homedir5(), ".nwb", "boxedcode");
+var nwbUpdateIntervalMs = 24 * 60 * 60 * 1000;
+var staleLockMs = 30 * 60 * 1000;
+var commandError = (command, result) => {
+  const output = [result.stdout, result.stderr].map((stream) => stream.toString().trim()).filter(Boolean).join(`
+`);
+  return new Error(output || `${command} exited with code ${result.exitCode}`);
+};
+var runSuccessfully = async (runCommand, command, args) => {
+  const result = await runCommand(command, args);
+  if (result.exitCode !== 0)
+    throw commandError(`${command} ${args.join(" ")}`, result);
+  return result;
+};
+var nwbWasUpgraded = (output) => output.split(/\r?\n/).some((line) => {
+  const summary = line.trim();
+  return summary.startsWith("- nwb:") && summary.includes("->") && !summary.includes("(unchanged)");
+});
+var isOpenCodeV2 = (output) => output.match(/\bv?(\d+)(?:\.\d+){2}\b/)?.[1] === "2";
+var isHomebrewOpenCodeV2 = async (runCommand) => {
+  const [command, homebrew, formula] = await Promise.all([runCommand("which", ["opencode"]), runCommand("brew", ["--prefix"]), runCommand("brew", ["--prefix", "opencode-v2"])]);
+  if (command.exitCode !== 0 || homebrew.exitCode !== 0 || formula.exitCode !== 0)
+    return false;
+  const opencodePath = command.stdout.toString().trim().split(/\r?\n/, 1)[0];
+  const homebrewPath = homebrew.stdout.toString().trim();
+  if (!opencodePath || !homebrewPath || !opencodePath.startsWith(`${homebrewPath}/`))
+    return false;
+  const version = await runCommand("opencode", ["--version"]);
+  if (version.exitCode !== 0)
+    return false;
+  return isOpenCodeV2(Buffer.concat([version.stdout, version.stderr]).toString());
+};
+async function readNwbUpdateState(stateDir = nwbUpdateStateDir) {
+  try {
+    const value = JSON.parse(await readFile3(join5(stateDir, "auto-update.json"), "utf8"));
+    if (!isRecord2(value) || typeof value["lastAttempt"] !== "string")
+      return;
+    return value;
+  } catch {
+    return;
+  }
+}
+var writeState = async (stateDir, state) => {
+  const path = join5(stateDir, "auto-update.json");
+  const temporary = `${path}.${process.pid}.${crypto.randomUUID()}.tmp`;
+  try {
+    await writeFile2(temporary, `${JSON.stringify(state, null, 2)}
+`, {
+      mode: 384
+    });
+    await rename2(temporary, path);
+  } catch (error) {
+    await rm2(temporary, {
+      force: true
+    });
+    throw error;
+  }
+};
+var isDue = (state, now) => {
+  const last = state ? Date.parse(state.lastAttempt) : NaN;
+  return Number.isNaN(last) || now.getTime() - last >= nwbUpdateIntervalMs;
+};
+var isAlive = (pid) => {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (error) {
+    return isRecord2(error) && error["code"] === "EPERM";
+  }
+};
+var temporaryLockPath = (lockPath, suffix) => `${lockPath}.${process.pid}.${crypto.randomUUID()}.${suffix}`;
+var createLock = async (lockPath, token) => {
+  const temporary = temporaryLockPath(lockPath, "tmp");
+  try {
+    await writeFile2(temporary, token, {
+      mode: 384
+    });
+    await link(temporary, lockPath);
+    return true;
+  } catch (error) {
+    if (isRecord2(error) && error["code"] === "EEXIST")
+      return false;
+    throw error;
+  } finally {
+    await rm2(temporary, {
+      force: true
+    });
+  }
+};
+var restoreLock = async (temporary, lockPath) => {
+  try {
+    await link(temporary, lockPath);
+  } catch (error) {
+    if (!isRecord2(error) || error["code"] !== "EEXIST")
+      throw error;
+  }
+};
+var acquireLock = async (lockPath) => {
+  const token = `${process.pid}:${crypto.randomUUID()}`;
+  for (let attempt = 0;attempt < 2; attempt++) {
+    if (await createLock(lockPath, token))
+      return token;
+    const [contents, info] = await Promise.all([readFile3(lockPath, "utf8").catch(() => {
+      return;
+    }), stat(lockPath).catch(() => {
+      return;
+    })]);
+    const pid = Number(contents?.split(":", 1)[0]);
+    const stale = contents !== undefined && (!info || Date.now() - info.mtimeMs > staleLockMs || !Number.isInteger(pid) || pid <= 0 || !isAlive(pid));
+    if (!stale)
+      return;
+    const stalePath = temporaryLockPath(lockPath, "stale");
+    try {
+      await rename2(lockPath, stalePath);
+    } catch (error) {
+      if (isRecord2(error) && error["code"] === "ENOENT")
+        continue;
+      throw error;
+    }
+    try {
+      const movedContents = await readFile3(stalePath, "utf8").catch(() => {
+        return;
+      });
+      if (movedContents !== contents)
+        await restoreLock(stalePath, lockPath);
+    } finally {
+      await rm2(stalePath, {
+        force: true
+      });
+    }
+  }
+  return;
+};
+var releaseLock = async (lockPath, token) => {
+  const releasingPath = temporaryLockPath(lockPath, "release");
+  try {
+    await rename2(lockPath, releasingPath);
+  } catch (error) {
+    if (isRecord2(error) && error["code"] === "ENOENT")
+      return;
+    throw error;
+  }
+  try {
+    const contents = await readFile3(releasingPath, "utf8").catch(() => {
+      return;
+    });
+    if (contents !== token)
+      await restoreLock(releasingPath, lockPath);
+  } finally {
+    await rm2(releasingPath, {
+      force: true
+    });
+  }
+};
+async function attemptNwbUpdate({
+  runCommand,
+  stateDir = nwbUpdateStateDir,
+  now = () => new Date,
+  force = false
+}) {
+  if (!force && !isDue(await readNwbUpdateState(stateDir), now()))
+    return "not-due";
+  await mkdir2(stateDir, {
+    recursive: true,
+    mode: 448
+  });
+  const lockPath = join5(stateDir, "auto-update.lock");
+  const lockToken = await acquireLock(lockPath);
+  if (!lockToken)
+    return "locked";
+  try {
+    if (!force && !isDue(await readNwbUpdateState(stateDir), now()))
+      return "not-due";
+    const lastAttempt = now().toISOString();
+    await writeState(stateDir, {
+      lastAttempt,
+      result: "running"
+    });
+    try {
+      const upgrade = await runSuccessfully(runCommand, "nwb", ["upgrade", "--no-restart"]);
+      for (const skill of ["configure-boxedcode", "find-skills"]) {
+        try {
+          await runSuccessfully(runCommand, "npx", ["--yes", "skills", "add", `eeveebank/agent-skills@${skill}`, "-y", "-g", "-a", "universal"]);
+        } catch {}
+      }
+      if (!nwbWasUpgraded(upgrade.stdout.toString())) {
+        await writeState(stateDir, {
+          lastAttempt,
+          result: "unchanged"
+        });
+        return "unchanged";
+      }
+      await writeState(stateDir, {
+        lastAttempt,
+        result: "upgraded"
+      });
+      await runSuccessfully(runCommand, "opencode", ["service", "restart"]);
+      return "upgraded";
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      await writeState(stateDir, {
+        lastAttempt,
+        result: "failed",
+        error: message
+      });
+      throw error;
+    }
+  } finally {
+    await releaseLock(lockPath, lockToken);
+  }
+}
+function isRecord2(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+// src/tui/update.ts
+var updateCommandID = "opencode.update";
+var isJAMFBlockedUpgradeError = (error) => {
+  const message = error instanceof Error ? error.message : String(error);
+  const normalizedMessage = message.toLowerCase();
+  return normalizedMessage.includes("failed to parse json response") && normalizedMessage.includes("<!doctype");
+};
+async function setupUpdate(context, runCommand = defaultRunCommand, stateDir = nwbUpdateStateDir) {
+  if (!await isHomebrewOpenCodeV2(runCommand))
+    return;
+  let keymapLayerRegistered = false;
+  let updateInProgress = false;
+  const updateLayer = () => ({
+    mode: "global",
+    priority: 1,
+    commands: [{
+      id: updateCommandID,
+      title: "Upgrade nwb and refresh BoxedCode",
+      description: "Upgrade nwb and dependencies; refresh BoxedCode and restart OpenCode if nwb changes",
+      group: "System",
+      palette: true,
+      slash: {
+        name: "update"
+      },
+      run: async () => {
+        if (updateInProgress)
+          return;
+        updateInProgress = true;
+        try {
+          context.ui.toast.show({
+            title: "Upgrade",
+            message: "Upgrading nwb and dependencies.",
+            variant: "info"
+          });
+          const outcome = await attemptNwbUpdate({
+            runCommand,
+            stateDir,
+            force: true
+          });
+          if (outcome === "locked") {
+            context.ui.toast.show({
+              title: "Upgrade",
+              message: "Another nwb upgrade is already running.",
+              variant: "info"
+            });
+            return;
+          }
+          context.ui.toast.show({
+            title: "Upgrade",
+            message: "Upgrade complete.",
+            variant: "success"
+          });
+        } catch (error) {
+          if (isJAMFBlockedUpgradeError(error)) {
+            context.ui.toast.show({
+              title: "Upgrade",
+              message: "Please enable JAMF",
+              variant: "error"
+            });
+            return;
+          }
+          context.ui.toast.show({
+            title: "Upgrade",
+            message: error instanceof Error ? error.message : String(error),
+            variant: "error"
+          });
+        } finally {
+          updateInProgress = false;
+        }
+      }
+    }]
+  });
+  context.ui.slot({
+    append: "app",
+    render: () => {
+      if (!keymapLayerRegistered) {
+        context.keymap.layer(updateLayer);
+        keymapLayerRegistered = true;
+      }
+      return null;
+    }
+  });
+}
+
 // src/tui.tsx
 var tui_default = {
   id: "boxedcode",
-  setup(context) {
+  async setup(context) {
     setupReport(context);
+    await setupUpdate(context);
     return setupSandboxControls(context);
   }
 };

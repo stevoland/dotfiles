@@ -14,42 +14,6 @@ var __export = (target, all) => {
     });
 };
 
-// src/box.ts
-import { homedir as homedir2 } from "os";
-import { isAbsolute, join as join2 } from "path";
-
-// src/box-state.ts
-import { mkdir, readFile, rename, rm, writeFile } from "fs/promises";
-import { homedir } from "os";
-import { dirname, join } from "path";
-var sandboxBehaviours = ["write", "read", "webfetch", "shell"];
-var defaultSandboxState = {
-  read: true,
-  write: true,
-  webfetch: true,
-  shell: true
-};
-var sandboxStatePath = join(homedir(), ".nwb", "boxedcode", "sandbox.json");
-async function readSandboxState(path = sandboxStatePath) {
-  try {
-    const value = JSON.parse(await readFile(path, "utf8"));
-    if (!isRecord(value))
-      return { ...defaultSandboxState };
-    if (sandboxBehaviours.some((behaviour) => value[behaviour] !== undefined && typeof value[behaviour] !== "boolean")) {
-      return { ...defaultSandboxState };
-    }
-    return Object.fromEntries(sandboxBehaviours.map((behaviour) => [
-      behaviour,
-      typeof value[behaviour] === "boolean" ? value[behaviour] : true
-    ]));
-  } catch {
-    return { ...defaultSandboxState };
-  }
-}
-function isRecord(value) {
-  return value !== null && typeof value === "object" && !Array.isArray(value);
-}
-
 // ../boxedcode-shared/run-command.ts
 import { spawn } from "child_process";
 var defaultRunCommand = (command, args, options) => new Promise((resolve) => {
@@ -77,6 +41,273 @@ var defaultRunCommand = (command, args, options) => new Promise((resolve) => {
   });
 });
 
+// src/nwb-update.ts
+import { link, mkdir, readFile, rename, rm, stat, writeFile } from "fs/promises";
+import { homedir } from "os";
+import { join } from "path";
+var nwbUpdateStateDir = join(homedir(), ".nwb", "boxedcode");
+var nwbUpdateIntervalMs = 24 * 60 * 60 * 1000;
+var staleLockMs = 30 * 60 * 1000;
+var commandError = (command, result) => {
+  const output = [result.stdout, result.stderr].map((stream) => stream.toString().trim()).filter(Boolean).join(`
+`);
+  return new Error(output || `${command} exited with code ${result.exitCode}`);
+};
+var runSuccessfully = async (runCommand, command, args) => {
+  const result = await runCommand(command, args);
+  if (result.exitCode !== 0)
+    throw commandError(`${command} ${args.join(" ")}`, result);
+  return result;
+};
+var nwbWasUpgraded = (output) => output.split(/\r?\n/).some((line) => {
+  const summary = line.trim();
+  return summary.startsWith("- nwb:") && summary.includes("->") && !summary.includes("(unchanged)");
+});
+var isOpenCodeV2 = (output) => output.match(/\bv?(\d+)(?:\.\d+){2}\b/)?.[1] === "2";
+var isHomebrewOpenCodeV2 = async (runCommand) => {
+  const [command, homebrew, formula] = await Promise.all([
+    runCommand("which", ["opencode"]),
+    runCommand("brew", ["--prefix"]),
+    runCommand("brew", ["--prefix", "opencode-v2"])
+  ]);
+  if (command.exitCode !== 0 || homebrew.exitCode !== 0 || formula.exitCode !== 0)
+    return false;
+  const opencodePath = command.stdout.toString().trim().split(/\r?\n/, 1)[0];
+  const homebrewPath = homebrew.stdout.toString().trim();
+  if (!opencodePath || !homebrewPath || !opencodePath.startsWith(`${homebrewPath}/`))
+    return false;
+  const version = await runCommand("opencode", ["--version"]);
+  if (version.exitCode !== 0)
+    return false;
+  return isOpenCodeV2(Buffer.concat([version.stdout, version.stderr]).toString());
+};
+async function readNwbUpdateState(stateDir = nwbUpdateStateDir) {
+  try {
+    const value = JSON.parse(await readFile(join(stateDir, "auto-update.json"), "utf8"));
+    if (!isRecord(value) || typeof value["lastAttempt"] !== "string")
+      return;
+    return value;
+  } catch {
+    return;
+  }
+}
+var writeState = async (stateDir, state) => {
+  const path = join(stateDir, "auto-update.json");
+  const temporary = `${path}.${process.pid}.${crypto.randomUUID()}.tmp`;
+  try {
+    await writeFile(temporary, `${JSON.stringify(state, null, 2)}
+`, { mode: 384 });
+    await rename(temporary, path);
+  } catch (error) {
+    await rm(temporary, { force: true });
+    throw error;
+  }
+};
+var isDue = (state, now) => {
+  const last = state ? Date.parse(state.lastAttempt) : NaN;
+  return Number.isNaN(last) || now.getTime() - last >= nwbUpdateIntervalMs;
+};
+var isAlive = (pid) => {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (error) {
+    return isRecord(error) && error["code"] === "EPERM";
+  }
+};
+var temporaryLockPath = (lockPath, suffix) => `${lockPath}.${process.pid}.${crypto.randomUUID()}.${suffix}`;
+var createLock = async (lockPath, token) => {
+  const temporary = temporaryLockPath(lockPath, "tmp");
+  try {
+    await writeFile(temporary, token, { mode: 384 });
+    await link(temporary, lockPath);
+    return true;
+  } catch (error) {
+    if (isRecord(error) && error["code"] === "EEXIST")
+      return false;
+    throw error;
+  } finally {
+    await rm(temporary, { force: true });
+  }
+};
+var restoreLock = async (temporary, lockPath) => {
+  try {
+    await link(temporary, lockPath);
+  } catch (error) {
+    if (!isRecord(error) || error["code"] !== "EEXIST")
+      throw error;
+  }
+};
+var acquireLock = async (lockPath) => {
+  const token = `${process.pid}:${crypto.randomUUID()}`;
+  for (let attempt = 0;attempt < 2; attempt++) {
+    if (await createLock(lockPath, token))
+      return token;
+    const [contents, info] = await Promise.all([
+      readFile(lockPath, "utf8").catch(() => {
+        return;
+      }),
+      stat(lockPath).catch(() => {
+        return;
+      })
+    ]);
+    const pid = Number(contents?.split(":", 1)[0]);
+    const stale = contents !== undefined && (!info || Date.now() - info.mtimeMs > staleLockMs || !Number.isInteger(pid) || pid <= 0 || !isAlive(pid));
+    if (!stale)
+      return;
+    const stalePath = temporaryLockPath(lockPath, "stale");
+    try {
+      await rename(lockPath, stalePath);
+    } catch (error) {
+      if (isRecord(error) && error["code"] === "ENOENT")
+        continue;
+      throw error;
+    }
+    try {
+      const movedContents = await readFile(stalePath, "utf8").catch(() => {
+        return;
+      });
+      if (movedContents !== contents)
+        await restoreLock(stalePath, lockPath);
+    } finally {
+      await rm(stalePath, { force: true });
+    }
+  }
+  return;
+};
+var releaseLock = async (lockPath, token) => {
+  const releasingPath = temporaryLockPath(lockPath, "release");
+  try {
+    await rename(lockPath, releasingPath);
+  } catch (error) {
+    if (isRecord(error) && error["code"] === "ENOENT")
+      return;
+    throw error;
+  }
+  try {
+    const contents = await readFile(releasingPath, "utf8").catch(() => {
+      return;
+    });
+    if (contents !== token)
+      await restoreLock(releasingPath, lockPath);
+  } finally {
+    await rm(releasingPath, { force: true });
+  }
+};
+async function attemptNwbUpdate({
+  runCommand,
+  stateDir = nwbUpdateStateDir,
+  now = () => new Date,
+  force = false
+}) {
+  if (!force && !isDue(await readNwbUpdateState(stateDir), now()))
+    return "not-due";
+  await mkdir(stateDir, { recursive: true, mode: 448 });
+  const lockPath = join(stateDir, "auto-update.lock");
+  const lockToken = await acquireLock(lockPath);
+  if (!lockToken)
+    return "locked";
+  try {
+    if (!force && !isDue(await readNwbUpdateState(stateDir), now()))
+      return "not-due";
+    const lastAttempt = now().toISOString();
+    await writeState(stateDir, { lastAttempt, result: "running" });
+    try {
+      const upgrade = await runSuccessfully(runCommand, "nwb", ["upgrade", "--no-restart"]);
+      for (const skill of ["configure-boxedcode", "find-skills"]) {
+        try {
+          await runSuccessfully(runCommand, "npx", [
+            "--yes",
+            "skills",
+            "add",
+            `eeveebank/agent-skills@${skill}`,
+            "-y",
+            "-g",
+            "-a",
+            "universal"
+          ]);
+        } catch {}
+      }
+      if (!nwbWasUpgraded(upgrade.stdout.toString())) {
+        await writeState(stateDir, { lastAttempt, result: "unchanged" });
+        return "unchanged";
+      }
+      await writeState(stateDir, { lastAttempt, result: "upgraded" });
+      await runSuccessfully(runCommand, "opencode", ["service", "restart"]);
+      return "upgraded";
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      await writeState(stateDir, { lastAttempt, result: "failed", error: message });
+      throw error;
+    }
+  } finally {
+    await releaseLock(lockPath, lockToken);
+  }
+}
+function isRecord(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+// src/auto-update.ts
+var checkIntervalMs = 60 * 60 * 1000;
+function setupAutoUpdate({
+  runCommand = defaultRunCommand,
+  stateDir = nwbUpdateStateDir,
+  now = () => new Date
+} = {}) {
+  let disposed = false;
+  let timer;
+  const check = async () => {
+    try {
+      if (await isHomebrewOpenCodeV2(runCommand))
+        await attemptNwbUpdate({ runCommand, stateDir, now });
+    } catch {}
+    if (!disposed)
+      timer = setTimeout(() => void check(), checkIntervalMs);
+  };
+  check();
+  return () => {
+    disposed = true;
+    clearTimeout(timer);
+  };
+}
+
+// src/box.ts
+import { homedir as homedir3 } from "os";
+import { isAbsolute, join as join3 } from "path";
+
+// src/box-state.ts
+import { mkdir as mkdir2, readFile as readFile2, rename as rename2, rm as rm2, writeFile as writeFile2 } from "fs/promises";
+import { homedir as homedir2 } from "os";
+import { dirname, join as join2 } from "path";
+var sandboxBehaviours = ["write", "read", "webfetch", "shell"];
+var defaultSandboxState = {
+  read: true,
+  write: true,
+  webfetch: true,
+  shell: true
+};
+var sandboxStatePath = join2(homedir2(), ".nwb", "boxedcode", "sandbox.json");
+async function readSandboxState(path = sandboxStatePath) {
+  try {
+    const value = JSON.parse(await readFile2(path, "utf8"));
+    if (!isRecord2(value))
+      return { ...defaultSandboxState };
+    if (sandboxBehaviours.some((behaviour) => value[behaviour] !== undefined && typeof value[behaviour] !== "boolean")) {
+      return { ...defaultSandboxState };
+    }
+    return Object.fromEntries(sandboxBehaviours.map((behaviour) => [
+      behaviour,
+      typeof value[behaviour] === "boolean" ? value[behaviour] : true
+    ]));
+  } catch {
+    return { ...defaultSandboxState };
+  }
+}
+function isRecord2(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
 // src/box.ts
 async function resolveFilesystemConfig(filesystem, projectRoot) {
   const config = {
@@ -96,8 +327,8 @@ async function resolveFilesystemConfig(filesystem, projectRoot) {
   return config;
 }
 function normalizePath(targetPath, projectRoot) {
-  const expandedPath = targetPath.replace(/^~(?=$|\/|\\)/, homedir2());
-  const absolutePath = isAbsolute(expandedPath) ? expandedPath : join2(projectRoot, expandedPath);
+  const expandedPath = targetPath.replace(/^~(?=$|\/|\\)/, homedir3());
+  const absolutePath = isAbsolute(expandedPath) ? expandedPath : join3(projectRoot, expandedPath);
   return absolutePath;
 }
 function normalizeForPatternMatch(pathValue) {
@@ -260,10 +491,10 @@ var checkWebfetch = async (networkConfig, args) => {
     throw new Error(`WebFetch ${url}: Connection blocked by network allowlist`);
   }
 };
-var homebrewBin = () => join2(process.env["HOMEBREW_PREFIX"] || "/opt/homebrew", "bin");
+var homebrewBin = () => join3(process.env["HOMEBREW_PREFIX"] || "/opt/homebrew", "bin");
 var getConfig = async (runCommand, projectRoot) => {
   const bin = homebrewBin();
-  const { stderr, stdout } = await runCommand(join2(bin, "box"), ["print-config"], {
+  const { stderr, stdout } = await runCommand(join3(bin, "box"), ["print-config"], {
     cwd: bin
   });
   const error = stderr.toString().trim();
@@ -453,7 +684,7 @@ var defaultSandboxBashPermission = {
   "zip *": "allow"
 };
 var checkHasJest = async (runCommand, projectRoot) => {
-  const { exitCode } = await runCommand("rg", ["jest", join2(projectRoot, "package.json")], {
+  const { exitCode } = await runCommand("rg", ["jest", join3(projectRoot, "package.json")], {
     cwd: projectRoot
   });
   return exitCode === 0;
@@ -549,7 +780,7 @@ var BoxPlugin = {
     }));
     registrations.push(await context.shell.hook("create.before", async (event) => {
       if ((await readState()).shell) {
-        event.shell = join2(homebrewBin(), "box-shell");
+        event.shell = join3(homebrewBin(), "box-shell");
         return;
       }
       event.shell = process.env["SHELL"] || "/bin/zsh";
@@ -558,7 +789,7 @@ var BoxPlugin = {
       if (!sandboxableToolNames.has(event.tool)) {
         return;
       }
-      if (!isRecord2(event.input))
+      if (!isRecord3(event.input))
         return;
       const args = event.input;
       const pathInfo = extractPathFromTool(event.tool, args);
@@ -617,16 +848,16 @@ var BoxPlugin = {
 };
 BoxPlugin.__test = testHooks;
 var box_default = BoxPlugin;
-function isRecord2(value) {
+function isRecord3(value) {
   return value !== null && typeof value === "object";
 }
 function filterV2Results(value, tool, config, projectRoot) {
   if (!Array.isArray(value))
     return value;
   return value.filter((item) => {
-    if (!isRecord2(item))
+    if (!isRecord3(item))
       return true;
-    const path = tool === "glob" ? item["path"] : isRecord2(item["entry"]) ? item["entry"]["path"] : undefined;
+    const path = tool === "glob" ? item["path"] : isRecord3(item["entry"]) ? item["entry"]["path"] : undefined;
     if (typeof path !== "string")
       return true;
     return !isPathBlocked(config, path, projectRoot, "read");
@@ -636,7 +867,7 @@ function formatV2Results(value, tool) {
   if (!Array.isArray(value))
     return String(value);
   if (tool === "glob") {
-    const paths = value.flatMap((item) => isRecord2(item) && typeof item["path"] === "string" ? [item["path"]] : []);
+    const paths = value.flatMap((item) => isRecord3(item) && typeof item["path"] === "string" ? [item["path"]] : []);
     return paths.length === 0 ? "No files found" : paths.join(`
 `);
   }
@@ -645,7 +876,7 @@ function formatV2Results(value, tool) {
   const lines = [`Found ${value.length} matches`];
   let current = "";
   for (const item of value) {
-    if (!isRecord2(item) || !isRecord2(item["entry"]) || typeof item["entry"]["path"] !== "string")
+    if (!isRecord3(item) || !isRecord3(item["entry"]) || typeof item["entry"]["path"] !== "string")
       continue;
     const path = item["entry"]["path"];
     if (current !== path) {
@@ -8695,7 +8926,7 @@ __export(exports_Schema, {
   makeFilterGroup: () => makeFilterGroup,
   makeFilter: () => makeFilter2,
   make: () => make19,
-  link: () => link,
+  link: () => link2,
   isUppercasedReviver: () => isUppercasedReviver,
   isUppercased: () => isUppercased,
   isUniqueReviver: () => isUniqueReviver,
@@ -8980,7 +9211,7 @@ __export(exports_Schema, {
   CauseReason: () => CauseReason,
   Cause: () => Cause,
   BooleanFromBit: () => BooleanFromBit,
-  Boolean: () => Boolean4,
+  Boolean: () => Boolean5,
   BigIntFromString: () => BigIntFromString,
   BigInt: () => BigInt5,
   BigDecimalReviver: () => BigDecimalReviver,
@@ -10660,7 +10891,7 @@ __export(exports_SchemaGetter, {
   Number: () => Number4,
   Getter: () => Getter,
   Date: () => Date3,
-  Boolean: () => Boolean,
+  Boolean: () => Boolean2,
   BigInt: () => BigInt3
 });
 class Getter extends Class {
@@ -10750,7 +10981,7 @@ function String3() {
 function Number4() {
   return transform(globalThis.Number);
 }
-function Boolean() {
+function Boolean2() {
   return transform(globalThis.Boolean);
 }
 function BigInt3() {
@@ -11639,7 +11870,7 @@ function hasCheck(checks, id) {
 }
 var number2 = /* @__PURE__ */ new Number5;
 
-class Boolean2 extends Base2 {
+class Boolean3 extends Base2 {
   _tag = "Boolean";
   getParser() {
     return fromRefinement(this, isBoolean);
@@ -11648,7 +11879,7 @@ class Boolean2 extends Base2 {
     return "boolean";
   }
 }
-var boolean = /* @__PURE__ */ new Boolean2;
+var boolean = /* @__PURE__ */ new Boolean3;
 
 class Symbol2 extends Base2 {
   _tag = "Symbol";
@@ -12258,7 +12489,7 @@ var toCandidate = /* @__PURE__ */ memoizeIdempotent((ast) => {
     if (!encoding) {
       return ast.recur?.(toCandidate, identity) ?? ast;
     }
-    if (encoding.some((link) => link.transformation._tag === "Middleware" && link.transformation.decode !== identity))
+    if (encoding.some((link2) => link2.transformation._tag === "Middleware" && link2.transformation.decode !== identity))
       return unknown;
     ast = encoding[encoding.length - 1].to;
   }
@@ -12836,9 +13067,9 @@ function replaceChecks(ast, checks) {
 function appendChecks(ast, checks) {
   return replaceChecks(ast, combineChecks(ast.checks, checks));
 }
-function mapLink(link, f) {
-  const to = f(link.to);
-  return to === link.to ? link : new Link(to, link.transformation);
+function mapLink(link2, f) {
+  const to = f(link2.to);
+  return to === link2.to ? link2 : new Link(to, link2.transformation);
 }
 function updateLastLink(encoding, f) {
   const links = encoding;
@@ -12869,8 +13100,8 @@ function middlewareEncoding(ast, middleware) {
   return appendTransformation(toEncoded(ast), middleware, ast);
 }
 function appendTransformation(from, transformation, to) {
-  const link = new Link(from, transformation);
-  return replaceEncoding(to, to.encoding ? [...to.encoding, link] : [link]);
+  const link2 = new Link(from, transformation);
+  return replaceEncoding(to, to.encoding ? [...to.encoding, link2] : [link2]);
 }
 function brand(ast, brand2) {
   const existing = resolveBrands(ast);
@@ -13596,7 +13827,7 @@ function makeParser(ast, compile, compileConstructorDefault2, constructorDefault
     if (astOptions) {
       options = mergeParseOptions(options, astOptions);
     }
-    const parsers = encodingParsers ??= links.map((link) => compile(link.to));
+    const parsers = encodingParsers ??= links.map((link2) => compile(link2.to));
     let current = input;
     let result3 = parsers[parsers.length - 1](input, options);
     for (let i = links.length - 1;i >= 0; i--) {
@@ -13672,7 +13903,7 @@ function make16(ast, options) {
 }
 
 // node_modules/effect/dist/Boolean.js
-var Boolean3 = globalThis.Boolean;
+var Boolean4 = globalThis.Boolean;
 var ReducerOr = /* @__PURE__ */ make2((a, b) => a || b, false);
 
 // node_modules/effect/dist/Struct.js
@@ -16833,7 +17064,7 @@ var Null2 = /* @__PURE__ */ make19(null_);
 var Undefined2 = /* @__PURE__ */ make19(undefined_3);
 var String5 = /* @__PURE__ */ make19(string2);
 var Number6 = /* @__PURE__ */ make19(number2);
-var Boolean4 = /* @__PURE__ */ make19(boolean);
+var Boolean5 = /* @__PURE__ */ make19(boolean);
 var Symbol3 = /* @__PURE__ */ make19(symbol3);
 var BigInt5 = /* @__PURE__ */ make19(bigInt);
 var Void2 = /* @__PURE__ */ make19(void_5);
@@ -17218,7 +17449,7 @@ function Opaque() {
 function instanceOf(constructor, annotations) {
   return declare((u) => u instanceof constructor, annotations);
 }
-function link() {
+function link2() {
   return (encodeTo2, transformation) => {
     return new Link(encodeTo2.ast, make14(transformation));
   };
@@ -18585,7 +18816,7 @@ function Option(value3) {
       importDeclarations: [`import * as Option from "effect/Option"`]
     }),
     expected: "Option",
-    toCodec: ([value4]) => link()(Union2([Struct3({
+    toCodec: ([value4]) => link2()(Union2([Struct3({
       _tag: Literal2("Some"),
       value: value4
     }), Struct3({
@@ -18674,7 +18905,7 @@ function Result(success, failure) {
       importDeclarations: [`import * as Result from "effect/Result"`]
     }),
     expected: "Result",
-    toCodec: ([success2, failure2]) => link()(Union2([Struct3({
+    toCodec: ([success2, failure2]) => link2()(Union2([Struct3({
       _tag: Literal2("Success"),
       success: success2
     }), Struct3({
@@ -18766,7 +18997,7 @@ function Redacted(value3, options) {
       importDeclarations: [`import * as Redacted from "effect/Redacted"`]
     }),
     expected: "Redacted",
-    toCodecJson: ([value4]) => link()(value4, {
+    toCodecJson: ([value4]) => link2()(value4, {
       decode: transform((e) => make18(e, {
         label
       })),
@@ -18838,7 +19069,7 @@ function CauseReason(error, defect) {
       importDeclarations: [`import * as Cause from "effect/Cause"`]
     }),
     expected: "Cause.Failure",
-    toCodec: ([error2, defect2]) => link()(Union2([Struct3({
+    toCodec: ([error2, defect2]) => link2()(Union2([Struct3({
       _tag: Literal2("Fail"),
       error: error2
     }), Struct3({
@@ -18936,7 +19167,7 @@ function Cause(error, defect) {
       importDeclarations: [`import * as Cause from "effect/Cause"`]
     }),
     expected: "Cause",
-    toCodec: ([error2, defect2]) => link()(ArraySchema(CauseReason(error2, defect2)), transform2({
+    toCodec: ([error2, defect2]) => link2()(ArraySchema(CauseReason(error2, defect2)), transform2({
       decode: fromReasons,
       encode: ({
         reasons: failures
@@ -19020,7 +19251,7 @@ function ErrorInstance(options) {
       Type: `globalThis.Error`
     }),
     expected: "Error",
-    toCodecJson: () => link()(JsonError, errorFromJsonError(normalizedOptions)),
+    toCodecJson: () => link2()(JsonError, errorFromJsonError(normalizedOptions)),
     toArbitrary: () => (fc) => fc.string().map((message) => new globalThis.Error(message))
   });
   errorSchemaCache[key] = schema;
@@ -19077,7 +19308,7 @@ function Exit(value3, error, defect) {
       importDeclarations: [`import * as Exit from "effect/Exit"`]
     }),
     expected: "Exit",
-    toCodec: ([value4, error2, defect2]) => link()(Union2([Struct3({
+    toCodec: ([value4, error2, defect2]) => link2()(Union2([Struct3({
       _tag: Literal2("Success"),
       value: value4
     }), Struct3({
@@ -19203,7 +19434,7 @@ function ReadonlyMap(key, value3) {
       Type: `globalThis.ReadonlyMap<${typeParameters[0].Type}, ${typeParameters[1].Type}>`
     }),
     expected: "ReadonlyMap",
-    toCodec: ([key2, value4]) => link()(ArraySchema(Tuple([key2, value4])), transform2({
+    toCodec: ([key2, value4]) => link2()(ArraySchema(Tuple([key2, value4])), transform2({
       decode: (e) => new globalThis.Map(e),
       encode: (map11) => [...map11.entries()]
     })),
@@ -19363,7 +19594,7 @@ function Graph(type, node, edge) {
       importDeclarations: [`import * as Graph from "effect/Graph"`]
     }),
     expected: `an immutable ${type} Graph`,
-    toCodec: ([node2, edge2]) => link()(graphEncodedSchema(type, node2, edge2), transformOrFail2({
+    toCodec: ([node2, edge2]) => link2()(graphEncodedSchema(type, node2, edge2), transformOrFail2({
       decode: graphDecode,
       encode: (graph, options) => graphEncode(graph, type, options)
     })),
@@ -19410,7 +19641,7 @@ function HashMap(key, value3) {
       importDeclarations: [`import * as HashMap from "effect/HashMap"`]
     }),
     expected: "HashMap",
-    toCodec: ([key2, value4]) => link()(ArraySchema(Tuple([key2, value4])), transform2({
+    toCodec: ([key2, value4]) => link2()(ArraySchema(Tuple([key2, value4])), transform2({
       decode: fromIterable5,
       encode: toEntries
     })),
@@ -19461,7 +19692,7 @@ function ReadonlySet(value3) {
       Type: `globalThis.ReadonlySet<${typeParameters[0].Type}>`
     }),
     expected: "ReadonlySet",
-    toCodec: ([value4]) => link()(ArraySchema(value4), transform2({
+    toCodec: ([value4]) => link2()(ArraySchema(value4), transform2({
       decode: (e) => new globalThis.Set(e),
       encode: (set2) => [...set2.values()]
     })),
@@ -19511,7 +19742,7 @@ function HashSet(value3) {
       Type: `HashSet.HashSet<${typeParameters[0].Type}>`
     }),
     expected: "HashSet",
-    toCodec: ([value4]) => link()(ArraySchema(value4), transform2({
+    toCodec: ([value4]) => link2()(ArraySchema(value4), transform2({
       decode: fromIterable7,
       encode: fromIterable2
     })),
@@ -19561,7 +19792,7 @@ function Chunk(value3) {
       Type: `Chunk.Chunk<${typeParameters[0].Type}>`
     }),
     expected: "Chunk",
-    toCodec: ([value4]) => link()(ArraySchema(value4), transform2({
+    toCodec: ([value4]) => link2()(ArraySchema(value4), transform2({
       decode: fromIterable3,
       encode: fromIterable2
     })),
@@ -19597,7 +19828,7 @@ var RegExp3 = /* @__PURE__ */ instanceOf(globalThis.RegExp, {
     Type: `globalThis.RegExp`
   }),
   expected: "RegExp",
-  toCodecJson: () => link()(Struct3({
+  toCodecJson: () => link2()(Struct3({
     source: String5,
     flags: String5
   }), transformOrFail2({
@@ -19632,7 +19863,7 @@ var URL2 = /* @__PURE__ */ instanceOf(globalThis.URL, {
     Type: `globalThis.URL`
   }),
   expected: "URL",
-  toCodecJson: () => link()(URLString, urlFromString),
+  toCodecJson: () => link2()(URLString, urlFromString),
   toArbitrary: () => (fc) => fc.webUrl().map((s) => new globalThis.URL(s)),
   toEquivalence: () => (a, b) => a.toString() === b.toString()
 });
@@ -19671,7 +19902,7 @@ var Date4 = /* @__PURE__ */ declare((input) => input instanceof globalThis.Date 
     Type: `globalThis.Date`
   }),
   expected: "a valid Date",
-  toCodecJson: () => link()(DateString, dateFromString),
+  toCodecJson: () => link2()(DateString, dateFromString),
   toArbitrary: () => (fc, ctx) => fc.date(dateArbitraryConstraints(ctx?.constraint?.ordered?.order === Date2 ? ctx.constraint.ordered : undefined, {
     noInvalidDate: true
   }))
@@ -19690,7 +19921,7 @@ var Duration = /* @__PURE__ */ declare(isDuration, {
     importDeclarations: [`import * as Duration from "effect/Duration"`]
   }),
   expected: "Duration",
-  toCodecJson: () => link()(Union2([Struct3({
+  toCodecJson: () => link2()(Union2([Struct3({
     _tag: Literal2("Infinity")
   }), Struct3({
     _tag: Literal2("NegativeInfinity")
@@ -19808,7 +20039,7 @@ var BigDecimal = /* @__PURE__ */ declare(isBigDecimal, {
     importDeclarations: [`import * as BigDecimal from "effect/BigDecimal"`]
   }),
   expected: "BigDecimal",
-  toCodecJson: () => link()(BigDecimalString, bigDecimalFromString),
+  toCodecJson: () => link2()(BigDecimalString, bigDecimalFromString),
   toArbitrary: () => (fc, ctx) => {
     const ordered = ctx.constraint?.ordered?.order === Order3 ? ctx.constraint.ordered : undefined;
     if (ordered === undefined) {
@@ -19848,7 +20079,7 @@ var File = /* @__PURE__ */ instanceOf(globalThis.File, {
     Type: `globalThis.File`
   }),
   expected: "File",
-  toCodecJson: () => link()(Struct3({
+  toCodecJson: () => link2()(Struct3({
     data: String5.check(isBase64()),
     type: String5,
     name: String5,
@@ -19893,7 +20124,7 @@ var FormData2 = /* @__PURE__ */ instanceOf(globalThis.FormData, {
     Type: `globalThis.FormData`
   }),
   expected: "FormData",
-  toCodecJson: () => link()(ArraySchema(Tuple([String5, Union2([Struct3({
+  toCodecJson: () => link2()(ArraySchema(Tuple([String5, Union2([Struct3({
     _tag: tag("String"),
     value: String5
   }), Struct3({
@@ -19938,7 +20169,7 @@ var URLSearchParams2 = /* @__PURE__ */ instanceOf(globalThis.URLSearchParams, {
     Type: `globalThis.URLSearchParams`
   }),
   expected: "URLSearchParams",
-  toCodecJson: () => link()(String5.annotate({
+  toCodecJson: () => link2()(String5.annotate({
     expected: "a query string that will be decoded as URLSearchParams"
   }), transform2({
     decode: (e) => new globalThis.URLSearchParams(e),
@@ -19981,7 +20212,7 @@ var StandardSchemaV1FailureResult = /* @__PURE__ */ Struct3({
     })])))
   }))
 });
-var BooleanFromBit = /* @__PURE__ */ Literals([0, 1]).pipe(/* @__PURE__ */ decodeTo2(Boolean4, /* @__PURE__ */ transform2({
+var BooleanFromBit = /* @__PURE__ */ Literals([0, 1]).pipe(/* @__PURE__ */ decodeTo2(Boolean5, /* @__PURE__ */ transform2({
   decode: (bit) => bit === 1,
   encode: (bool) => bool ? 1 : 0
 })));
@@ -20000,7 +20231,7 @@ var Uint8Array2 = /* @__PURE__ */ instanceOf(globalThis.Uint8Array, {
     Type: `globalThis.Uint8Array`
   }),
   expected: "Uint8Array",
-  toCodecJson: () => link()(Base64String, uint8ArrayFromBase64String),
+  toCodecJson: () => link2()(Base64String, uint8ArrayFromBase64String),
   toArbitrary: () => (fc) => fc.uint8Array()
 });
 var Uint8ArrayReviver = /* @__PURE__ */ makeFixedDeclarationReviver("effect/schema/Uint8Array", Uint8Array2);
@@ -20028,7 +20259,7 @@ var DateTimeUtc = /* @__PURE__ */ declare((u) => isDateTime2(u) && isUtc2(u), {
     importDeclarations: [`import * as DateTime from "effect/DateTime"`]
   }),
   expected: "DateTime.Utc",
-  toCodecJson: () => link()(String5, dateTimeUtcFromString),
+  toCodecJson: () => link2()(String5, dateTimeUtcFromString),
   toArbitrary: () => (fc, ctx) => fc.date(dateArbitraryConstraints(ctx?.constraint?.ordered?.order === Order2 ? ctx.constraint.ordered : undefined, {
     noInvalidDate: true
   }, toDateUtc2)).map((date) => fromDateUnsafe2(date)),
@@ -20058,7 +20289,7 @@ var TimeZoneOffset = /* @__PURE__ */ declare(isTimeZoneOffset2, {
     importDeclarations: [`import * as DateTime from "effect/DateTime"`]
   }),
   expected: "DateTime.TimeZone.Offset",
-  toCodecJson: () => link()(Int, timeZoneOffsetFromNumber),
+  toCodecJson: () => link2()(Int, timeZoneOffsetFromNumber),
   toArbitrary: () => (fc) => fc.integer({
     min: -12 * 60 * 60 * 1000,
     max: 14 * 60 * 60 * 1000
@@ -20081,7 +20312,7 @@ var TimeZoneNamed = /* @__PURE__ */ declare(isTimeZoneNamed2, {
     importDeclarations: [`import * as DateTime from "effect/DateTime"`]
   }),
   expected: "DateTime.TimeZone.Named",
-  toCodecJson: () => link()(TimeZoneNamedString, timeZoneNamedFromString),
+  toCodecJson: () => link2()(TimeZoneNamedString, timeZoneNamedFromString),
   toArbitrary: () => (fc) => fc.constantFrom(...["UTC", "Europe/London", "America/New_York", "Asia/Tokyo", "Australia/Sydney"].map(zoneMakeNamedUnsafe2)),
   toFormatter: () => (tz) => zoneToString2(tz),
   toEquivalence: () => (a, b) => a.id === b.id
@@ -20102,7 +20333,7 @@ var TimeZone = /* @__PURE__ */ declare(isTimeZone2, {
     importDeclarations: [`import * as DateTime from "effect/DateTime"`]
   }),
   expected: "DateTime.TimeZone",
-  toCodecJson: () => link()(TimeZoneString, timeZoneFromString),
+  toCodecJson: () => link2()(TimeZoneString, timeZoneFromString),
   toArbitrary: () => (fc) => fc.oneof(fc.integer({
     min: -12 * 60 * 60 * 1000,
     max: 14 * 60 * 60 * 1000
@@ -20126,7 +20357,7 @@ var DateTimeZoned = /* @__PURE__ */ declare((u) => isDateTime2(u) && isZoned2(u)
     importDeclarations: [`import * as DateTime from "effect/DateTime"`]
   }),
   expected: "DateTime.Zoned",
-  toCodecJson: () => link()(DateTimeZonedString, dateTimeZonedFromString),
+  toCodecJson: () => link2()(DateTimeZonedString, dateTimeZonedFromString),
   toArbitrary: () => (fc, ctx) => fc.tuple(fc.date(dateArbitraryConstraints(ctx?.constraint?.ordered?.order === Order2 ? ctx.constraint.ordered : undefined, {
     max: new globalThis.Date(8640000000000000 - 14 * 60 * 60 * 1000),
     min: new globalThis.Date(-8640000000000000 + 14 * 60 * 60 * 1000),
@@ -20486,8 +20717,8 @@ function toCodecJsonASTStep(ast, recur3) {
         return replaceEncoding(ast, [unknownToJson]);
       }
       const typeParameters = ast.typeParameters.map((tp) => make16(toEncoded(tp)));
-      const link2 = getLink(typeParameters);
-      return link2 === undefined ? ast : replaceEncoding(ast, [mapLink(link2, recur3)]);
+      const link3 = getLink(typeParameters);
+      return link3 === undefined ? ast : replaceEncoding(ast, [mapLink(link3, recur3)]);
     }
     case "Unknown":
       return replaceEncoding(ast, [unknownToJson]);
@@ -20531,8 +20762,8 @@ function toCodecIsoASTStep(ast, recur3) {
     case "Declaration": {
       const getLink = ast.annotations?.toCodecIso ?? ast.annotations?.toCodec;
       if (isFunction(getLink)) {
-        const link2 = getLink(ast.typeParameters.map((tp) => make16(tp)));
-        return replaceEncoding(ast, [mapLink(link2, recur3)]);
+        const link3 = getLink(ast.typeParameters.map((tp) => make16(tp)));
+        return replaceEncoding(ast, [mapLink(link3, recur3)]);
       }
       return ast;
     }
@@ -20674,16 +20905,16 @@ function toCodecStringTreeASTStep(ast, recur3, onMissingAnnotation) {
       const typeParameters = ast.typeParameters.map((tp) => make19(recur3(toEncoded(tp))));
       const getStringTreeLink = ast.annotations?.toCodecStringTree;
       if (isFunction(getStringTreeLink)) {
-        const link3 = getStringTreeLink(typeParameters);
-        if (link3 === undefined)
+        const link4 = getStringTreeLink(typeParameters);
+        if (link4 === undefined)
           return ast;
-        return replaceEncoding(ast, [mapLink(link3, recur3)]);
+        return replaceEncoding(ast, [mapLink(link4, recur3)]);
       }
       const getJsonLink = ast.annotations?.toCodecJson;
       const jsonLink = isFunction(getJsonLink) ? getJsonLink(typeParameters) : undefined;
       const getLink = jsonLink === undefined ? ast.annotations?.toCodec : undefined;
-      const link2 = jsonLink ?? (isFunction(getLink) ? getLink(typeParameters) : undefined);
-      return link2 === undefined ? onMissingAnnotation(ast) : replaceEncoding(ast, [mapLink(link2, recur3)]);
+      const link3 = jsonLink ?? (isFunction(getLink) ? getLink(typeParameters) : undefined);
+      return link3 === undefined ? onMissingAnnotation(ast) : replaceEncoding(ast, [mapLink(link3, recur3)]);
     }
     case "Null":
       return replaceEncoding(ast, [nullToString]);
@@ -20719,7 +20950,7 @@ function toCodecStringTreeASTStep(ast, recur3, onMissingAnnotation) {
 var nullToString = /* @__PURE__ */ new Link(/* @__PURE__ */ new Literal("null"), /* @__PURE__ */ new Transformation(/* @__PURE__ */ transform(() => null), /* @__PURE__ */ transform(() => "null")));
 var booleanToString = /* @__PURE__ */ new Link(/* @__PURE__ */ new Union([/* @__PURE__ */ new Literal("true"), /* @__PURE__ */ new Literal("false")], "anyOf"), /* @__PURE__ */ new Transformation(/* @__PURE__ */ transform((s) => s === "true"), /* @__PURE__ */ String3()));
 var arrayFromSingleTransformation = /* @__PURE__ */ new Transformation(/* @__PURE__ */ transform((input) => typeof input === "string" ? [input] : input), /* @__PURE__ */ passthrough2());
-var isCodecArrayFromSingleLink = (link2) => link2.transformation === arrayFromSingleTransformation;
+var isCodecArrayFromSingleLink = (link3) => link3.transformation === arrayFromSingleTransformation;
 var toCodecStringTreeAST = /* @__PURE__ */ applyToSelfOrLastLinkEncodingIdempotent((ast) => {
   const out = toCodecStringTreeASTStep(ast, toCodecStringTreeAST, (ast2) => {
     throw new globalThis.Error("Missing structural codec for StringTree", {
@@ -21493,6 +21724,9 @@ var baseConfig = {
   provider: {
     "github-copilot": {
       models: {
+        "claude-haiku-5.5": {
+          name: "Claude Haiku 5.5 (Very cheap)"
+        },
         "claude-opus-5": {
           name: "Claude Opus 5 (Expensive)",
           limit: {
@@ -21515,6 +21749,14 @@ var baseConfig = {
             context: 400000,
             input: 336000,
             output: 64000
+          }
+        },
+        "claude-sonnet-5.5": {
+          name: "Claude Sonnet 5.5 (Moderately priced)",
+          limit: {
+            context: 464000,
+            input: 336000,
+            output: 128000
           }
         },
         "gemini-3.8-flash": {
@@ -21568,6 +21810,14 @@ var baseConfig = {
             input: 272000,
             output: 128000
           }
+        },
+        "gpt-6.1-sol": {
+          name: "GPT-6.1 Sol (Moderately priced)",
+          limit: {
+            context: 400000,
+            input: 272000,
+            output: 128000
+          }
         }
       }
     }
@@ -21578,10 +21828,12 @@ var baseConfig = {
       variant: "low"
     },
     general: {
-      model: "github-copilot/gpt-5.6-luna"
+      model: "github-copilot/gpt-6-luna",
+      variant: "medium"
     },
     explore: {
-      model: "github-copilot/gpt-5.6-luna"
+      model: "github-copilot/gpt-6-luna",
+      variant: "medium"
     },
     plan: {
       model: defaultModel,
@@ -21640,19 +21892,19 @@ var defaultAgentPermissions = Object.entries(baseConfig.permission).map(([action
   effect: effect2
 }));
 var defaultAgents = {
-  low: {
+  light: {
     color: "#5ff5d6",
-    model: "github-copilot/gpt-5.6-luna",
+    model: "github-copilot/gpt-6-luna",
     variant: "high"
   },
-  mid: {
+  medium: {
     color: "#ffc799",
-    model: "github-copilot/gpt-5.6-terra",
+    model: "github-copilot/gpt-6.1-sol",
     variant: "medium"
   },
   high: {
     color: "#ff8080",
-    model: "github-copilot/gpt-5.6-sol",
+    model: "github-copilot/claude-opus-5.5",
     variant: "medium"
   }
 };
@@ -21803,22 +22055,170 @@ var BoxedCodeConfigPluginV2 = {
   }
 };
 var config_default = BoxedCodeConfigPluginV2;
-var isRecord3 = (value3) => value3 !== null && typeof value3 === "object" && !Array.isArray(value3);
+var isRecord4 = (value3) => value3 !== null && typeof value3 === "object" && !Array.isArray(value3);
 var isEnabledProvider = (id2) => id2 === "github-copilot" || id2 === "ollama";
 var hasModelCost = (config) => {
   const cost = Reflect.get(config, "cost");
-  return isRecord3(cost) && typeof cost["input"] === "number" && typeof cost["output"] === "number" && (cost["cache_read"] === undefined || typeof cost["cache_read"] === "number") && (cost["cache_write"] === undefined || typeof cost["cache_write"] === "number");
+  return isRecord4(cost) && typeof cost["input"] === "number" && typeof cost["output"] === "number" && (cost["cache_read"] === undefined || typeof cost["cache_read"] === "number") && (cost["cache_write"] === undefined || typeof cost["cache_write"] === "number");
 };
 var hasModelModalities = (config) => {
   const modalities = Reflect.get(config, "modalities");
-  return isRecord3(modalities) && Array.isArray(modalities["input"]) && modalities["input"].every((value3) => typeof value3 === "string") && Array.isArray(modalities["output"]) && modalities["output"].every((value3) => typeof value3 === "string");
+  return isRecord4(modalities) && Array.isArray(modalities["input"]) && modalities["input"].every((value3) => typeof value3 === "string") && Array.isArray(modalities["output"]) && modalities["output"].every((value3) => typeof value3 === "string");
 };
+
+// src/copilot-cost-data.ts
+var usdPerMillion = (prices) => prices.batch_size > 0 ? 1e4 / prices.batch_size : 0;
+var tierCost = (prices, scale2) => ({
+  input: prices.input_price * scale2,
+  output: prices.output_price * scale2,
+  cache: {
+    read: (prices.cache_read_price ?? prices.cache_price ?? 0) * scale2,
+    write: (prices.cache_write_price ?? 0) * scale2
+  }
+});
+function copilotModelCosts(prices) {
+  const scale2 = usdPerMillion(prices);
+  if (scale2 === 0)
+    return;
+  const costs = [tierCost(prices.default, scale2)];
+  const threshold = prices.default.max_prompt_tokens;
+  if (prices.long_context && threshold !== undefined) {
+    costs.push({
+      ...tierCost(prices.long_context, scale2),
+      tier: { type: "context", size: threshold }
+    });
+  }
+  return costs;
+}
+function withCacheWrites(usage, cacheWrite) {
+  if (cacheWrite === undefined || cacheWrite <= 0 || usage.inputTokens.cacheWrite !== undefined)
+    return usage;
+  const noCache = usage.inputTokens.noCache;
+  return {
+    ...usage,
+    inputTokens: {
+      ...usage.inputTokens,
+      cacheWrite,
+      noCache: noCache === undefined ? undefined : Math.max(0, noCache - cacheWrite)
+    }
+  };
+}
+function copilotCacheWriteTokens(value3) {
+  const record2 = value3;
+  const usage = record2?.response?.usage ?? record2?.usage ?? value3;
+  const tokens = usage?.input_tokens_details?.cache_write_tokens ?? usage?.prompt_tokens_details?.cache_write_tokens;
+  return typeof tokens === "number" && Number.isFinite(tokens) ? tokens : undefined;
+}
+
+// src/copilot-cost.ts
+var providerID = "github-copilot";
+var apiVersion = "2026-08-01";
+async function fetchCosts(context3, signal) {
+  const connection = await context3.integration.connection.active(providerID);
+  const credential = connection && await context3.integration.connection.resolve(connection);
+  if (credential?.type !== "oauth")
+    return;
+  const response2 = await fetch("https://api.githubcopilot.com/models", {
+    headers: {
+      Authorization: `Bearer ${credential.refresh}`,
+      "X-GitHub-Api-Version": apiVersion,
+      Accept: "application/json"
+    },
+    signal: AbortSignal.any([signal, AbortSignal.timeout(1e4)])
+  });
+  if (!response2.ok)
+    throw new Error(`Copilot /models returned ${response2.status}`);
+  const body = await response2.json();
+  const costs = new Map;
+  for (const model of body.data ?? []) {
+    const prices = model.billing?.token_prices;
+    const cost = prices && copilotModelCosts(prices);
+    if (typeof model.id === "string" && cost)
+      costs.set(model.id, cost);
+  }
+  return costs;
+}
+function withCopilotCacheWrites(original) {
+  return {
+    specificationVersion: original.specificationVersion,
+    provider: original.provider,
+    modelId: original.modelId,
+    get supportedUrls() {
+      return original.supportedUrls;
+    },
+    doGenerate: async (options) => {
+      const result3 = await original.doGenerate(options);
+      const cacheWrite = copilotCacheWriteTokens(result3.response?.body) ?? copilotCacheWriteTokens(result3.usage.raw);
+      return { ...result3, usage: withCacheWrites(result3.usage, cacheWrite) };
+    },
+    doStream: async (options) => {
+      const result3 = await original.doStream({ ...options, includeRawChunks: true });
+      let cacheWrite;
+      const stream = result3.stream.pipeThrough(new TransformStream({
+        transform(part, controller) {
+          if (part.type === "raw") {
+            cacheWrite = copilotCacheWriteTokens(part.rawValue) ?? cacheWrite;
+            if (options.includeRawChunks)
+              controller.enqueue(part);
+            return;
+          }
+          if (part.type === "finish") {
+            controller.enqueue({ ...part, usage: withCacheWrites(part.usage, cacheWrite) });
+            return;
+          }
+          controller.enqueue(part);
+        }
+      }));
+      return { ...result3, stream };
+    }
+  };
+}
+async function setupCopilotCost(context3) {
+  let costs = new Map;
+  const transform3 = await context3.model.transform((models) => {
+    for (const model of models.list(providerID)) {
+      const cost = costs.get(String(model.modelID ?? model.id));
+      if (!cost || model.cost.some((entry) => Number(entry.cache.write) > 0))
+        continue;
+      models.update(String(model.providerID), String(model.id), (draft) => {
+        draft.cost = cost.map((entry) => ({
+          ...entry.tier ? { tier: entry.tier } : {},
+          input: exports_money.USDPerMillionTokens.make(entry.input),
+          output: exports_money.USDPerMillionTokens.make(entry.output),
+          cache: {
+            read: exports_money.USDPerMillionTokens.make(entry.cache.read),
+            write: exports_money.USDPerMillionTokens.make(entry.cache.write)
+          }
+        }));
+      });
+    }
+  });
+  const hook = await context3.aisdk.hook("language", (event) => {
+    if (event.language)
+      event.language = withCopilotCacheWrites(event.language);
+  }, { providerID });
+  const controller = new AbortController;
+  const load = (async () => {
+    const loaded = await fetchCosts(context3, controller.signal);
+    if (!loaded || controller.signal.aborted)
+      return;
+    costs = loaded;
+    await context3.model.reload();
+  })().catch(() => {
+    return;
+  });
+  return async () => {
+    controller.abort();
+    await load;
+    await Promise.all([transform3.dispose(), hook.dispose()]);
+  };
+}
 
 // src/local.ts
 import { spawn as spawn2 } from "child_process";
-import { mkdir as mkdir2, readFile as readFile2, rm as rm2, stat, writeFile as writeFile2 } from "fs/promises";
-import { homedir as homedir3 } from "os";
-import { join as join4 } from "path";
+import { mkdir as mkdir3, readFile as readFile3, rm as rm3, stat as stat2, writeFile as writeFile3 } from "fs/promises";
+import { homedir as homedir4 } from "os";
+import { join as join5 } from "path";
 var models = new Map([
   ["gemma4:26b-mlx", { maxTokens: 2000, temperature: 1, topP: 0.95, topK: 64 }],
   ["gemma4:31b-mlx", { maxTokens: 2000, temperature: 1, topP: 0.95, topK: 64 }],
@@ -21829,7 +22229,7 @@ var models = new Map([
 var instanceID = `${process.pid}-${Date.now()}`;
 var defaultRuntime = {
   baseURL: "http://localhost:11434",
-  stateDir: join4(homedir3(), ".local", "state", "opencode", "boxedcode-ollama-v2")
+  stateDir: join5(homedir4(), ".local", "state", "opencode", "boxedcode-ollama-v2")
 };
 var sleep3 = (ms) => new Promise((resolve2) => setTimeout(resolve2, ms));
 var isModelID = (value3) => models.has(value3);
@@ -21856,7 +22256,7 @@ var notify = (title, message) => {
 };
 var commandPath = async () => {
   for (const path of ["/opt/homebrew/bin/ollama", "/usr/local/bin/ollama"]) {
-    if (await stat(path).then(() => true).catch(() => false))
+    if (await stat2(path).then(() => true).catch(() => false))
       return path;
   }
   return "ollama";
@@ -21925,7 +22325,7 @@ var generate = async (runtime, modelID, keepAlive) => {
 };
 var readRegistry = async (runtime) => {
   try {
-    const value3 = JSON.parse(await readFile2(join4(runtime.stateDir, "registry.json"), "utf8"));
+    const value3 = JSON.parse(await readFile3(join5(runtime.stateDir, "registry.json"), "utf8"));
     return { instances: value3.instances ?? {}, sessions: value3.sessions ?? {} };
   } catch {
     return { instances: {}, sessions: {} };
@@ -21959,29 +22359,29 @@ var counts = (registry) => {
 };
 var released = (before, after) => [...before].flatMap(([id2, count]) => count > 0 && !after.has(id2) ? [id2] : []);
 var locked = async (runtime, update2) => {
-  const lockPath = join4(runtime.stateDir, "registry.lock");
-  await mkdir2(runtime.stateDir, { recursive: true });
+  const lockPath = join5(runtime.stateDir, "registry.lock");
+  await mkdir3(runtime.stateDir, { recursive: true });
   for (let attempt = 0;attempt < 100; attempt++) {
     try {
-      await writeFile2(lockPath, instanceID, { flag: "wx" });
+      await writeFile3(lockPath, instanceID, { flag: "wx" });
       try {
         const registry = await readRegistry(runtime);
         clean(registry);
         const result3 = await update2(registry);
-        await writeFile2(join4(runtime.stateDir, "registry.json"), `${JSON.stringify(registry, null, 2)}
+        await writeFile3(join5(runtime.stateDir, "registry.json"), `${JSON.stringify(registry, null, 2)}
 `);
         return result3;
       } finally {
-        await rm2(lockPath, { force: true });
+        await rm3(lockPath, { force: true });
       }
     } catch (error) {
       if (!(error && typeof error === "object" && ("code" in error) && error.code === "EEXIST"))
         throw error;
-      const info = await stat(lockPath).catch(() => {
+      const info = await stat2(lockPath).catch(() => {
         return;
       });
       if (info && Date.now() - info.mtimeMs > 1e4)
-        await rm2(lockPath, { force: true });
+        await rm3(lockPath, { force: true });
       else
         await sleep3(50);
     }
@@ -22014,14 +22414,14 @@ var unload = async (runtime, modelIDs) => {
     notify("Failed to unload Ollama model", `Could not unload ${failed.join(", ")}.`);
 };
 var isMalformedEventDataError = (error) => error instanceof Error && error.message.includes('at ["data"]');
-var isRecord4 = (value3) => value3 !== null && typeof value3 === "object" && !Array.isArray(value3);
+var isRecord5 = (value3) => value3 !== null && typeof value3 === "object" && !Array.isArray(value3);
 var watchSessionDeletions = async (subscribe, signal, onDeleted) => {
   let retryDelay = 50;
   while (!signal.aborted) {
     try {
       for await (const event of subscribe({ signal })) {
         retryDelay = 50;
-        if (event.type !== "session.deleted" || !isRecord4(event.data))
+        if (event.type !== "session.deleted" || !isRecord5(event.data))
           continue;
         if (typeof event.data["sessionID"] !== "string")
           continue;
@@ -22108,19 +22508,19 @@ var BoxedCodeLocalPlugin = createBoxedCodeLocalPlugin();
 var local_default = BoxedCodeLocalPlugin;
 
 // src/quota.ts
-import { mkdir as mkdir3, rename as rename2, writeFile as writeFile3 } from "fs/promises";
-import { homedir as homedir5 } from "os";
-import { join as join6 } from "path";
+import { mkdir as mkdir4, rename as rename3, writeFile as writeFile4 } from "fs/promises";
+import { homedir as homedir6 } from "os";
+import { join as join7 } from "path";
 
 // src/quota-data.ts
-import { homedir as homedir4 } from "os";
-import { join as join5 } from "path";
-var quotaPath = join5(homedir4(), ".boxedcode-pro", "quota.json");
-var isRecord5 = (value3) => typeof value3 === "object" && value3 !== null;
+import { homedir as homedir5 } from "os";
+import { join as join6 } from "path";
+var quotaPath = join6(homedir5(), ".boxedcode-pro", "quota.json");
+var isRecord6 = (value3) => typeof value3 === "object" && value3 !== null;
 var numberAt = (source, ...path) => {
   let value3 = source;
   for (const key of path) {
-    if (!isRecord5(value3))
+    if (!isRecord6(value3))
       return;
     value3 = value3[key];
   }
@@ -22167,10 +22567,10 @@ function setupQuota(context3) {
     const value3 = await readQuota(context3).catch(() => ({ status: "unavailable" }));
     if (disposed)
       return;
-    await mkdir3(join6(homedir5(), ".boxedcode-pro"), { recursive: true, mode: 448 });
+    await mkdir4(join7(homedir6(), ".boxedcode-pro"), { recursive: true, mode: 448 });
     const temporary = `${quotaPath}.${process.pid}.${crypto.randomUUID()}.tmp`;
-    await writeFile3(temporary, JSON.stringify(value3), { mode: 384 });
-    await rename2(temporary, quotaPath);
+    await writeFile4(temporary, JSON.stringify(value3), { mode: 384 });
+    await rename3(temporary, quotaPath);
     timer = setTimeout(() => void refresh(), refreshIntervalMs);
   };
   refresh();
@@ -22181,16 +22581,16 @@ function setupQuota(context3) {
 }
 
 // src/system-data.ts
-import { mkdir as mkdir4, writeFile as writeFile4 } from "fs/promises";
-import { homedir as homedir6 } from "os";
-import { join as join7 } from "path";
-var shareDirectory = join7(homedir6(), ".boxedcode-pro", "share");
+import { mkdir as mkdir5, writeFile as writeFile5 } from "fs/promises";
+import { homedir as homedir7 } from "os";
+import { join as join8 } from "path";
+var shareDirectory = join8(homedir7(), ".boxedcode-pro", "share");
 async function persistSystemData(sessionID, system, tools) {
-  const prompt = system.flatMap((part) => isRecord6(part) && part["type"] === "text" && typeof part["text"] === "string" ? [part["text"]] : []);
+  const prompt = system.flatMap((part) => isRecord7(part) && part["type"] === "text" && typeof part["text"] === "string" ? [part["text"]] : []);
   const definitions = Object.entries(tools).map(([name, tool]) => ({ name, ...tool }));
-  await mkdir4(shareDirectory, { recursive: true, mode: 448 });
-  await writeFile4(join7(shareDirectory, `${sessionID}.json`), JSON.stringify({ prompt, tools: definitions }, null, 2), { flag: "wx" }).catch((error) => {
-    if (!isRecord6(error) || error["code"] !== "EEXIST")
+  await mkdir5(shareDirectory, { recursive: true, mode: 448 });
+  await writeFile5(join8(shareDirectory, `${sessionID}.json`), JSON.stringify({ prompt, tools: definitions }, null, 2), { flag: "wx" }).catch((error) => {
+    if (!isRecord7(error) || error["code"] !== "EEXIST")
       throw error;
   });
 }
@@ -22211,13 +22611,15 @@ async function setupSystemData(context3, persist = persistSystemData) {
     await registration?.dispose();
   };
 }
-var isRecord6 = (value3) => value3 !== null && typeof value3 === "object" && !Array.isArray(value3);
+var isRecord7 = (value3) => value3 !== null && typeof value3 === "object" && !Array.isArray(value3);
 
 // src/index.ts
 var BoxedCodePlugin = {
   id: "boxedcode",
   setup: async (context3) => {
     const disposeQuota = setupQuota(context3);
+    const disposeCopilotCost = await setupCopilotCost(context3);
+    const disposeAutoUpdate = setupAutoUpdate();
     const disposeLocal = await local_default.setup(context3);
     const disposeConfig = await config_default.setup(context3);
     const disposeBox = await box_default.setup(context3);
@@ -22227,7 +22629,9 @@ var BoxedCodePlugin = {
       await disposeBox?.();
       await disposeConfig?.();
       await disposeLocal?.();
+      await disposeCopilotCost();
       disposeQuota();
+      disposeAutoUpdate();
     };
   }
 };

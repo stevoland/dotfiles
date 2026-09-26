@@ -35,16 +35,16 @@
       "skillPath": "skills/find-skills/SKILL.md",
       "skillFolderHash": "8f53ef230643b563207e4de26272aab4dab6ce97",
       "installedAt": "2026-05-06T16:11:31.173Z",
-      "updatedAt": "2026-05-06T16:11:31.173Z"
+      "updatedAt": "2026-10-18T07:49:51.952Z"
     },
     "configure-boxedcode": {
       "source": "eeveebank/agent-skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/eeveebank/agent-skills.git",
       "skillPath": "skills/configure-boxedcode/SKILL.md",
-      "skillFolderHash": "fc266349bb2af3bda6b6b1405734b91168631899",
+      "skillFolderHash": "f67458b013622ad1d6ad8815ee56a8614d10d2fa",
       "installedAt": "2026-05-06T16:11:33.610Z",
-      "updatedAt": "2026-05-06T16:11:33.610Z"
+      "updatedAt": "2026-10-18T07:49:49.858Z"
     },
     "motel-debug": {
       "source": "kitlangton/motel",
@@ -337,9 +337,41 @@
       "skillFolderHash": "763660a601ea4b9b75d2fdb679aa81fd205df461",
       "installedAt": "2026-09-12T14:02:10.025Z",
       "updatedAt": "2026-09-12T14:05:16.463Z"
+    },
+    "pr": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/mattpocock/skills.git",
+      "skillPath": "skills/in-progress/pr/SKILL.md",
+      "skillFolderHash": "80d46d68aa3fea9ff45e191b7ec107d65d37e416",
+      "installedAt": "2026-09-25T21:54:57.793Z",
+      "updatedAt": "2026-09-25T21:54:57.793Z"
+    },
+    "2password": {
+      "source": "kitlangton/2password",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/kitlangton/2password.git",
+      "skillPath": "skills/2password/SKILL.md",
+      "skillFolderHash": "84a70ae6b98b6052ebce164e7aa7cbb132a44410",
+      "installedAt": "2026-10-05T15:40:15.702Z",
+      "updatedAt": "2026-10-05T15:40:15.702Z"
     }
   },
   "dismissed": {
     "findSkillsPrompt": true
-  }
+  },
+  "lastSelectedAgents": [
+    "amp",
+    "cline",
+    "codex",
+    "cursor",
+    "droid",
+    "gemini-cli",
+    "github-copilot",
+    "kilo",
+    "kimi-code-cli",
+    "opencode",
+    "warp",
+    "zed"
+  ]
 }

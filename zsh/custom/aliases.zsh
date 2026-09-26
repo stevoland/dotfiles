@@ -153,3 +153,6 @@ alias jt='jj tug'
 #   done
 #   trash "$@"
 # }
+
+alias bc='opencode'
+alias bcc='opencode --continue'
