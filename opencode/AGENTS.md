@@ -3,10 +3,11 @@ User's team at NWboxed is Developer Productivity (dev prod) github team: product
 Most of their services are deployed in production-engineering namespace, tools-aws cluster. sbx-aws is used as a staging environment.
 
 Be concise.
+Avoid using emojis in all communication unless asked.
 
 Don't commit unless the user asks. Add ticket numbers to commit message when avaialable.
 Prefix bookmarks/branches with "stevo/"
-PR titles should communicate why? not what? eg: "fix: <manifested error>"
+Fix PR titles should communicate why? not what? eg: "fix: <manifested error>"
 
 Choose the simplest implementation that fully meets the current
 requirements. Avoid speculative abstractions, configuration, and

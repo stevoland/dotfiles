@@ -235,7 +235,7 @@ function transformSystemPrompt(prompt: string): string {
 }
 
 const plugin: Plugin.Plugin = {
-  id: "jj",
+  id: "stevo.jj",
   setup: async (context) => {
     await context.session.hook("context", async (event) => {
       let directory: string;

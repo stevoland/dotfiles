@@ -28,8 +28,6 @@
     "thinking": "show"
   },
   "plugins": [
-    "/Users/stephen.collings/workspace/github.com/eeveebank/tender",
-    "/Users/stephen.collings/workspace/github.com/eeveebank/opencode-skills-insight",
     "-stevo.moar-context.tui"
   ],
   "prompt": {

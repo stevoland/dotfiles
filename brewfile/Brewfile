@@ -93,6 +93,7 @@ brew hwatch
 brew hyperfine
 brew icu4c@77
 brew icu4c@78
+brew icu4c@79
 brew imagemagick
 brew istioctl
 brew jj
@@ -180,7 +181,6 @@ brew npq
 brew npth
 brew ollama
 brew oniguruma
-brew opencode
 brew openjdk
 brew openssl@3
 brew openssl@4
@@ -202,6 +202,7 @@ brew pyenv-virtualenv
 brew python-setuptools
 brew python@3.13
 brew python@3.14
+brew python@3.15
 brew qemu
 brew qrencode
 brew rbenv
@@ -350,7 +351,6 @@ cask ghostty
 cask helium-browser
 cask iina
 cask keycastr
-cask kitlangton-hex
 cask loopback
 cask meld
 cask mitmproxy
@@ -359,6 +359,7 @@ cask obs
 cask raycast
 cask supacode
 cask switch
+cask tldraw
 cask visual-studio-code
 cask wireshark-app
 cask zed
@@ -455,7 +456,7 @@ appstore 1608041266 Jamf Trust (2.23.0)
 appstore 409183694 Keynote (14.2)
 appstore 409203825 Numbers (14.4)
 appstore 409201541 Pages (14.2)
-appstore 497799835 Xcode (27.0)
+appstore 497799835 Xcode (27.2)
 
 # VSCode extensions
 vscode aaron-bond.better-comments

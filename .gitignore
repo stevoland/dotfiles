@@ -6,8 +6,8 @@ jj/repos/**
 
 opencode/artifact-index
 opencode/logs
-opencode/plugin
-opencode/plugins/boxedcode
+opencode/plugin/**
+opencode/plugins/boxedcode/**
 opencode/service.json
 opencode/service-local.json
 
@@ -27,3 +27,4 @@ pi/agent/**/
 !pi/agent/skills/**
 
 agents/skills/boxed-platform
+agents/skills/configure-boxedcode

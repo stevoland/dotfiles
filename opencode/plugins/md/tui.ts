@@ -10,7 +10,7 @@ export default Plugin.define({
     return rpc.events.on("written", (event) => {
       context.ui.toast.show({
         title: "Markdown handoff written",
-        message: event.data.path,
+        message: String(event.data.path),
         variant: "success",
       })
     })

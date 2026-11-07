@@ -9,6 +9,8 @@ description: |
   language server, so every identifier is a search query and every search miss
   costs wasted reads.
 license: MIT
+metadata:
+  attribution: https://github.com/modem-dev/skills/blob/main/write-discoverable-code
 ---
 
 # Write discoverable code

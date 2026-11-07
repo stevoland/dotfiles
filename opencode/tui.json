@@ -3,9 +3,6 @@
   "attention": {
     "enabled": true
   },
-  "plugin": [
-    "/Users/stephen.collings/.boxedcode-pro/0.16.1/boxedcode-pro"
-  ],
   "scroll_acceleration": {
     "enabled": true
   }

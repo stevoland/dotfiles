@@ -35,16 +35,16 @@
       "skillPath": "skills/find-skills/SKILL.md",
       "skillFolderHash": "8f53ef230643b563207e4de26272aab4dab6ce97",
       "installedAt": "2026-05-06T16:11:31.173Z",
-      "updatedAt": "2026-10-18T07:49:51.952Z"
+      "updatedAt": "2026-11-08T00:12:41.062Z"
     },
     "configure-boxedcode": {
       "source": "eeveebank/agent-skills",
       "sourceType": "github",
       "sourceUrl": "https://github.com/eeveebank/agent-skills.git",
       "skillPath": "skills/configure-boxedcode/SKILL.md",
-      "skillFolderHash": "f67458b013622ad1d6ad8815ee56a8614d10d2fa",
+      "skillFolderHash": "61def84f47886730c428db721b1975a100451af1",
       "installedAt": "2026-05-06T16:11:33.610Z",
-      "updatedAt": "2026-10-18T07:49:49.858Z"
+      "updatedAt": "2026-11-08T00:12:37.230Z"
     },
     "motel-debug": {
       "source": "kitlangton/motel",
@@ -192,14 +192,13 @@
       "updatedAt": "2026-08-12T23:03:40.682Z"
     },
     "domain-modeling": {
-      "source": "mattpocock/skills",
+      "source": "eeveebank/agent-skills",
       "sourceType": "github",
-      "sourceUrl": "https://github.com/mattpocock/skills.git",
-      "skillPath": "skills/engineering/domain-modeling/SKILL.md",
-      "skillFolderHash": "05c3244ec75b7548bbc2b635b0624bb9f70369c3",
-      "pluginName": "mattpocock-skills",
+      "sourceUrl": "https://github.com/eeveebank/agent-skills.git",
+      "skillPath": "skills/domain-modeling/SKILL.md",
+      "skillFolderHash": "51a0b392550eb278787148824573f9a1ed94682b",
       "installedAt": "2026-08-14T22:02:42.181Z",
-      "updatedAt": "2026-08-14T22:02:42.181Z"
+      "updatedAt": "2026-11-08T00:12:39.240Z"
     },
     "debrief": {
       "source": "staltz/microskills",
@@ -355,6 +354,24 @@
       "skillFolderHash": "84a70ae6b98b6052ebce164e7aa7cbb132a44410",
       "installedAt": "2026-10-05T15:40:15.702Z",
       "updatedAt": "2026-10-05T15:40:15.702Z"
+    },
+    "scrawl": {
+      "source": "kitlangton/scrawl",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/kitlangton/scrawl.git",
+      "skillPath": "skills/scrawl/SKILL.md",
+      "skillFolderHash": "2c0a8511bd15c1ad52921010b141fb439fe9f5b7",
+      "installedAt": "2026-10-20T14:48:06.357Z",
+      "updatedAt": "2026-10-20T14:48:06.357Z"
+    },
+    "nasa-handbook": {
+      "source": "R44VC0RP/skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/R44VC0RP/skills.git",
+      "skillPath": "skills/nasa-handbook/SKILL.md",
+      "skillFolderHash": "2689a51c7b2716e2551f3ef6c4e4c9b344b76e0b",
+      "installedAt": "2026-11-04T08:48:19.169Z",
+      "updatedAt": "2026-11-04T08:48:19.169Z"
     }
   },
   "dismissed": {
@@ -366,11 +383,13 @@
     "codex",
     "cursor",
     "droid",
+    "fx",
     "gemini-cli",
     "github-copilot",
     "kilo",
     "kimi-code-cli",
     "opencode",
+    "pi",
     "warp",
     "zed"
   ]

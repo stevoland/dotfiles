@@ -1,31 +1,12 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "agent": {
-    "medium": {
-      "model": "github-copilot/gpt-6.1-sol",
-      "variant": "medium"
-    },
-    "pure": {
-      "model": "github-copilot/gpt-6-luna",
-      "permission": {
-        "skill": {
-          "*": "deny"
-        }
-      },
-      "variant": "high"
-    }
+  "experimental": {
+    "all_flags": true,
+    "artifacts": false,
+    "background_compaction": true,
+    "codemode_vm": true
   },
   "mcp": {
-    "agent-browser": {
-      "command": [
-        "agent-browser",
-        "mcp",
-        "--tools",
-        "all"
-      ],
-      "enabled": true,
-      "type": "local"
-    },
     "akhq": {
       "command": [
         "/opt/homebrew/bin/boxed-akhq-mcp-server"
@@ -34,7 +15,7 @@
       "type": "local"
     },
     "atlassian": {
-      "enabled": true,
+      "enabled": false,
       "type": "remote",
       "url": "https://mcp.atlassian.com/v2/mcp"
     },
@@ -60,37 +41,13 @@
         "mcp"
       ],
       "cwd": "/opt/homebrew/bin",
-      "enabled": true,
-      "type": "local"
-    },
-    "computer-use": {
-      "command": [
-        "open-computer-use",
-        "mcp"
-      ],
       "enabled": false,
       "type": "local"
     },
     "datadog": {
-      "enabled": true,
-      "type": "remote",
-      "url": "https://mcp.datadoghq.eu/v1/mcp?toolsets=all"
-    },
-    "filesystem": {
-      "command": [
-        "mcp-server-filesystem"
-      ],
       "enabled": false,
-      "type": "local"
-    },
-    "github": {
-      "enabled": false,
-      "headers": {
-        "Authorization": "Bearer {env:GITHUB_TOKEN}"
-      },
-      "oauth": false,
       "type": "remote",
-      "url": "https://api.githubcopilot.com/mcp"
+      "url": "https://mcp.datadoghq.eu/v1/mcp?toolsets=core,apm,software-delivery"
     },
     "incidentio": {
       "enabled": false,
@@ -103,11 +60,120 @@
       ],
       "enabled": false,
       "type": "local"
+    },
+    "servers": {
+      "agent-browser": {
+        "command": [
+          "agent-browser",
+          "mcp",
+          "--tools",
+          "all"
+        ],
+        "disabled": true,
+        "type": "local"
+      },
+      "akhq": {
+        "command": [
+          "/opt/homebrew/bin/boxed-akhq-mcp-server"
+        ],
+        "cwd": "/opt/homebrew/bin",
+        "disabled": true,
+        "pool": true,
+        "type": "local"
+      },
+      "atlassian": {
+        "disabled": false,
+        "pool": true,
+        "type": "remote",
+        "url": "https://mcp.atlassian.com/v2/mcp"
+      },
+      "backstage": {
+        "command": [
+          "/opt/homebrew/bin/nwb",
+          "backstage",
+          "mcp"
+        ],
+        "cwd": "/opt/homebrew/bin",
+        "disabled": true,
+        "pool": true,
+        "type": "local"
+      },
+      "bigquery": {
+        "command": [
+          "/opt/homebrew/bin/boxed-bigquery-mcp-server"
+        ],
+        "cwd": "/opt/homebrew/bin",
+        "disabled": true,
+        "pool": true,
+        "type": "local"
+      },
+      "browse": {
+        "command": [
+          "browse",
+          "mcp"
+        ],
+        "environment": {
+          "OPENCODE_BROWSER_RUNTIME": "auto-update"
+        },
+        "type": "local"
+      },
+      "codesearch": {
+        "command": [
+          "/opt/homebrew/bin/codesearch",
+          "mcp"
+        ],
+        "cwd": "/opt/homebrew/bin",
+        "disabled": false,
+        "pool": true,
+        "type": "local"
+      },
+      "computer-use": {
+        "command": [
+          "open-computer-use",
+          "mcp"
+        ],
+        "disabled": true,
+        "type": "local"
+      },
+      "datadog": {
+        "disabled": false,
+        "pool": true,
+        "type": "remote",
+        "url": "https://mcp.datadoghq.eu/v1/mcp?toolsets=all"
+      },
+      "filesystem": {
+        "command": [
+          "mcp-server-filesystem"
+        ],
+        "disabled": true,
+        "type": "local"
+      },
+      "github": {
+        "disabled": true,
+        "headers": {
+          "Authorization": "Bearer {env:GITHUB_TOKEN}"
+        },
+        "oauth": false,
+        "type": "remote",
+        "url": "https://api.githubcopilot.com/mcp"
+      },
+      "incidentio": {
+        "disabled": false,
+        "pool": true,
+        "type": "remote",
+        "url": "https://mcp.incident.io/mcp"
+      },
+      "kubernetes": {
+        "command": [
+          "/opt/homebrew/bin/boxed-kubernetes-mcp-server"
+        ],
+        "cwd": "/opt/homebrew/bin",
+        "disabled": false,
+        "pool": true,
+        "type": "local"
+      }
     }
   },
-  "plugin": [
-    "/Users/stephen.collings/.boxedcode-pro/0.16.1/boxedcode-pro"
-  ],
   "plugins": [
     {
       "options": {
@@ -116,15 +182,69 @@
           "improve_instructions": true
         }
       },
-      "package": "/Users/stephen.collings/workspace/github.com/eeveebank/tender/src"
+      "package": "/Users/stephen.collings/workspace/github.com/eeveebank/tender"
     },
-    "/Users/stephen.collings/workspace/github.com/eeveebank/opencode-skills-insight/src",
+    "@boxed/opencode-skills-insight",
     "/Users/stephen.collings/workspace/github.com/eeveebank/opencode-oracle/src",
-    "-stevo.moar-context"
+    {
+      "options": {
+        "sources": [
+          {
+            "auth": {
+              "env": {
+                "token": [
+                  "GITHUB_TOKEN"
+                ]
+              },
+              "schemes": {
+                "token": {
+                  "scheme": "bearer",
+                  "type": "http"
+                }
+              },
+              "security": [
+                {
+                  "token": []
+                }
+              ]
+            },
+            "description": "GitHub REST API",
+            "namespace": "github",
+            "spec": "https://raw.githubusercontent.com/github/rest-api-description/main/descriptions/api.github.com/api.github.com.json"
+          },
+          {
+            "auth": {
+              "env": {
+                "token": [
+                  "GITHUB_TOKEN"
+                ]
+              },
+              "schemes": {
+                "token": {
+                  "scheme": "bearer",
+                  "type": "http"
+                }
+              }
+            },
+            "description": "GitHub GraphQL API",
+            "endpoint": "https://api.github.com/graphql",
+            "kind": "graphql",
+            "namespace": "githubGraphql"
+          },
+          {
+            "baseUrl": "https://pring-api.tools.nwboxed.com",
+            "description": "pring API",
+            "namespace": "pring",
+            "spec": "https://pring-api.tools.nwboxed.com/openapi.json"
+          }
+        ]
+      },
+      "package": "/Users/stephen.collings/workspace/github.com/eeveebank/opencode-api-tools/src"
+    }
   ],
   "references": {
     "opencode-v2": {
-      "branch": "v2",
+      "branch": "dev",
       "description": "Use for opencode v2 source",
       "repository": "anomalyco/opencode"
     }
