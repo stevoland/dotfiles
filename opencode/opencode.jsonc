@@ -239,7 +239,7 @@
           }
         ]
       },
-      "package": "/Users/stephen.collings/workspace/github.com/eeveebank/opencode-api-tools/src"
+      "package": "@boxed/opencode-api-tools"
     }
   ],
   "references": {
